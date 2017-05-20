@@ -9,7 +9,9 @@
 #include "stdafx.h"
 #include "LyricMaker.h"
 #include "FileHelper.h"
+#include "Windows.h"
 #include <mmsystem.h> 
+#include "BSMessageBox.h"
 #pragma comment (lib, "winmm.lib")
 
 LyricMaker::LyricMaker():
@@ -131,12 +133,36 @@ void LyricMaker::markSpaceLine()
 void LyricMaker::makingEnd()
 {
 	File outFile(m_szOutputPathName,_T("w"));
+
+	if(!outFile.isValidFile())
+	{
+		BSMessageBox m;
+		m.MessageBoxW(NULL,SStringT().Format(_T("文件写入失败:\\n【%s】\\n!请确保文件有效"),m_szOutputPathName),
+			_T("失败提示"),MB_OK|MB_ICONWARNING);
+		return;
+	}
+
+	//先写入 UTF-8 BOM 头
+	fputc(0xef, outFile.m_pf);  
+	fputc(0xbb, outFile.m_pf); 
+	fputc(0xbf, outFile.m_pf); 
+
 	char line[400];
 	for(auto i=m_vLyricOutput.begin(); i != m_vLyricOutput.end(); i++)
 	{
 		//输出到文件中去 [ _fputts(m_vLyricOutput.at(i),outFile.m_pf);  无法输出中文]
 		
-		WideCharToMultiByte(CP_ACP,WC_COMPOSITECHECK,(*i),-1,line,400,"#",NULL);
+		//WideCharToMultiByte(CP_ACP,WC_COMPOSITECHECK,(*i),-1,line,400,"#",NULL);
+		
+		int ret = WideCharToMultiByte(CP_UTF8,  0,(*i),-1,line,400,NULL,NULL);
+		
+		if(ret == 0)
+		{
+			SStringT str;
+			BSMessageBox m;
+			m.MessageBoxW(NULL,str.Format(_T("WideCharToMultiByte error code:%d"), GetLastError()),_T("Tip"),0);
+		}
+
 		fputs(line,outFile.m_pf);
 	}
 

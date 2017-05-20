@@ -28,6 +28,7 @@
 #pragma once
 #include "stdafx.h"
 #include "MusicPlayer.h"
+#include "FileHelper.h"
 
 #include <vector>
 using namespace std;
@@ -67,6 +68,9 @@ public:
 
 	//如果快进或者后退都会导致，当前行发生变化，故需要先更新再取值
 	void updateCurLine();
+
+	//从文件获取带时间信息的每行歌词的集合向量
+	vector<TimeLineInfo> getLyricWithLineInfo(File& lyricFile);
 
 private:
 	//播放音乐

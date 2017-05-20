@@ -115,3 +115,61 @@ void LyricPlayer::updateCurLine()
 			break;
 		}
 }
+
+//从文件获取带时间信息的每行歌词的集合向量
+vector<TimeLineInfo> LyricPlayer::getLyricWithLineInfo(File& lyricFile)
+{
+	vector<TimeLineInfo> lines;
+
+	if(lyricFile.m_encodingType == ENCODING_TYPE::UTF_8 || lyricFile.m_encodingType == ENCODING_TYPE::UNICODE_BIG_ENDIAN 
+		|| lyricFile.m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN )
+	{
+		wchar_t line[MAX_WCHAR_COUNT_OF_LINE+1];
+	
+		// 从文件中读取歌词，并将非空行加入到 player.m_vTimeLyric 向量中
+		while(fgetws(line,MAX_WCHAR_COUNT_OF_LINE,lyricFile.m_pf))
+		{
+			line[MAX_CHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
+
+			//由变长字符装换为 unicode 宽字节字符
+			//MultiByteToWideChar(CP_ACP,MB_COMPOSITE,_line,strlen(_line)+1,line,MAX_WCHAR_COUNT_OF_LINE+1);
+
+			SStringT aLine(line);
+			aLine.Trim('\n');
+			aLine.Trim(' ');
+			aLine.Trim('\t');
+			if(aLine.GetLength() ==0)
+				continue;
+
+			//生成一个行信息对象，储存到player.m_vLineInfo向量中
+			TimeLineInfo newInfo(aLine);
+			lines.push_back(newInfo);
+		}
+	}
+	else  //if(encodingFile.m_encodingType == ENCODING_TYPE::ASCII  或 其他
+	{
+		char _line[MAX_CHAR_COUNT_OF_LINE+1];
+		wchar_t line[MAX_WCHAR_COUNT_OF_LINE+1];
+	
+		// 从文件中读取歌词，并将非空行加入到 player.m_vTimeLyric 向量中
+		while(fgets(_line,MAX_WCHAR_COUNT_OF_LINE,lyricFile.m_pf))
+		{
+			_line[MAX_CHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
+
+			//由变长字符装换为 unicode 宽字节字符
+			MultiByteToWideChar(CP_ACP,MB_COMPOSITE,_line,strlen(_line)+1,line,MAX_WCHAR_COUNT_OF_LINE+1);
+			SStringT aLine(line);
+			aLine.Trim('\n');
+			aLine.Trim(' ');
+			aLine.Trim('\t');
+			if(aLine.GetLength() ==0)
+				continue;
+
+			//生成一个行信息对象，储存到player.m_vLineInfo向量中
+			TimeLineInfo newInfo(aLine);
+			lines.push_back(newInfo);
+		}
+	}
+
+	return lines;
+}
