@@ -158,8 +158,12 @@ translucent="1"
               本软件由 BensonLaur 倾情提供。
             </text>
                
-            <text pos="15,[15,-5,@30" multilines="1" maxWidth="550">
+            <text pos="15,[15,@200,@30" multilines="1" maxWidth="550">
                 本软件名称：BesLyric  
+            </text>
+
+            <text pos="[15,{0,@100,@30" multilines="1" maxWidth="550">
+                版本号：1.0.1
             </text>
 
           <text pos="15,[15,-5,@40" multilines="1">

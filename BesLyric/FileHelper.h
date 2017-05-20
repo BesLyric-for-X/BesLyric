@@ -25,9 +25,12 @@
 * Describe    File类（管理打开的文件） 和CFileDialogEx 类（用对话框选择文件和文件夹）的定义
 */
 
+
+
 #pragma once
 #include "stdafx.h"
 #include <windows.h>
+#include "Define.h"
 
 //定义歌词文件每一行的最多字符数
 #define MAX_CHAR_COUNT_OF_LINE 200
@@ -42,46 +45,31 @@ UINT_PTR __stdcall  MyFolderProc(  HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM 
 LRESULT __stdcall  _WndProc ( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam  );
 
 /*
-*   @brief 应用RAII思想，管理文件文件的资源
+*   @brief			使得文件支持
+*					应用RAII思想，管理文件文件的资源
 */
 class File{
 
 public:
 	File():m_pf(NULL),m_lpszPathFile(NULL),m_lpszMode(NULL){}
 	
-	File(LPCTSTR pathFile,LPCTSTR mode)
-	{
-		m_pf=_tfopen(pathFile,mode);
+	//读取文件打开时，支持ascii\unicode little endian\ unicode big endian \utf-8 编码格式
+	//写入打开文件时，直接由函数 wideCharToMultiChar 以ascii 方式打开
+	//mode : “r”“w”
+	File(LPCTSTR pathFile,LPCTSTR mode);
 
-		m_lpszPathFile = pathFile;
-		m_lpszMode = mode;
-	}
+	inline BOOL isValidFile(){return m_pf!=NULL;}
 
-	BOOL openFile(LPCTSTR pathFile,LPCTSTR mode)
-	{
+	~File(){
 		//如果已存在，则释放资源
-		if(m_pf)
-			fclose(m_pf);
-		File(pathFile,mode);
-	}
-
-	BOOL isValidFile()
-	{
-		return m_pf!=NULL;
-	}
-
-	~File()
-	{
-		//如果已存在，则释放资源
-		if(m_pf)
-			fclose(m_pf);
+		if(m_pf) fclose(m_pf);
 	}
 public:
 	LPCTSTR m_lpszPathFile;		/* 文件路径和名字串*/
 	LPCTSTR m_lpszMode;			/* 打开文件的模式 */
 
 	FILE *m_pf;					/* 存放当前打开文件的指针*/
-
+	ENCODING_TYPE m_encodingType;	/* 存放文件编码格式 */
 };
 
 /*

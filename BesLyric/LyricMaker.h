@@ -28,8 +28,8 @@
 #pragma once
 #include "stdafx.h"
 #include "MusicPlayer.h"
-
 #include <vector>
+#include "FileHelper.h"
 using namespace std;
 
 /*
@@ -78,6 +78,10 @@ public:
 
 	//上一行是否为空白行
 	bool isLastLineSpace();
+
+public:
+	//从文件获取每行歌词的集合向量
+	vector<SStringT> getLyricOrigin(File& encodingFile);
 
 private:
 	//根据m_szMusicPathName 的文件名得到歌词文件名，并更新outputFileName 和 m_szOutputPathName的值

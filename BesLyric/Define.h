@@ -17,12 +17,12 @@
 */
 
 /**
-* @file       CodeFile.h
-* @version    v1.0      
+* @file       Define.h
+* @version    v1.0.1      
 * @author     BensonLaur   
-* @date       2017/05/19
+* @date       2017/05/20
 * 
-* Describe    定义了 各种编码文件 的操作	
+* Describe    定义了 程序使用的一些结构
 */
 
 #pragma once

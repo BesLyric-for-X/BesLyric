@@ -5,6 +5,113 @@
 
 #include "stdafx.h"
 #include "FileHelper.h"
+#include <fstream>
+using namespace std;
+
+File::File(LPCTSTR pathFile,LPCTSTR mode)
+{
+	m_lpszPathFile = NULL;
+	m_lpszMode = NULL;
+	m_pf = NULL;
+	m_encodingType = ENCODING_TYPE::OTHER;
+
+	if(_tcscmp(mode,_T("r")) == 0)
+	{
+		//读取文件的前两个字节，判断编码
+		int len = 0;
+		char *buf = NULL;
+		byte firstByte = '\0';
+		byte secondByte = '\0';
+		ifstream in(pathFile);
+		if(in)
+		{
+			in.seekg(0,ios::end);
+			len = in.tellg();
+			buf = new char[len];
+			in.seekg(0,SEEK_SET);
+			in.read(buf,len);
+
+			if(len < 2)//文件内容太少，读取失败
+				return ;
+			
+			firstByte = buf[0];
+			secondByte = buf[1];
+
+			in.close();
+			delete buf;
+		}
+		else return;//打开文件失败
+
+		if(firstByte == 0xef && secondByte == 0xbb)
+			m_encodingType = ENCODING_TYPE::UTF_8;
+		else if(firstByte == 0xff && secondByte == 0xfe)
+			m_encodingType = ENCODING_TYPE::UNICODE_LITTLE_ENDIAN;
+		else if(firstByte == 0xfe && secondByte == 0xff)
+			m_encodingType = ENCODING_TYPE::UNICODE_BIG_ENDIAN;
+		else 
+			m_encodingType = ENCODING_TYPE::ASCII;	//默认ascii 码和其他编码，以ascii 方式处理
+
+		//根据不同的编码，打开文件
+		if(m_encodingType == ENCODING_TYPE::UTF_8)
+			m_pf = _tfopen(pathFile, _T("r,ccs=utf-8"));
+		else if(m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN)
+			m_pf = _tfopen(pathFile, _T("r,ccs=UNICODE"));
+		else if(m_encodingType == ENCODING_TYPE::UNICODE_BIG_ENDIAN)
+		{	
+			//UNICODE_BIG_ENDIAN 不支持_tfopen(pathFile, _T("r,ccs=UNICODE")); 方式读取
+
+			//转换为UNICODE_LITTLE_ENDIAN文本，然后再读取
+
+			//使用c方式读取文件
+			int len = 0;
+			FILE *in = _tfopen(pathFile,_T("rb"));
+			if(in)
+			{
+				fseek(in, 0, SEEK_END);
+				len = ftell(in);
+				buf = new char[len];
+				fseek(in, 0, SEEK_SET);
+				fread(buf, sizeof(char), len, in);
+
+				WCHAR *pWC;
+				pWC = reinterpret_cast<WCHAR*>(buf);
+
+				int index = 0;
+				while(index < len/2)  //对每一个宽字节交换字节序
+				{
+					WCHAR temp = *pWC >> 8;
+					temp |= *pWC << 8;
+					*pWC = temp;
+					pWC++;
+					index++;
+				}
+
+				//以c的形式写入临时文件
+				FILE* tFile = _tfopen(_T("temp_unicode_little_endian.txt"),_T("wb"));
+				if(tFile)
+				{
+					fwrite(buf, sizeof(char), len, tFile);
+					fclose(tFile);
+				}
+				else return;//写入文件失败
+			}
+			else return;//打开文件失败
+			
+			m_pf = _tfopen(_T("temp_unicode_little_endian.txt"), _T("r,ccs=UNICODE"));
+		}
+		else //m_encodingType == ENCODING_TYPE::ASCII
+			m_pf = _tfopen(pathFile,mode);
+
+	}
+	else //if(_tcscmp(mode,_T("r"))
+		m_pf = _tfopen(pathFile,mode);
+
+
+	m_lpszPathFile = pathFile;
+	m_lpszMode = mode;
+}
+
+
 
 LONG g_lOriWndProc = NULL;
 BOOL g_bReplaced = FALSE;

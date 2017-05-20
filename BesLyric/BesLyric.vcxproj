@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BSMessageBox.h" />
+    <ClInclude Include="Define.h" />
     <ClInclude Include="FileHelper.h" />
     <ClInclude Include="LyricMaker.h" />
     <ClInclude Include="LyricPlayer.h" />
