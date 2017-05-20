@@ -1,0 +1,2 @@
+版本号：1.0.1
+1、歌词原文件在原来支持 ascii 码的基础上，支持windows文本另外3种编码：Unicode 、Unicode little endian 、UTF-8
