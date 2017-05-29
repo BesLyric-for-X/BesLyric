@@ -18,9 +18,6 @@
 
 /**
 * @file       MusicPlayer.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    MusicPlayer类，可以进行打开声音设备、音乐的播放、声音设置等常规操作
 */

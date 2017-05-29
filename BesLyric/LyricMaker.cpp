@@ -76,8 +76,8 @@ void LyricMaker::markNextLine()
 {
 	SYSTEMTIME		currentPoint;				/* 记录当前的时间点 */
 	ULARGE_INTEGER  currentPointF;				/* 对应的 FILETIME ，为了得到时间差，使用FILETIME*/ 
+
 	GetLocalTime(&currentPoint);
-	
 	SystemTimeToFileTime(&currentPoint,(FILETIME*)&currentPointF); 
 	
 	unsigned __int64 dft=currentPointF.QuadPart-startPointF.QuadPart; 

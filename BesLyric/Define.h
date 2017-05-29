@@ -18,9 +18,6 @@
 
 /**
 * @file       Define.h
-* @version    v1.0.1      
-* @author     BensonLaur   
-* @date       2017/05/20
 * 
 * Describe    定义了 程序使用的一些结构
 */
@@ -29,6 +26,9 @@
 #include "stdafx.h"
 using namespace std;
 
+
+
+/* 枚举定义 */
 enum ENCODING_TYPE			//文件编码类型
 {
 	ASCII,						
@@ -37,3 +37,4 @@ enum ENCODING_TYPE			//文件编码类型
 	UTF_8,
 	OTHER
 };
+

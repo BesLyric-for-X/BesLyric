@@ -18,9 +18,6 @@
 
 /**
 * @file       LyricMaker.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    LyricMaker类，定义了 歌词制作页面处理 歌词制作事务的  LyricMaker类 的接口	
 */

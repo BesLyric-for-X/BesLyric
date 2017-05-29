@@ -18,9 +18,6 @@
 
 /**
 * @file       LyricPlayer.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    LyricPlayer类，定义了 歌词滚动播放页面处理 歌词播放事务的接口
 */
