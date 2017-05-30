@@ -1,7 +1,7 @@
 ﻿<SOUI name="mainWindow" title="@string/title" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="760" height="550" minSize="735,510" margin="20,5,5,5"  
       resizable="1" wndType="appMain"
 appWnd="1"
-translucent="1" 
+translucent="0" 
 >
   
   <root skin="_skin.sys.wnd.bkgnd" cache="1">
@@ -151,6 +151,21 @@ translucent="1"
           </window>
         </page>
         
+		
+        <page title="设置" >
+			<window pos="10,10,-10,-10">
+				<text pos="5,5,@80,@30">时间轴设置</text>
+				
+				<hr pos="5,[5,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff55"/>
+				
+				<window pos="0,[10,-10,@40" tip="设置后，制作歌词时插入的时间的值 将提前这里所指定的时间值，一般为正数，建议设置300-500">
+					<text pos="5,5,@100,@30" >提前毫秒数：</text>
+					<edit pos="[0,{0,@100,@30" font="adding:1" notifyChange="1" number="1" name="edit_time_shift"></edit>
+					<imgbtn name="btn_modify_setting_shift_time" pos="[10,{0,@80,@30" enable="1" skin="app_button" class="normalbtn">修改</imgbtn>
+				</window>
+			</window>
+        </page>
+		
         <page title="本软件" tip="关于本软件" >
           <!--<group pos="20,10,-20,-40" headerHeight="20" round ="0" colorLine1 ="@color/yello" colorLine2="@color/gray">-->
         <window pos="10,10,-10,-10">
@@ -162,9 +177,15 @@ translucent="1"
                 本软件名称：BesLyric  
             </text>
 
-            <text pos="[15,{0,@100,@30" multilines="1" maxWidth="550">
-                版本号：1.0.1
+            <text pos="[15,{0,@60,@30" multilines="1" maxWidth="550">
+                版本号：
             </text>
+			
+            <text pos="[0,{0,@50,@30" name="txt_version_number" multilines="1" maxWidth="550">
+               
+            </text>
+			
+			
 
           <text pos="15,[15,-5,@40" multilines="1">
             本软件 试图提供给用户一个 上手简单、功能实用的 滚动歌词制作软件，为广大网易云音乐爱好者提供一个良好的歌词制作体验。

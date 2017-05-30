@@ -116,6 +116,21 @@ void LyricPlayer::updateCurLine()
 		}
 }
 
+//当前是否在第0行的位置
+bool LyricPlayer::isCurrentZeroLine()
+{
+	bool isZero;
+
+	//根据当前歌曲播放的位置，判断当前在哪一行
+	int pos = this->m_musicPlayer.getPosition();
+	if( pos < m_vLineInfo.begin()->m_nmSesonds )
+		isZero = true;
+	else
+		isZero = false;
+	
+	return isZero;
+}
+
 //从文件获取带时间信息的每行歌词的集合向量
 vector<TimeLineInfo> LyricPlayer::getLyricWithLineInfo(File& lyricFile)
 {

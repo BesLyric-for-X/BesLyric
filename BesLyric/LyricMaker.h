@@ -18,9 +18,6 @@
 
 /**
 * @file       LyricMaker.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    LyricMaker类，定义了 歌词制作页面处理 歌词制作事务的  LyricMaker类 的接口	
 */
@@ -30,6 +27,7 @@
 #include "MusicPlayer.h"
 #include <vector>
 #include "FileHelper.h"
+#include  "PageSetting.h"
 using namespace std;
 
 /*
@@ -39,6 +37,7 @@ class LyricMaker
 {
 public:
 	LyricMaker();
+	void Init(CSettingPage *pSettingPage);		//初始化时得到主窗口指针
 
 	//设置各个路径
 	//设置音乐路径时，传入播放音乐需要的 消息宿主窗口的句柄
@@ -108,7 +107,10 @@ public:
 	int				m_nTotalLine;			/* 歌词总行数（不包括空行） */
 	
 	MusicPlayer		m_musicPlayer;			/* 负责歌词制作过程中音乐的播放 */
+
 private:
+	CSettingPage *m_pSettingPage;			/* 设置页面指针 */
+
 	ULARGE_INTEGER  startPointF;			/* 对应的 FILETIME ，为了得到时间差，使用FILETIME(单位100ns)*/ 
 	TCHAR outputFileName[_MAX_FNAME];		/* 输出文件的文件名 */
 

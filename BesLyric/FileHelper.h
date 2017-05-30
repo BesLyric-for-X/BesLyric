@@ -18,9 +18,6 @@
 
 /**
 * @file       FileHelper.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    File类（管理打开的文件） 和CFileDialogEx 类（用对话框选择文件和文件夹）的定义
 */
@@ -30,7 +27,6 @@
 #pragma once
 #include "stdafx.h"
 #include <windows.h>
-#include "Define.h"
 
 //定义歌词文件每一行的最多字符数
 #define MAX_CHAR_COUNT_OF_LINE 200

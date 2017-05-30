@@ -18,16 +18,27 @@
 
 /**
 * @file       Define.h
-* @version    v1.0.1      
-* @author     BensonLaur   
-* @date       2017/05/20
 * 
 * Describe    定义了 程序使用的一些结构
 */
 
 #pragma once
 #include "stdafx.h"
+#include <string>
 using namespace std;
+
+
+/* 结构定义 */
+
+//在制作歌词页面 和 滚动预览 页面中，需要选择音乐路径，歌词路径，输出路径等信息
+//该结构用于存储 路径名 以及 是否已被选择的状态
+typedef struct _PATH_STATE
+{	
+	TCHAR nameOfPath[_MAX_PATH];
+	bool isInited;
+}PATH_STATE; 
+
+
 
 enum ENCODING_TYPE			//文件编码类型
 {
@@ -37,3 +48,25 @@ enum ENCODING_TYPE			//文件编码类型
 	UTF_8,
 	OTHER
 };
+
+
+/* 全局变量定义 */
+static const SStringW VERSION_NUMBER = L"1.0.2";		//版本号
+
+static const string SETTING_FILE_NAME = "setting";		//设置文件名
+
+//制作歌词页面 的路径 与选择状态
+static PATH_STATE PATH_STATE_1[] = 
+{
+	{_T("音乐文件"),false},
+	{_T("歌词文件"),false},
+	{_T("输出路径"),false}
+};
+
+//滚动预览页面 的路径 与选择状态
+static PATH_STATE PATH_STATE_2[] = 
+{
+	{_T("音乐文件"),false},
+	{_T("歌词文件"),false}
+};
+

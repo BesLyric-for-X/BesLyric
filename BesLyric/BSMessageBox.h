@@ -18,9 +18,6 @@
 
 /**
 * @file       BSMessageBox.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    BSMessageBox 类，实现SOUI的SMessageBoxImpl接口，实现自定义图标的显示
 */

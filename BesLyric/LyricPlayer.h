@@ -18,9 +18,6 @@
 
 /**
 * @file       LyricPlayer.h
-* @version    v1.0      
-* @author     BensonLaur   
-* @date       2017/01/08
 * 
 * Describe    LyricPlayer类，定义了 歌词滚动播放页面处理 歌词播放事务的接口
 */
@@ -68,6 +65,9 @@ public:
 
 	//如果快进或者后退都会导致，当前行发生变化，故需要先更新再取值
 	void updateCurLine();
+
+	//当前是否在第0行的位置
+	bool isCurrentZeroLine();
 
 	//从文件获取带时间信息的每行歌词的集合向量
 	vector<TimeLineInfo> getLyricWithLineInfo(File& lyricFile);
