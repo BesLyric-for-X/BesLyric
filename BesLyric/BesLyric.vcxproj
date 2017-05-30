@@ -119,6 +119,7 @@
     <ClCompile Include="LyricPlayer.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="MusicPlayer.cpp" />
+    <ClCompile Include="PageSetting.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -135,6 +136,7 @@
     <ClInclude Include="LyricPlayer.h" />
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="MusicPlayer.h" />
+    <ClInclude Include="PageSetting.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

@@ -25,6 +25,14 @@ LyricMaker::LyricMaker():
 	m_szOutputPathName[0] = _T('\0');
 }
 
+void LyricMaker::Init(CSettingPage *pSettingPage)
+{
+	SASSERT(NULL != pSettingPage);
+
+	//保存主窗口对象
+	m_pSettingPage = pSettingPage;
+}
+
 //设置各个路径
 //设置音乐路径时，传入播放音乐需要的 消息宿主窗口的句柄
 void LyricMaker::setMusicPath(LPCTSTR pathName, HWND hostWnd)
@@ -83,6 +91,11 @@ void LyricMaker::markNextLine()
 	unsigned __int64 dft=currentPointF.QuadPart-startPointF.QuadPart; 
 	int ms = (int)(dft/10000);//得到相差的毫秒数
 
+	//根据用户设置的时间偏移，修改得到实际记录的毫秒数
+	ms -= m_pSettingPage->m_nTimeShift;
+	if(ms < 0 )
+		ms = 0;
+
 	//得到[00:33.490] 形式的时间串
 	TCHAR timeBuf[255];
 	msToLyricTimeString(ms, timeBuf);
@@ -111,6 +124,11 @@ void LyricMaker::markSpaceLine()
 	
 		unsigned __int64 dft=currentPointF.QuadPart-startPointF.QuadPart; 
 		int ms = (int)(dft/10000);//得到相差的毫秒数
+
+		//根据用户设置的时间偏移，修改得到实际记录的毫秒数
+		ms -= m_pSettingPage->m_nTimeShift;
+		if(ms < 0 )
+			ms = 0;
 
 		//得到[00:33.490] 形式的时间串
 		TCHAR timeBuf[255];

@@ -27,7 +27,6 @@
 #pragma once
 #include "stdafx.h"
 #include <windows.h>
-#include "Define.h"
 
 //定义歌词文件每一行的最多字符数
 #define MAX_CHAR_COUNT_OF_LINE 200
