@@ -67,10 +67,6 @@ DWORD WINAPI AutoUpdateThread::ThreadProc(LPVOID pParam)
 {
 	AutoUpdateThread* pThread = static_cast<AutoUpdateThread*>(pParam);
 	
-	//启动之后15秒才开始更新。
-	//发布新版本时，即在Realease 下，会自动更新，为了编译后不立刻更新导致版本被自动被替换成较低版本,设置15秒延时，在15秒内关闭则不会被自动替换
-	Sleep(15000);
-
 #if _KEEP_UPDATE == 0
 	pThread->m_bKeepUpdate = false;
 #endif
@@ -122,7 +118,7 @@ bool AutoUpdateThread::AutoUpdate()
 		}
 	}
 
-	if(VERSION_NUMBER == strVersion) // 版本一致
+	if(VersionCompare(VERSION_NUMBER, strVersion) >= 0 ) // 版本一致 或者 当前版本大于服务器版本（处于开发状态）
 	{
 		m_bHasUpdate = true;
 		return true;
@@ -182,6 +178,38 @@ bool AutoUpdateThread::AutoUpdate()
 	return true;
 }
 
+//比较2个字符串版本号的大小，
+int AutoUpdateThread::VersionCompare(const SStringW v1, const SStringW v2)
+{
+	int nMainNum1 = 0, nSubNum1= 0, nModifidNum1= 0;
+	int nMainNum2 = 0, nSubNum2= 0, nModifidNum2= 0;
+	swscanf(v1,L"%d.%d.%d",&nMainNum1, &nSubNum1, &nModifidNum1);
+	swscanf(v2,L"%d.%d.%d",&nMainNum2, &nSubNum2, &nModifidNum2);
+
+	if(nMainNum1 > nMainNum2)
+		return 1;
+	else if(nMainNum1 < nMainNum2)
+		return -1;
+	else//主版本号相同
+	{
+		if(nSubNum1 > nSubNum2)
+		return 1;
+		else if(nSubNum1 < nSubNum2)
+			return -1;
+		else//次版本号相同
+		{
+			if(nModifidNum1 > nModifidNum2)
+				return 1;
+			else if(nModifidNum1 < nModifidNum2)
+				return -1;
+			else
+				return 0;
+		}
+	}
+
+}
+
+
 /*将Url指向的地址的文件下载到save_as指向的本地文件*/
 bool AutoUpdateThread::DownloadFile(const wstring strUrl, const wstring strSaveAs)
 {
@@ -219,6 +247,8 @@ bool AutoUpdateThread::DownloadFile(const wstring strUrl, const wstring strSaveA
 
 	return true;
 }
+
+
 
 
 //发送登录信息（ip地址）

@@ -30,9 +30,13 @@ private:
 	//自动更新执行函数
 	bool AutoUpdate();
 
+	//比较2个字符串版本号的大小，
+	int VersionCompare(const SStringW v1, const SStringW v2);
+
 	//从网络下载文件
 	bool DownloadFile(const wstring strUrl, const wstring strSaveAs);
 	
+
 	//发送登录信息（ip地址）
 	void SendLoginInfo();
 

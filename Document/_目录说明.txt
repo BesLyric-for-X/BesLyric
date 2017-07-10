@@ -1,0 +1,5 @@
+Document	
+	该目录用于储存说明文档，用于记录不同模块开发过程说明和注意事项
+
+Document/AutoUpdate.txt
+	自动升级模块
