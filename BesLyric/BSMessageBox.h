@@ -90,3 +90,7 @@ public:
         return TRUE;
 	}
 };
+
+
+//发送自定义图标的消息
+int _MessageBox(HWND hwnd,LPCTSTR content, LPCTSTR tiltle, UINT uType);
