@@ -27,6 +27,18 @@
 #include <string>
 using namespace std;
 
+/* 宏定义 */
+#ifdef _DEBUG
+
+#define _KEEP_UPDATE  0			/* 是否在启动时更新程序 */
+
+#else
+
+#define _KEEP_UPDATE  1
+
+#endif
+
+
 
 /* 结构定义 */
 
@@ -51,7 +63,7 @@ enum ENCODING_TYPE			//文件编码类型
 
 
 /* 全局变量定义 */
-static const SStringW VERSION_NUMBER = L"1.0.2";		//版本号
+static const SStringW VERSION_NUMBER = L"2.0.0";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
 
 static const string SETTING_FILE_NAME = "setting";		//设置文件名
 

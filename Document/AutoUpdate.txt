@@ -1,0 +1,33 @@
+﻿自动升级模块
+====================================================================================
+模块说明：
+	该模块实现自动升级功能，在程序启动后启动一个线程来自动升级程序；以静默升级方
+式，在线程启动后，下载最新配置文件，发现有新的版本，则下载最新的可执行文件和最新
+版本信息文件。以重命名的方式，升级文件。
+
+
+-------------------------------------------------------------------------------------
+主要代码文件：
+../BesLyric/BesAutoUpdateThread.cpp
+../BesLyric/AutoUpdateThread.h
+
+-------------------------------------------------------------------------------------
+升级程序说明：
+
+服务器上储存着4个文件，这里使用博客园的文件服务器，由于文件类型限制，后缀使用zip，具体
+文件如下：
+http://files.cnblogs.com/files/BensonLaur/Beslyric.zip
+
+http://files.cnblogs.com/files/BensonLaur/lastVersion.zip
+http://files.cnblogs.com/files/BensonLaur/BesLyricExe.zip
+http://files.cnblogs.com/files/BensonLaur/versionLog.zip
+
+文件具体说明：
+Beslyric.zip，该文件为压缩包文件，储存最新的完整的整个程序，下载链接实际下载文件
+
+lastVersion.zip,该文件为txt文件，即 lastVersion.txt，储存最新版本号和最新更新内容，
+		自动升级程序时，首先下载这个配置文件
+BesLyricExe.zip，该文件为exe文件，即BesLyric.exe，用于自动更新时下载来替换当前版本
+versionLog.zip，该文件为txt文件，即 versionLog.txt，用于自动更新时下载来替换旧的版
+		本记录。
+

@@ -113,7 +113,9 @@
     <None Include="uires\xml\messagebox.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AutoUpdateThread.cpp" />
     <ClCompile Include="BesLyric.cpp" />
+    <ClCompile Include="BSMessageBox.cpp" />
     <ClCompile Include="FileHelper.cpp" />
     <ClCompile Include="LyricMaker.cpp" />
     <ClCompile Include="LyricPlayer.cpp" />
@@ -124,11 +126,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WinFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AutoUpdateThread.h" />
     <ClInclude Include="BSMessageBox.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="FileHelper.h" />
@@ -139,6 +143,7 @@
     <ClInclude Include="PageSetting.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="WinFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
