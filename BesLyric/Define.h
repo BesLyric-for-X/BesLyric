@@ -63,7 +63,7 @@ enum ENCODING_TYPE			//文件编码类型
 
 
 /* 全局变量定义 */
-static const SStringW VERSION_NUMBER = L"2.0.0";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
+static const SStringW VERSION_NUMBER = L"2.0.1";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
 
 static const wstring  LINK_VERSION_LOG= L"http://files.cnblogs.com/files/BensonLaur/versionLog.zip";			//链接，指向版本日志文件
 static const wstring  LINK_LAST_VERSION_INFO= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.zip";		//链接，指向最后版本信息的文件
