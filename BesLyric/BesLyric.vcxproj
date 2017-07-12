@@ -117,6 +117,7 @@
     <ClCompile Include="BesLyric.cpp" />
     <ClCompile Include="BSMessageBox.cpp" />
     <ClCompile Include="FileHelper.cpp" />
+    <ClCompile Include="lib\tinyxml2.cpp" />
     <ClCompile Include="LyricMaker.cpp" />
     <ClCompile Include="LyricPlayer.cpp" />
     <ClCompile Include="MainDlg.cpp" />
@@ -136,6 +137,7 @@
     <ClInclude Include="BSMessageBox.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="FileHelper.h" />
+    <ClInclude Include="lib\tinyxml2.h" />
     <ClInclude Include="LyricMaker.h" />
     <ClInclude Include="LyricPlayer.h" />
     <ClInclude Include="MainDlg.h" />

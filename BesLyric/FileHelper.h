@@ -27,6 +27,7 @@
 #pragma once
 #include "stdafx.h"
 #include <windows.h>
+#include <Shlobj.h>
 
 //定义歌词文件每一行的最多字符数
 #define MAX_CHAR_COUNT_OF_LINE 200
@@ -41,7 +42,7 @@ UINT_PTR __stdcall  MyFolderProc(  HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM 
 LRESULT __stdcall  _WndProc ( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam  );
 
 /*
-*   @brief			使得文件支持
+*   @brief	文件读取类，支持Windows多种编码
 *					应用RAII思想，管理文件文件的资源
 */
 class File{
@@ -68,8 +69,33 @@ public:
 	ENCODING_TYPE m_encodingType;	/* 存放文件编码格式 */
 };
 
+
 /*
-*	@用于打开文件 和 文件夹； 以及 保存文件
+*	@brief 用于打开文件 和 文件夹(方式一)
+*/
+class CBrowseDlg
+{
+	public:
+		CBrowseDlg(void);
+		~CBrowseDlg(void);
+
+	protected:
+		char m_pszDirPath[MAX_PATH]; //选择的目录
+		char m_pszFilePath[MAX_PATH];  //选择中的文件地址
+		wchar_t m_pszFilePath2[MAX_PATH];  //选择中的文件地址
+
+	public:
+		BOOL DoDirBrowse(HWND hwndOwner, LPCTSTR pszDisplayName, BOOL bAddNewFolder);  //文件夹浏览
+		BOOL DoFileBrowse(HWND hWnd, LPCSTR pFilter, const char *pInitialDir);  //文件选择器
+
+		LPSTR GetDirPath();  //获取目录路径
+		LPSTR GetFilePath();  //获取文件路径
+
+};
+
+
+/*
+*	@brief 用于打开文件 和 文件夹； 以及保存文件(方式二)
 */
 class CFileDialogEx
 {
@@ -80,51 +106,17 @@ public:
     TCHAR m_szFileTitle[_MAX_FNAME];   // contains file title after return
     TCHAR m_szFileName[_MAX_PATH];     // contains full path name after return
 
+	//构造函数
     CFileDialogEx(BOOL bOpenFileDialog, // TRUE for FileOpen, FALSE for FileSaveAs
         LPCTSTR lpszDefExt = NULL,
         LPCTSTR lpszFileName = NULL,
         DWORD dwFlags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT ,
         LPCTSTR lpszFilter = NULL,
         HWND hWndParent = NULL,
-		BOOL bFloder = FALSE)
-    {
-        memset(&m_ofn, 0, sizeof(m_ofn)); // initialize structure to 0/NULL
-        m_szFileName[0] = _T('\0');
-        m_szFileTitle[0] = _T('\0');
+		BOOL bFloder = FALSE);
 
-        m_bOpenFileDialog = bOpenFileDialog;
-        m_ofn.lStructSize = sizeof(m_ofn);
-        m_ofn.lpstrFile = m_szFileName;
-        m_ofn.nMaxFile = _MAX_PATH;
-        m_ofn.lpstrDefExt = lpszDefExt;
-        m_ofn.lpstrFileTitle = (LPTSTR)m_szFileTitle;
-        m_ofn.nMaxFileTitle = _MAX_FNAME;
-        m_ofn.Flags = dwFlags | OFN_EXPLORER | OFN_ENABLEHOOK | OFN_ENABLESIZING| OFN_NOCHANGEDIR;
-        m_ofn.lpstrFilter = lpszFilter;
-        m_ofn.hwndOwner = hWndParent;
-
-        // setup initial file name
-        if(lpszFileName != NULL)
-            _tcscpy_s(m_szFileName, _countof(m_szFileName), lpszFileName);
-
-		//文件夹设置
-		if(bFloder)
-		{
-			m_ofn.hInstance = (HMODULE)GetCurrentProcess();//不要使用NULL,可能造成无法定制的问题
-			m_ofn.lpfnHook = (LPOFNHOOKPROC)MyFolderProc;
-		}
-    }
-
-    INT_PTR DoModal(HWND hWndParent = ::GetActiveWindow())
-    {
-        if(m_ofn.hwndOwner == NULL)   // set only if not specified before
-            m_ofn.hwndOwner = hWndParent;
-
-        if(m_bOpenFileDialog)
-            return ::GetOpenFileName(&m_ofn);
-        else
-            return ::GetSaveFileName(&m_ofn);
-    }
+	//打开选择窗口
+    INT_PTR DoModal(HWND hWndParent = ::GetActiveWindow());
 
 public:
 	/**
@@ -135,55 +127,7 @@ public:
 	*	@return TRUE 符合要求
 	*	@note	
 	*/
-
-	static BOOL checkPathName(LPCTSTR format,LPCTSTR toChecked)
-	{
-		int i;
-		bool isFloder = false;
-		//TODO：异常抛出处理
-		int len = _tcslen(format);
-		if(_tcscmp(format,_T(".."))==0)
-		{
-			isFloder = true;
-		}
-		else if(len < 3 || format[0]!=_T('*') || format[1]!=_T('.'))
-			return FALSE;  //TODO：异常
-		
-
-		//获取并检查 被检查的路径字符串 toChecked 的信息
-		TCHAR pathName[_MAX_PATH];
-		TCHAR ext[_MAX_EXT];
-
-		int lenPathName = 0, pos =-1;
-
-		_tcscpy(pathName,toChecked);
-		lenPathName = _tcslen(pathName);	//得到路径总长
-		if(!lenPathName)
-			return FALSE;
-
-		//得到路径中最后一个“.”的位置置于pos中
-		for( i=0; i< lenPathName; i++)
-		{
-			if(_T('.')==pathName[i])
-				pos = i;
-		}
-
-		if(isFloder) //检查文件夹类型
-		{
-			if(pos == -1)//这里默认文件夹的路径不包含任何点'.'
-				return TRUE;
-			else
-				return FALSE;
-		}
-		else //检查普通后缀名类型
-		{
-			_tcscpy(ext,&pathName[pos+1]);  //得到路径的后缀（不包含“.”）
-			if(_tcscmp(&format[2],ext)==0)	//和 参数提供的后缀对比
-				return TRUE;
-			else
-				return FALSE;
-		}
-	}
+	static BOOL checkPathName(LPCTSTR format,LPCTSTR toChecked);
 
 };
 

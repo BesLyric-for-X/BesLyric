@@ -28,16 +28,22 @@
 class CSettingPage
 {
 public:
-	CSettingPage(){};
-	~CSettingPage(){};
+	CSettingPage(){LoadSetting();};
+	~CSettingPage(){SaveSetting();};
 
 	void Init(SHostWnd *pMainWnd);		//初始化设置页面
+	void SaveSetting();					//保存设置
+	void LoadSetting();					//加载设置
 	void LoadShiftTime();				//从文件获取获取时间，显示到edit_time_shift 编辑框中
 	void SaveShiftTime();				//将设置的时间保存到文件中
 	
 	void OnTimeShiftEditNotify(EventArgs *pEvt);	//偏移时间编辑框通知响应
 	void OnBtnModifyShiftTime();					//修改偏移时间
+	void OnBtnSelectDefaultMusicPath();				//选择默认音乐路径
+	void OnBtnSelectDefaultLyricPath();				//选择默认歌词路径
+	void OnBtnSelectDefaultOutputPath();				//选择默认LRC歌词输出路径
 
+	void OnCheckAutoUpdateChanged();				//自动升级check 改变状态时
 
 	//消息
 protected:
@@ -45,18 +51,33 @@ protected:
 		EVENT_CHECK_SENDER_ROOT(m_pMainWnd)
 		EVENT_NAME_COMMAND(L"btn_modify_setting_shift_time", OnBtnModifyShiftTime)
 		
+		EVENT_NAME_COMMAND(L"btn_select_default_music_path", OnBtnSelectDefaultMusicPath)
+		EVENT_NAME_COMMAND(L"btn_select_default_lyric_path", OnBtnSelectDefaultLyricPath)
+		EVENT_NAME_COMMAND(L"btn_select_default_output_path", OnBtnSelectDefaultOutputPath)
+
+		EVENT_NAME_COMMAND(R.name.check_auto_update, OnCheckAutoUpdateChanged)
+		
         EVENT_NAME_HANDLER(R.name.edit_time_shift, EVT_RE_NOTIFY, OnTimeShiftEditNotify);
 		//EVENT_NAME_HANDLER(R.name.edit_time_shift, EventRENotify::EventID, OnTimeShiftEditNotify)
 	EVENT_MAP_BREAK()
 
 
 public:
-	int m_nTimeShift;			/* 时间轴偏移量，单位为毫秒，为正数时表示按键时间向前偏移 */
-
+	int m_nTimeShift;				/* 时间轴偏移量，单位为毫秒，为正数时表示按键时间向前偏移 */
+	string m_default_music_path;	/* 默认音乐路径 */
+	string m_default_lyric_path;	/* 默认歌词路径 */
+	string m_default_output_path;	/* 默认输出路径 */
+	BOOL   m_check_auto_update;		/* 是否自动升级 */
 
 private:
 	SButton* btn_modify_shift_time;		/* 修改时间轴偏移时间按钮 */
 	SEdit* edit_time_shift;				/* 偏移时间编辑框 */
+	
+	SStatic* text_default_music_path;	/* 默认音乐路径 */
+	SStatic* text_default_lyric_path;	/* 默认歌词路径 */
+	SStatic* text_default_output_path;	/* 默认输出路径 */
+
+	SCheckBox* check_auto_update;		/* 是否自动升级 */
 
 	SHostWnd *m_pMainWnd;		/* 主窗口指针 */
 	

@@ -8,20 +8,23 @@ using namespace SOUI;
 class  AutoUpdateThread : public Singleton<AutoUpdateThread>
 {
 public:
-	AutoUpdateThread(int nDelay = 1000):m_nDelay(nDelay),m_handleThread(NULL),m_bKeepUpdate(true),m_bHasUpdate(false),m_bFirstEnter(true){}
+	// 设置检查更新的间隔为10分钟
+	AutoUpdateThread(int nDelay = 1000 * 60 * 10):m_nDelay(nDelay),m_handleThread(NULL),m_bLoop(true),m_bKeepUpdate(false),m_bFirstEnter(true){}
 
 	//开始线程
 	bool Start();
 
-	//挂起线程
-	DWORD Pause();
-
-	//恢复线程
-	DWORD Resume();
-
 	//停止线程
 	void Stop();
-
+	
+	//设置是否持续检测更新
+	void SetBKeepUpdate(BOOL bValue)
+	{
+		m_bKeepUpdate = (bValue ? true : false);
+		if(m_bKeepUpdate)
+			//设置 m_EventStopWaiting 为有信号，以结束 ThreadProc 中的循环的等待
+			SetEvent(m_EventStopWaiting);
+	}
 private:
 	
 	//线程执行地址
@@ -29,6 +32,9 @@ private:
 
 	//自动更新执行函数
 	bool AutoUpdate();
+
+	//检测是否有更新
+	bool IfUpdateAvailable();
 
 	//比较2个字符串版本号的大小，
 	int VersionCompare(const SStringW v1, const SStringW v2);
@@ -44,8 +50,9 @@ private:
 private:
 
 	HANDLE		m_handleThread;			/* 当前线程句柄 */
+	HANDLE		m_EventStopWaiting;		/* 停止等待时间 */
+	bool		m_bLoop;				/* 线程循环标记 */
 	bool		m_bKeepUpdate;			/* 保持更新标志 */
-	bool		m_bHasUpdate;			/* 是否已经更新 */
-	int			m_nDelay;				/* 检查更新的延时，单位ms */
+	int			m_nDelay;				/* 检查更新的间隔，单位ms */
 };
 

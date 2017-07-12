@@ -19,7 +19,7 @@ bool FileOperator::ReadAllText(const string file, string& fileContent)
 			temp += "\n";
 			fileContent += temp;
 		}
-		return false;
+		return true;
 	}
 	else
 		return false;
@@ -36,7 +36,7 @@ bool FileOperator::ReadAllLines(const string file, OUT vector<string> *lines)
 			getline(in, temp);
 			lines->push_back(temp);
 		}
-		return false;
+		return true;
 	}
 	else
 		return false;

@@ -5,8 +5,12 @@
 
 #include "stdafx.h"
 #include "FileHelper.h"
+#include <Windows.h>
+#include "Commdlg.h"
 #include <fstream>
 using namespace std;
+
+/* 文件类 */
 
 File::File(LPCTSTR pathFile,LPCTSTR mode)
 {
@@ -111,6 +115,157 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 	m_lpszMode = mode;
 }
 
+
+/*  用于打开文件 和 文件夹(方式一) */
+CBrowseDlg::CBrowseDlg(void)
+{
+	memset(m_pszDirPath, 0, MAX_PATH);
+	memset(m_pszFilePath, 0, MAX_PATH);
+}
+
+CBrowseDlg::~CBrowseDlg(void)
+{
+}
+
+//文件夹浏览
+BOOL CBrowseDlg::DoDirBrowse(HWND hwndOwner, LPCTSTR pszTitle, BOOL bAddNewFolder)  
+{
+	BROWSEINFO bi = {0};
+	bi.hwndOwner = hwndOwner;  
+	bi.lpszTitle = pszTitle;
+	bi.ulFlags = bAddNewFolder ? BIF_NEWDIALOGSTYLE : 0;
+	PIDLIST_ABSOLUTE pItem = ::SHBrowseForFolder(&bi);  
+	if (pItem != NULL)
+	{
+		return ::SHGetPathFromIDListA(pItem, m_pszDirPath);
+	}
+
+	return FALSE;  
+}
+
+//获取目录
+LPSTR CBrowseDlg::GetDirPath()
+{
+	return m_pszDirPath;
+}
+
+//文件浏览
+BOOL CBrowseDlg::DoFileBrowse(HWND hWnd, LPCSTR pFilter, const char *pInitialDir)
+{
+	memset(m_pszFilePath, 0, MAX_PATH);
+	OPENFILENAMEA ofn = {0};
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFilter = pFilter;  //_T("Exe文件(*.exe)\0*.exe\0所有文件(*.*)\0*.*\0");
+	ofn.lpstrInitialDir = pInitialDir;  //默认的文件路径
+	ofn.lpstrFile = m_pszFilePath;  //存放文件的缓冲区
+	ofn.nMaxFile = MAX_PATH;
+	ofn.nFilterIndex = 0;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER ;//标志如果是多选要加上OFN_ALLOWMULTISELECT  
+	return GetOpenFileNameA(&ofn);
+}
+
+//获取文件路径
+LPSTR CBrowseDlg::GetFilePath()
+{
+	return m_pszFilePath;
+}
+
+
+/*  用于打开文件 和 文件夹； 以及保存文件(方式二) */
+
+//构造函数
+CFileDialogEx::CFileDialogEx(BOOL bOpenFileDialog,LPCTSTR lpszDefExt, LPCTSTR lpszFileName, DWORD dwFlags ,
+        LPCTSTR lpszFilter,  HWND hWndParent, BOOL bFloder)
+{
+        memset(&m_ofn, 0, sizeof(m_ofn)); // initialize structure to 0/NULL
+        m_szFileName[0] = _T('\0');
+        m_szFileTitle[0] = _T('\0');
+
+        m_bOpenFileDialog = bOpenFileDialog;
+        m_ofn.lStructSize = sizeof(m_ofn);
+        m_ofn.lpstrFile = m_szFileName;
+        m_ofn.nMaxFile = _MAX_PATH;
+        m_ofn.lpstrDefExt = lpszDefExt;
+        m_ofn.lpstrFileTitle = (LPTSTR)m_szFileTitle;
+        m_ofn.nMaxFileTitle = _MAX_FNAME;
+        m_ofn.Flags = dwFlags | OFN_EXPLORER | OFN_ENABLEHOOK | OFN_ENABLESIZING| OFN_NOCHANGEDIR;
+        m_ofn.lpstrFilter = lpszFilter;
+        m_ofn.hwndOwner = hWndParent;
+
+        // setup initial file name
+        if(lpszFileName != NULL)
+            _tcscpy_s(m_szFileName, _countof(m_szFileName), lpszFileName);
+
+		//文件夹设置
+		if(bFloder)
+		{
+			m_ofn.hInstance = (HMODULE)GetCurrentProcess();//不要使用NULL,可能造成无法定制的问题
+			m_ofn.lpfnHook = (LPOFNHOOKPROC)MyFolderProc;
+		}
+}
+
+//打开选择窗口
+INT_PTR CFileDialogEx::DoModal(HWND hWndParent)
+{
+     if(m_ofn.hwndOwner == NULL)   // set only if not specified before
+         m_ofn.hwndOwner = hWndParent;
+
+     if(m_bOpenFileDialog)
+         return ::GetOpenFileName(&m_ofn);
+     else
+         return ::GetSaveFileName(&m_ofn);
+}
+
+//检查文件名是否符合要求格式
+BOOL CFileDialogEx::checkPathName(LPCTSTR format,LPCTSTR toChecked)
+{
+	int i;
+	bool isFloder = false;
+	//TODO：异常抛出处理
+	int len = _tcslen(format);
+	if(_tcscmp(format,_T(".."))==0)
+	{
+		isFloder = true;
+	}
+	else if(len < 3 || format[0]!=_T('*') || format[1]!=_T('.'))
+		return FALSE;  //TODO：异常
+	
+
+	//获取并检查 被检查的路径字符串 toChecked 的信息
+	TCHAR pathName[_MAX_PATH];
+	TCHAR ext[_MAX_EXT];
+
+	int lenPathName = 0, pos =-1;
+
+	_tcscpy(pathName,toChecked);
+	lenPathName = _tcslen(pathName);	//得到路径总长
+	if(!lenPathName)
+		return FALSE;
+
+	//得到路径中最后一个“.”的位置置于pos中
+	for( i=0; i< lenPathName; i++)
+	{
+		if(_T('.')==pathName[i])
+			pos = i;
+	}
+
+	if(isFloder) //检查文件夹类型
+	{
+		if(pos == -1)//这里默认文件夹的路径不包含任何点'.'
+			return TRUE;
+		else
+			return FALSE;
+	}
+	else //检查普通后缀名类型
+	{
+		_tcscpy(ext,&pathName[pos+1]);  //得到路径的后缀（不包含“.”）
+		if(_tcscmp(&format[2],ext)==0)	//和 参数提供的后缀对比
+			return TRUE;
+		else
+			return FALSE;
+	}
+}
 
 
 LONG g_lOriWndProc = NULL;
