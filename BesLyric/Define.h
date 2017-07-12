@@ -30,11 +30,11 @@ using namespace std;
 /* 宏定义 */
 #ifdef _DEBUG
 
-#define _KEEP_UPDATE  0			/* 是否在启动时更新程序 */
+#define UPDATE_LOOP  0			/* 是否在启动时更新程序 */
 
 #else
 
-#define _KEEP_UPDATE  1
+#define UPDATE_LOOP  1
 
 #endif
 
@@ -65,7 +65,15 @@ enum ENCODING_TYPE			//文件编码类型
 /* 全局变量定义 */
 static const SStringW VERSION_NUMBER = L"2.0.0";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
 
-static const string SETTING_FILE_NAME = "setting";		//设置文件名
+static const wstring  LINK_VERSION_LOG= L"http://files.cnblogs.com/files/BensonLaur/versionLog.zip";			//链接，指向版本日志文件
+static const wstring  LINK_LAST_VERSION_INFO= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.zip";		//链接，指向最后版本信息的文件
+static const wstring  LINK_LAST_EXE= L"http://files.cnblogs.com/files/BensonLaur/BesLyricExe.zip";				//链接，指向最新的 EXE文件
+
+static const string LINK_SEND_LOGIN = "http://beslyric.320.io/BesBlog/beslyric/login.action";
+
+static const string FILE_NAME_LAST_VERSION_INFO = "version";					//文件名，从 LINK_LAST_VERSION_INFO 下载下来储存的文件
+static const string FILE_NAME_LAST_EXE_TEMP = "BesLyric";						//文件名，从 LINK_LAST_EXE 下载下来储存的文件
+static const string SETTING_FILE_NAME = "setting";								//文件名，储存设置
 
 //制作歌词页面 的路径 与选择状态
 static PATH_STATE PATH_STATE_1[] = 
