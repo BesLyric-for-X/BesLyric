@@ -40,6 +40,9 @@
     <file name="img_question" path="image\question_48px.png"/>
     <file name="img_exclamation" path="image\exclamation_48px.png"/>
 
+	
+    <file name="png_check" path="image\netease\check.png" />
+	
   </IMGX>
   
   <BackGround>

@@ -17,6 +17,9 @@
       <UniqueIdentifier>{36cac5c1-c8f6-4113-9ed2-f4708ee1b94f}</UniqueIdentifier>
       <Extensions>idx;xml;png;gif;jpg;ico;lua;bmp</Extensions>
     </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{05d0041a-25cf-4910-bc1c-9d7010b5f7d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\soui_res.rc2">
@@ -79,6 +82,9 @@
     <ClCompile Include="BSMessageBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lib\tinyxml2.cpp">
+      <Filter>lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -121,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="WinFile.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\tinyxml2.h">
+      <Filter>lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

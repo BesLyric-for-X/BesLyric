@@ -9,14 +9,22 @@ class  AutoUpdateThread : public Singleton<AutoUpdateThread>
 {
 public:
 	// 设置检查更新的间隔为10分钟
-	AutoUpdateThread(int nDelay = 1000 * 60 * 10):m_nDelay(nDelay),m_handleThread(NULL),m_bLoop(true),m_bKeepUpdate(true),m_bFirstEnter(true){}
+	AutoUpdateThread(int nDelay = 1000 * 60 * 10):m_nDelay(nDelay),m_handleThread(NULL),m_bLoop(true),m_bKeepUpdate(false),m_bFirstEnter(true){}
 
 	//开始线程
 	bool Start();
 
 	//停止线程
 	void Stop();
-
+	
+	//设置是否持续检测更新
+	void SetBKeepUpdate(BOOL bValue)
+	{
+		m_bKeepUpdate = (bValue ? true : false);
+		if(m_bKeepUpdate)
+			//设置 m_EventStopWaiting 为有信号，以结束 ThreadProc 中的循环的等待
+			SetEvent(m_EventStopWaiting);
+	}
 private:
 	
 	//线程执行地址
