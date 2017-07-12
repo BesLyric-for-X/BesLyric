@@ -2,7 +2,9 @@
 本项目目的在制作一款 操作简单、功能实用的 专门用于制作网易云音乐滚动歌词的 歌词制作软件。（[更多介绍 ](http://www.cnblogs.com/BensonLaur/p/6262565.html)）
 
 BesLyric 最新下载地址：http://beslyric.320.io/BesBlog/beslyric/download.action
+
 备用下载地址1：http://files.cnblogs.com/files/BensonLaur/Beslyric.zip
+
 备用下载地址2：http://bensonlaur.vicp.io/BesBlog/beslyric/download.action
 
 
