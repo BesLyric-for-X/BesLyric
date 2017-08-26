@@ -128,32 +128,46 @@ CBrowseDlg::~CBrowseDlg(void)
 }
 
 //文件夹浏览
-BOOL CBrowseDlg::DoDirBrowse(HWND hwndOwner, LPCTSTR pszTitle, BOOL bAddNewFolder)  
+BOOL CBrowseDlg::DoDirBrowse(HWND hwndOwner, LPCTSTR pszTitle, BOOL bAddNewFolder,const WCHAR *szDefaultDir)  
 {
 	BROWSEINFO bi = {0};
 	bi.hwndOwner = hwndOwner;  
 	bi.lpszTitle = pszTitle;
 	bi.ulFlags = bAddNewFolder ? BIF_NEWDIALOGSTYLE : 0;
+
+	//设置默认路径
+	bi.lpfn = BrowseCallbackProc ;        //设置CALLBACK函数  
+	bi.lParam = (LPARAM)szDefaultDir;	//设置默认路径  
+
 	PIDLIST_ABSOLUTE pItem = ::SHBrowseForFolder(&bi);  
 	if (pItem != NULL)
 	{
-		return ::SHGetPathFromIDListA(pItem, m_pszDirPath);
+		BOOL bRet = ::SHGetPathFromIDListW(pItem, m_pszDirPath);
+
+		LPMALLOC pMalloc;  
+		if(SUCCEEDED(SHGetMalloc(&pMalloc)))//pidl指向的对象用完应该释放
+		{  
+			pMalloc->Free(pItem);  
+			pMalloc->Release();  
+		}  
+
+		return bRet;
 	}
 
 	return FALSE;  
 }
 
 //获取目录
-LPSTR CBrowseDlg::GetDirPath()
+LPTSTR CBrowseDlg::GetDirPath()
 {
 	return m_pszDirPath;
 }
 
 //文件浏览
-BOOL CBrowseDlg::DoFileBrowse(HWND hWnd, LPCSTR pFilter, const char *pInitialDir)
+BOOL CBrowseDlg::DoFileBrowse(HWND hWnd, LPCTSTR pFilter, const WCHAR *pInitialDir)
 {
 	memset(m_pszFilePath, 0, MAX_PATH);
-	OPENFILENAMEA ofn = {0};
+	OPENFILENAMEW ofn = {0};
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = hWnd;
 	ofn.lpstrFilter = pFilter;  //_T("Exe文件(*.exe)\0*.exe\0所有文件(*.*)\0*.*\0");
@@ -162,14 +176,35 @@ BOOL CBrowseDlg::DoFileBrowse(HWND hWnd, LPCSTR pFilter, const char *pInitialDir
 	ofn.nMaxFile = MAX_PATH;
 	ofn.nFilterIndex = 0;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER ;//标志如果是多选要加上OFN_ALLOWMULTISELECT  
-	return GetOpenFileNameA(&ofn);
+	return GetOpenFileNameW(&ofn);
 }
 
 //获取文件路径
-LPSTR CBrowseDlg::GetFilePath()
+LPTSTR CBrowseDlg::GetFilePath()
 {
 	return m_pszFilePath;
 }
+
+int CALLBACK CBrowseDlg::BrowseCallbackProc(HWND hwnd,UINT uMsg,LPARAM lParam,LPARAM lpData)  
+{  
+    switch(uMsg)  
+    {  
+    case BFFM_INITIALIZED:    //初始化消息  
+        ::SendMessage(hwnd,BFFM_SETSELECTION,TRUE,lpData);   //  m_filePath 为类的静态变量  
+        break;  
+    case BFFM_SELCHANGED:    //选择路径变化，  
+        {  
+            TCHAR curr[MAX_PATH];     
+            SHGetPathFromIDList((LPCITEMIDLIST)lParam,curr);     
+            ::SendMessage(hwnd,BFFM_SETSTATUSTEXT,0,(LPARAM)curr);     
+        }  
+        break;  
+    default:  
+        break;  
+    }  
+    return 0;     
+}
+
 
 
 /*  用于打开文件 和 文件夹； 以及保存文件(方式二) */

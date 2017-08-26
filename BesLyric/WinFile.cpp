@@ -42,9 +42,9 @@ bool FileOperator::ReadAllLines(const string file, OUT vector<string> *lines)
 		return false;
 }
 
-bool FileOperator::ReadAllLinesW(const string file, OUT vector<SStringW> *lines)
+bool FileOperator::ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines)
 {
-	File encodingFile( S_CA2W(SStringA(file.c_str())), L"r");
+	File encodingFile( file.c_str(), L"r");
 	if(!encodingFile.isValidFile())
 		return false;
 
@@ -110,15 +110,68 @@ bool FileOperator::SaveToFile(const string file, string& fileContent)
 }
 
 
+bool FileOperator::WriteToUtf8File(const wstring file, wstring fileContent)
+{
+	vector<SStringW> lines;
+
+	do{
+		auto pos = fileContent.find_first_of(L"\n");
+		if(pos != wstring::npos)
+		{
+			wstring line = fileContent.substr(0,pos+1);
+			SStringW wline = line.c_str();
+			lines.push_back(wline);
+
+			fileContent = fileContent.substr(pos+1);
+		}
+		else
+		{
+			SStringW wline = fileContent.c_str();
+			lines.push_back(wline);
+			break;
+		}
+	}while(true);
+
+	return WriteToUtf8File(file, lines);
+}
+
+bool FileOperator::WriteToUtf8File(const wstring file, vector<SStringW> lines)
+{
+	File outFile(file.c_str(),_T("w")); 
+
+	if(!outFile.isValidFile())
+		return false;
+
+	//œ»–¥»Î UTF-8 BOM Õ∑
+	fputc(0xef, outFile.m_pf);  
+	fputc(0xbb, outFile.m_pf); 
+	fputc(0xbf, outFile.m_pf); 
+
+	char line[400];
+	for(auto i=lines.begin(); i != lines.end(); i++)
+	{
+		int ret = WideCharToMultiByte(CP_UTF8,  0,(*i),-1,line,400,NULL,NULL);
+		
+		if(ret == 0)
+			return false;
+
+		fputs(line,outFile.m_pf);
+	}
+
+	return true;
+}
+
+
+
 /* FileHelper */
-string FileHelper::GetCurrentDirectoryStr()
+wstring FileHelper::GetCurrentDirectoryStr()
 {
 	wchar_t exeFullPath[MAX_PATH]; // Full path   
 
 	GetModuleFileName(NULL, exeFullPath, MAX_PATH);
 
-	string strPath(S_CW2A(SStringW(exeFullPath)).GetBuffer(1));
-	strPath = strPath.substr(0, strPath.find_last_of("\\")+1);
+	wstring strPath(exeFullPath);
+	strPath = strPath.substr(0, strPath.find_last_of(L"\\")+1);
 	return strPath;
 }
 
@@ -183,12 +236,12 @@ bool FileHelper::IsDirectory(SStringW path)
 	return bValue;
 }
 
-bool  FileHelper::CheckFileExist(const string &strPath)
+bool  FileHelper::CheckFileExist(const wstring &strPath)
 {
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind;
 
-	hFind = FindFirstFile(S_CA2W(SStringA(strPath.c_str())), &FindFileData);
+	hFind = FindFirstFile(strPath.c_str(), &FindFileData);
 
 	if (hFind == INVALID_HANDLE_VALUE) {
 		return false;
@@ -199,11 +252,11 @@ bool  FileHelper::CheckFileExist(const string &strPath)
 	}
 }
 
-bool  FileHelper::CheckFolderExist(const string &strPath)
+bool  FileHelper::CheckFolderExist(const wstring &strPath)
 {
 	WIN32_FIND_DATA  wfd;
 	bool rValue = false;
-	HANDLE hFind = FindFirstFile(S_CA2W(SStringA(strPath.c_str())), &wfd);
+	HANDLE hFind = FindFirstFile(strPath.c_str(), &wfd);
 	if ((hFind != INVALID_HANDLE_VALUE) && (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{
 		rValue = true;

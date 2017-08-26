@@ -15,10 +15,15 @@ public:
 
 	static bool ReadAllLines(const string file, OUT vector<string> *lines);
 
-	static bool ReadAllLinesW(const string file, OUT vector<SStringW> *lines);
+	static bool ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines);
 
+	//以ascii 编码保存
 	static bool SaveToFile(const string file, string& fileContent);
+	
+	//以 UTF-8 编码写到文件
+	static bool WriteToUtf8File(const wstring file, wstring fileContent);
 
+	static bool WriteToUtf8File(const wstring file, vector<SStringW> lines);
 };
 
 
@@ -29,7 +34,7 @@ class FileHelper
 {
 public:
 	/* 获得应用程序当前的路径 */
-	static string GetCurrentDirectoryStr();
+	static wstring GetCurrentDirectoryStr();
 
 	/**
 	*   @brief 检查文件名是否符合要求格式（仅仅检查名字上的格式）
@@ -50,12 +55,12 @@ public:
 	/*
 	*   @brief 查询文件是否存在
 	*/
-	static bool  CheckFileExist(const string &strPath);
+	static bool  CheckFileExist(const wstring &strPath);
 
 	/*
 	*   @brief 查询文件夹是否存在
 	*/
-	static bool  CheckFolderExist(const string &strPath);
+	static bool  CheckFolderExist(const wstring &strPath);
 
 	/**
 	*	@brief 分割路径名

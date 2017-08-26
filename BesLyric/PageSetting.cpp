@@ -9,13 +9,13 @@
 using namespace std;
 using namespace tinyxml2;
 
-static const string XML_TRUE = "1";
-static const string XML_FALSE = "0";
-static const string XML_SHIFT_TIME = "shiftTime";							//时间轴偏移量
-static const string XML_DEFAULF_MUSIC_PATH = "defaultMusicPath";			//默认音乐路径
-static const string XML_DEFAULF_LYRIC_PATH = "defaultLyricPath";			//默认歌词路径
-static const string XML_DEFAULF_OUTPUT_PATH = "defaultOutputPath";			//默认输出路径
-static const string XML_AUTO_UPDATE = "autoUpdate";							//是否自动升级
+static const wstring XML_TRUE = L"1";
+static const wstring XML_FALSE = L"0";
+static const wstring XML_SHIFT_TIME = L"shiftTime";							//时间轴偏移量
+static const wstring XML_DEFAULF_MUSIC_PATH = L"defaultMusicPath";			//默认音乐路径
+static const wstring XML_DEFAULF_LYRIC_PATH = L"defaultLyricPath";			//默认歌词路径
+static const wstring XML_DEFAULF_OUTPUT_PATH = L"defaultOutputPath";		//默认输出路径
+static const wstring XML_AUTO_UPDATE = L"autoUpdate";						//是否自动升级
 
 
 void CSettingPage::Init(SHostWnd *pMainWnd)
@@ -48,9 +48,9 @@ void CSettingPage::Init(SHostWnd *pMainWnd)
 	//初始禁用修改按钮
 	btn_modify_shift_time->EnableWindow(FALSE, FALSE);
 	
-	text_default_music_path->SetWindowTextW(S_CA2W(SStringA(m_default_music_path.c_str())));
-	text_default_lyric_path->SetWindowTextW(S_CA2W(SStringA(m_default_lyric_path.c_str())));
-	text_default_output_path->SetWindowTextW(S_CA2W(SStringA(m_default_output_path.c_str())));
+	text_default_music_path->SetWindowTextW(SStringW(m_default_music_path.c_str()));
+	text_default_lyric_path->SetWindowTextW(SStringW(m_default_lyric_path.c_str()));
+	text_default_output_path->SetWindowTextW(SStringW(m_default_output_path.c_str()));
 
 	//初始化界面check 和 生效其作用
 	check_auto_update->SetCheck(m_check_auto_update);
@@ -61,20 +61,21 @@ void CSettingPage::Init(SHostWnd *pMainWnd)
 //保存设置
 void CSettingPage::SaveSetting()
 {
-	string a;
-	stringstream ss(a);  //创建一个流
+	wstring a;
+	wstringstream ss(a);  //创建一个流
 	ss << m_nTimeShift;  //把值传递如流中
 
-	string xmlStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-	xmlStr += "<setting>\n";
-	xmlStr += "\t<"+XML_SHIFT_TIME+" value=\""+	ss.str() +"\"/>\n";
-	xmlStr += "\t<"+XML_DEFAULF_MUSIC_PATH+" value=\""+	m_default_music_path +"\"/>\n";
-	xmlStr += "\t<"+XML_DEFAULF_LYRIC_PATH+" value=\""+	m_default_lyric_path +"\"/>\n";
-	xmlStr += "\t<"+XML_DEFAULF_OUTPUT_PATH+" value=\""+ m_default_output_path +"\"/>\n";
-	xmlStr += "\t<"+XML_AUTO_UPDATE+		" value=\""+ (m_check_auto_update? XML_TRUE : XML_FALSE) +"\"/>\n";
-	xmlStr += "</setting>\n";
-
-	FileOperator::SaveToFile(FileHelper::GetCurrentDirectoryStr() + SETTING_FILE_NAME, xmlStr);
+	wstring xmlStr = L"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+	xmlStr += L"<setting>\n";
+	xmlStr += L"\t<"+XML_SHIFT_TIME+L" value=\""+	ss.str() +L"\"/>\n";
+	xmlStr += L"\t<"+XML_DEFAULF_MUSIC_PATH+L" value=\""+	m_default_music_path +L"\"/>\n";
+	xmlStr += L"\t<"+XML_DEFAULF_LYRIC_PATH+L" value=\""+	m_default_lyric_path +L"\"/>\n";
+	xmlStr += L"\t<"+XML_DEFAULF_OUTPUT_PATH+L" value=\""+ m_default_output_path +L"\"/>\n";
+	xmlStr += L"\t<"+XML_AUTO_UPDATE+		L" value=\""+ (m_check_auto_update? XML_TRUE : XML_FALSE) +L"\"/>\n";
+	xmlStr += L"</setting>\n";
+	
+	wstring wstrPath = FileHelper::GetCurrentDirectoryStr()+SETTING_FILE_NAME;
+	FileOperator::WriteToUtf8File( wstrPath,xmlStr);
 }
 
 //加载设置
@@ -82,14 +83,15 @@ void CSettingPage::LoadSetting()
 {
 	//先进行默认初始化，初始化默认设置
 	m_nTimeShift = 300;			
-	m_default_music_path = "";
-	m_default_lyric_path = "";
-	m_default_output_path = "";
+	m_default_music_path = L"";
+	m_default_lyric_path = L"";
+	m_default_output_path = L"";
 	m_check_auto_update = TRUE;	
 
 	//从文件加载数据
-	string strSettingPath = FileHelper::GetCurrentDirectoryStr() + SETTING_FILE_NAME;
-	if(FileHelper::CheckFileExist(strSettingPath))
+	wstring wstrSettingPath = FileHelper::GetCurrentDirectoryStr() + SETTING_FILE_NAME;
+	string strSettingPath = S_CW2A(SStringW(wstrSettingPath.c_str()));
+	if(FileHelper::CheckFileExist(wstrSettingPath))
 	{
 		//读取XML文件
 		tinyxml2::XMLDocument doc;
@@ -104,35 +106,43 @@ void CSettingPage::LoadSetting()
 		SASSERT(pRoot);
 
 		XMLElement* ele = pRoot->FirstChildElement();
-		string strName = ("");
 		while(ele)
 		{
-			strName = ele->Name();
-			string value = ele->Attribute("value");
-			if (XML_SHIFT_TIME == strName)
+			const char* szName = ele->Name();
+			const char* szValue = ele->Attribute("value");
+			
+			wstring wStrName = S_CA2W(SStringA(szName));
+			WCHAR wszValue[MAX_BUFFER_SIZE] = {0};
+			if(szValue)
+			{
+				//由于文件保存是以utf-8保存，需要转换
+				::MultiByteToWideChar(CP_UTF8,0,szValue, MAX_BUFFER_SIZE/2, wszValue, MAX_BUFFER_SIZE);
+			}
+
+			if (XML_SHIFT_TIME == wStrName)
 			{
 				//时间轴偏移量
-				m_nTimeShift = atoi(value.c_str());
+				m_nTimeShift = _wtoi(wszValue);
 			}
-			else if (XML_DEFAULF_MUSIC_PATH == strName)
+			else if (XML_DEFAULF_MUSIC_PATH == wStrName)
 			{
 				//默认音乐路径
-				m_default_music_path = value;
+				m_default_music_path = wszValue;
 			}
-			else if ( XML_DEFAULF_LYRIC_PATH == strName)
+			else if ( XML_DEFAULF_LYRIC_PATH == wStrName)
 			{
 				//默认歌词路径
-				m_default_lyric_path = value;
+				m_default_lyric_path = wszValue;
 			}
-			else if (XML_DEFAULF_OUTPUT_PATH == strName)
+			else if (XML_DEFAULF_OUTPUT_PATH == wStrName)
 			{
 				//默认输出路径
-				m_default_output_path = value;
+				m_default_output_path = wszValue;
 			}
-			else if (XML_AUTO_UPDATE == strName)
+			else if (XML_AUTO_UPDATE == wStrName)
 			{
 				//是否自动升级
-				m_check_auto_update = (atoi(value.c_str())? TRUE: FALSE);
+				m_check_auto_update = (_wtoi(wszValue)? TRUE: FALSE);
 			}
 
 			//下一兄弟结点
@@ -141,41 +151,6 @@ void CSettingPage::LoadSetting()
 	}
 }
 
-//从文件获取获取时间，显示到edit_time_shift 编辑框中
-void CSettingPage::LoadShiftTime()
-{
-	//获得exe文件目录
-	wchar_t exeFullPath[MAX_PATH]; // Full path   
-	GetModuleFileName(NULL, exeFullPath, MAX_PATH);
-	string strPath(S_CW2A(SStringW(exeFullPath)).GetBuffer(1));
-	strPath = strPath.substr(0, strPath.find_last_of("\\")+1);
-
-	//得到储存路径
-	strPath += SETTING_FILE_NAME;
-
-	fstream storageFile;
-	storageFile.open(strPath, ios::in);
-	if(storageFile)//成功打开文件
-	{
-		char msTime[100] = {'\0'};
-		storageFile.getline(msTime, 100-1);
-	
-		m_nTimeShift = atoi(msTime);
-	}
-	else
-	{
-		m_nTimeShift = 0;
-		//创建新的文件，写入偏移时间
-		storageFile.close();
-		storageFile.open(strPath, ios::out);
-		if(storageFile){
-			storageFile << m_nTimeShift;
-			storageFile.close();
-		}
-	}
-	
-	edit_time_shift->SetWindowTextW(SStringW(L"").Format(L"%d",m_nTimeShift));
-}
 
 //偏移时间编辑框通知响应
 void CSettingPage::OnTimeShiftEditNotify(EventArgs *pEvt)
@@ -217,11 +192,11 @@ void CSettingPage::OnBtnModifyShiftTime()
 void CSettingPage::OnBtnSelectDefaultMusicPath()
 {
 	CBrowseDlg Browser;
-	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【音乐文件】 默认路径"), TRUE);
+	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【音乐文件】 默认路径"), TRUE, m_default_music_path.c_str());
 	if(bRet == TRUE)
 	{
-		m_default_music_path = string(Browser.GetDirPath());
-		m_pMainWnd->FindChildByID(R.id.text_default_music_path)->SetWindowTextW(S_CA2W(SStringA(m_default_music_path.c_str())));
+		m_default_music_path = SStringW(Browser.GetDirPath()).GetBuffer(1);
+		m_pMainWnd->FindChildByID(R.id.text_default_music_path)->SetWindowTextW(SStringW(m_default_music_path.c_str()));
 	}
 }
 
@@ -229,11 +204,11 @@ void CSettingPage::OnBtnSelectDefaultMusicPath()
 void CSettingPage::OnBtnSelectDefaultLyricPath()
 {
 	CBrowseDlg Browser;
-	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【歌词文件】 默认路径"), TRUE);
+	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【歌词文件】 默认路径"), TRUE, m_default_lyric_path.c_str());
 	if(bRet == TRUE)
 	{
-		m_default_lyric_path = string(Browser.GetDirPath());
-		m_pMainWnd->FindChildByID(R.id.text_default_lyric_path)->SetWindowTextW(S_CA2W(SStringA(m_default_lyric_path.c_str())));
+		m_default_lyric_path = SStringW(Browser.GetDirPath()).GetBuffer(1);
+		m_pMainWnd->FindChildByID(R.id.text_default_lyric_path)->SetWindowTextW(SStringW(m_default_lyric_path.c_str()));
 	}
 	
 }
@@ -242,11 +217,11 @@ void CSettingPage::OnBtnSelectDefaultLyricPath()
 void CSettingPage::OnBtnSelectDefaultOutputPath()
 {
 	CBrowseDlg Browser;
-	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【LRC歌词文件】 默认输出路径"), TRUE);
+	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【LRC歌词文件】 默认输出路径"), TRUE, m_default_output_path.c_str());
 	if(bRet == TRUE)
 	{
-		m_default_output_path = string(Browser.GetDirPath());
-		m_pMainWnd->FindChildByID(R.id.text_default_output_path)->SetWindowTextW(S_CA2W(SStringA(m_default_output_path.c_str())));
+		m_default_output_path = SStringW(Browser.GetDirPath()).GetBuffer(1);
+		m_pMainWnd->FindChildByID(R.id.text_default_output_path)->SetWindowTextW(SStringW(m_default_output_path.c_str()));
 	}
 }
 			
