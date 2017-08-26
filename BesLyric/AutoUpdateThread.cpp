@@ -6,7 +6,6 @@
 #define MAXBLOCKSIZE 1024  
 
 using namespace SOUI;
-extern int _MessageBox(HWND hwnd,LPCTSTR content, LPCTSTR tiltle, UINT uType);
 
 AutoUpdateThread* AutoUpdateThread::ms_Singleton = NULL;
 
@@ -83,31 +82,31 @@ DWORD WINAPI AutoUpdateThread::ThreadProc(LPVOID pParam)
 //自动更新执行函数
 bool AutoUpdateThread::AutoUpdate()
 {
-	string strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-	string strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
+	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
 
 	/*有新版本，则直接下载最新的版本 执行文件 */
 	//下载新的版本日志文件 versionLog.txt （服务器的名称为 versionLog.zip）
-	string strVersionLog =  FileHelper::GetCurrentDirectoryStr()+ "versionLog.txt";
+	wstring strVersionLog =  FileHelper::GetCurrentDirectoryStr()+ L"versionLog.txt";
 	if(FileHelper::CheckFileExist(strVersionLog))
-		remove(strVersionLog.c_str());
-	bool bRet = DownloadFile( LINK_VERSION_LOG, wstring(S_CA2W( SStringA(strVersionLog.c_str()).GetBuffer(1) )));
+		_wremove(strVersionLog.c_str());
+	bool bRet = DownloadFile( LINK_VERSION_LOG, strVersionLog );
 	if(bRet == false)
 		return false;
 
 	//下载最新的执行文件  BesLyric.exe（服务器的名称为 BesLyricExe.zip） 到 strLastExe （BesLyric）中
-	bRet = DownloadFile( LINK_LAST_EXE ,wstring(S_CA2W( SStringA(strLastExe.c_str()).GetBuffer(1) )));
+	bRet = DownloadFile( LINK_LAST_EXE , strLastExe);
 	if(bRet == false)
 		return false;
 
 	/*修改文件名称，达到替换旧版本目的 */
-	string strCurrentExe = strLastExe + ".exe";
-	string strBackupExe =  strLastExe+ "."+ S_CW2A(VERSION_NUMBER).GetBuffer(1) ;//+ ".exe";
+	wstring strCurrentExe = strLastExe + L".exe";
+	wstring strBackupExe =  strLastExe+ L"."+ VERSION_NUMBER ;//+ ".exe";
 
 	if(FileHelper::CheckFileExist(strBackupExe))//删除可能存在的备份文件
-		remove(strBackupExe.c_str());
-	rename(strCurrentExe.c_str(),strBackupExe.c_str());
-	rename(strLastExe.c_str(),strCurrentExe.c_str());
+		_wremove(strBackupExe.c_str());
+	_wrename(strCurrentExe.c_str(),strBackupExe.c_str());
+	_wrename(strLastExe.c_str(),strCurrentExe.c_str());
 	
 
 	/*发送消息，提示用户重启以使用新版本 */
@@ -152,11 +151,11 @@ bool AutoUpdateThread::AutoUpdate()
 //检测是否有更新
 bool AutoUpdateThread::IfUpdateAvailable()
 {
-	string strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-	string strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
+	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
 
 	/*下载最新版本配置信息 */
-	bool bRet = DownloadFile( LINK_LAST_VERSION_INFO, wstring(S_CA2W( SStringA(strVersionFile.c_str()).GetBuffer(1) )));
+	bool bRet = DownloadFile( LINK_LAST_VERSION_INFO, strVersionFile);
 	if(bRet == false)
 		return false;//访问出错
 
@@ -181,7 +180,7 @@ bool AutoUpdateThread::IfUpdateAvailable()
 		}
 	}
 
-	if(VersionCompare(VERSION_NUMBER, strVersion) >= 0 ) // 版本一致 或者 当前版本大于服务器版本（处于开发状态）
+	if(VersionCompare(SStringW(VERSION_NUMBER.c_str()), strVersion) >= 0 ) // 版本一致 或者 当前版本大于服务器版本（处于开发状态）
 	{
 		return false;
 	}
@@ -273,16 +272,16 @@ void AutoUpdateThread::SendLoginInfo()
 	//最大检测ip的次数
 	int nMaxCheckCount = 5;
 	
-	string strIP="unknown";
-	string strTempFile;
+	wstring strIP= L"unknown";
+	wstring strTempFile;
 
 	while(nMaxCheckCount)
 	{
-		strTempFile =  FileHelper::GetCurrentDirectoryStr()+ "temp";
+		strTempFile =  FileHelper::GetCurrentDirectoryStr()+ L"temp";
 		if(FileHelper::CheckFileExist(strTempFile))
-			remove(strTempFile.c_str());
+			_wremove(strTempFile.c_str());
 	
-		bool bRet = DownloadFile(L"http://www.ip138.com/ip2city.asp",wstring(S_CA2W( SStringA(strTempFile.c_str()).GetBuffer(1) )));
+		bool bRet = DownloadFile(L"http://www.ip138.com/ip2city.asp",strTempFile);
 		if(bRet == false)
 		{
 			//可能没网络，或网络异常，也可能读取文件失败
@@ -292,8 +291,8 @@ void AutoUpdateThread::SendLoginInfo()
 			continue;
 		}
 
-		vector<string>	vecLine;
-		bRet = FileOperator::ReadAllLines(strTempFile,&vecLine);
+		vector<SStringW> vecLine;
+		bRet = FileOperator::ReadAllLinesW(strTempFile,&vecLine);
 		if(bRet == false)
 		{
 			//文件读取异常，5秒后重新检测过程
@@ -304,11 +303,11 @@ void AutoUpdateThread::SendLoginInfo()
 
 		for(auto iter = vecLine.begin(); iter != vecLine.end(); iter++)
 		{
-			if(iter->find_first_of('[') != string::npos)
+			if(iter->Find(L'[') != -1)
 			{
-				auto beg = iter->find_first_of('[')+1;
-				auto end = iter->find_first_of(']');
-				strIP = iter->substr(beg, end - beg);
+				auto beg = iter->Find(L'[')+1;
+				auto end = iter->Find(L']');
+				strIP = iter->Right(beg).Left(end);
 				break;
 			}
 		}
@@ -318,6 +317,6 @@ void AutoUpdateThread::SendLoginInfo()
 	}
 
 	//访问链接，服务端负责记录登录信息
-	string strSendLink = LINK_SEND_LOGIN + "?ip=" + strIP;
-	DownloadFile(wstring(S_CA2W( SStringA(strSendLink.c_str()).GetBuffer(1) )),wstring(S_CA2W( SStringA(strTempFile.c_str()).GetBuffer(1) )));
+	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP;
+	DownloadFile(strSendLink, strTempFile);
 }

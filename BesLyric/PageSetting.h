@@ -34,8 +34,6 @@ public:
 	void Init(SHostWnd *pMainWnd);		//初始化设置页面
 	void SaveSetting();					//保存设置
 	void LoadSetting();					//加载设置
-	void LoadShiftTime();				//从文件获取获取时间，显示到edit_time_shift 编辑框中
-	void SaveShiftTime();				//将设置的时间保存到文件中
 	
 	void OnTimeShiftEditNotify(EventArgs *pEvt);	//偏移时间编辑框通知响应
 	void OnBtnModifyShiftTime();					//修改偏移时间
@@ -64,9 +62,9 @@ protected:
 
 public:
 	int m_nTimeShift;				/* 时间轴偏移量，单位为毫秒，为正数时表示按键时间向前偏移 */
-	string m_default_music_path;	/* 默认音乐路径 */
-	string m_default_lyric_path;	/* 默认歌词路径 */
-	string m_default_output_path;	/* 默认输出路径 */
+	wstring m_default_music_path;	/* 默认音乐路径 */
+	wstring m_default_lyric_path;	/* 默认歌词路径 */
+	wstring m_default_output_path;	/* 默认输出路径 */
 	BOOL   m_check_auto_update;		/* 是否自动升级 */
 
 private:

@@ -80,16 +80,19 @@ class CBrowseDlg
 		~CBrowseDlg(void);
 
 	protected:
-		char m_pszDirPath[MAX_PATH]; //选择的目录
-		char m_pszFilePath[MAX_PATH];  //选择中的文件地址
-		wchar_t m_pszFilePath2[MAX_PATH];  //选择中的文件地址
+		WCHAR m_pszDirPath[MAX_PATH]; //选择的目录
+		WCHAR m_pszFilePath[MAX_PATH];  //选择中的文件地址
 
 	public:
-		BOOL DoDirBrowse(HWND hwndOwner, LPCTSTR pszDisplayName, BOOL bAddNewFolder);  //文件夹浏览
-		BOOL DoFileBrowse(HWND hWnd, LPCSTR pFilter, const char *pInitialDir);  //文件选择器
+		BOOL DoDirBrowse(HWND hwndOwner, LPCTSTR pszDisplayName, BOOL bAddNewFolder, const WCHAR *szDefaultDir = NULL);  //文件夹浏览
+		BOOL DoFileBrowse(HWND hWnd, LPCTSTR pFilter, const WCHAR *pInitialDir);  //文件选择器
 
-		LPSTR GetDirPath();  //获取目录路径
-		LPSTR GetFilePath();  //获取文件路径
+		LPTSTR GetDirPath();  //获取目录路径
+		LPTSTR GetFilePath();  //获取文件路径
+
+private:
+		//参考 http://blog.csdn.net/shuilan0066/article/details/7302904
+		static  int CALLBACK  BrowseCallbackProc(HWND hwnd,UINT uMsg,LPARAM lParam,LPARAM lpData);
 
 };
 
