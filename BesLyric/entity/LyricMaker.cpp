@@ -8,8 +8,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 #include "LyricMaker.h"
-#include "FileHelper.h"
-#include "WinFile.h"
+#include "../utility/FileHelper.h"
+#include "../utility/WinFile.h"
 #include "Windows.h"
 #include <mmsystem.h> 
 #include "BSMessageBox.h"
@@ -139,8 +139,8 @@ void LyricMaker::markSpaceLine()
 		SStringT newLine(timeBuf);
 		newLine.Append(SStringT(_T("\n")));
 
-		if( m_nCurLine >= m_nTotalLine )//此时添加的空行在文件结尾，而原文件可能没有回车，所以这里多加个回车前缀
-			newLine.Insert(0,_T("\n"));
+		//if( m_nCurLine >= m_nTotalLine )//此时添加的空行在文件结尾，而原文件可能没有回车，所以这里多加个回车前缀
+		//	newLine.Insert(0,_T("\n"));
 
 		m_vLyricOutput.push_back(newLine);
 
@@ -197,54 +197,10 @@ bool LyricMaker::isLastLineSpace()
 //从文件获取每行歌词的集合向量
 vector<SStringT> LyricMaker::getLyricOrigin(File& encodingFile)
 {
-	vector<SStringT> lyrics;
+	vector<SStringW> lyrics;
 
-	if(encodingFile.m_encodingType == ENCODING_TYPE::UTF_8 || encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_BIG_ENDIAN 
-		|| encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN )
-	{
-		wchar_t line[MAX_WCHAR_COUNT_OF_LINE+1];
+	FileOperator::ReadAllLinesW(encodingFile, &lyrics);
 	
-		// 从文件中读取歌词，并将非空行加入到 maker.m_vLyricOrigin 向量中
-		while(fgetws(line,MAX_WCHAR_COUNT_OF_LINE,encodingFile.m_pf))
-		{
-			line[MAX_CHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
-
-			//由变长字符转换为 unicode 宽字节字符
-			//MultiByteToWideChar(CP_ACP,MB_COMPOSITE,_line,strlen(_line)+1,line,MAX_WCHAR_COUNT_OF_LINE+1);
-
-			SStringT aLine(line);
-			aLine.Trim('\n');
-			aLine.Trim(' ');
-			aLine.Trim('\t');
-			if(aLine.GetLength() ==0) 
-				continue;
-
-			lyrics.push_back(aLine);
-		}
-	}
-	else //if(encodingFile.m_encodingType == ENCODING_TYPE::ASCII  或 其他
-	{
-		char _line[MAX_CHAR_COUNT_OF_LINE+1]; 
-		wchar_t line[MAX_WCHAR_COUNT_OF_LINE+1];
-	
-		// 从文件中读取歌词，并将非空行加入到 maker.m_vLyricOrigin 向量中
-		while(fgets(_line,MAX_WCHAR_COUNT_OF_LINE,encodingFile.m_pf))
-		{
-			_line[MAX_CHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
-
-			//由变长字符转换为 unicode 宽字节字符
-			MultiByteToWideChar(CP_ACP,MB_COMPOSITE,_line,strlen(_line)+1,line,MAX_WCHAR_COUNT_OF_LINE+1);
-			SStringT aLine(line);
-			aLine.Trim('\n');
-			aLine.Trim(' ');
-			aLine.Trim('\t');
-			if(aLine.GetLength() ==0) 
-				continue;
-
-			lyrics.push_back(aLine);
-		}
-	}
-
 	return lyrics;
 }
 

@@ -48,6 +48,14 @@ bool FileOperator::ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines
 	if(!encodingFile.isValidFile())
 		return false;
 
+	return ReadAllLinesW(encodingFile, lines);
+}
+
+bool FileOperator::ReadAllLinesW(File& encodingFile,  OUT vector<SStringW> *lines)
+{
+	if(!encodingFile.isValidFile())
+		return false;
+	
 	if(encodingFile.m_encodingType == ENCODING_TYPE::UTF_8 || encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_BIG_ENDIAN 
 		|| encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN )
 	{
@@ -95,7 +103,9 @@ bool FileOperator::ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines
 	}
 
 	return true;
+
 }
+
 
 bool FileOperator::SaveToFile(const string file, string& fileContent)
 {

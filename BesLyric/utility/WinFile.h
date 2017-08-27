@@ -1,8 +1,29 @@
+/*
+	BesLyric  一款 操作简单、功能实用的 专门用于制作网易云音乐滚动歌词的 歌词制作软件。
+    Copyright (C) 2017  
+	Author: BensonLaur <BensonLaur@163.com>
+	Author:
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 #include "stdafx.h"
 #include <string>
 #include <Windows.h> 
 #include <vector>
+#include "FileHelper.h"
 using namespace std;
 
 /*
@@ -15,7 +36,9 @@ public:
 
 	static bool ReadAllLines(const string file, OUT vector<string> *lines);
 
+	//读取文件所有行，支持4种windows notepad 基本编码文件，自动去除所有空行
 	static bool ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines);
+	static bool ReadAllLinesW(File& encodingFile,  OUT vector<SStringW> *lines);
 
 	//以ascii 编码保存
 	static bool SaveToFile(const string file, string& fileContent);
