@@ -1,6 +1,8 @@
 /*
 	BesLyric  一款 操作简单、功能实用的 专门用于制作网易云音乐滚动歌词的 歌词制作软件。
-    Copyright (C) 2017  BensonLaur
+    Copyright (C) 2017  
+	Author: BensonLaur <BensonLaur@163.com>
+	Author:
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

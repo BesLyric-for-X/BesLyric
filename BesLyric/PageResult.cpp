@@ -1,0 +1,381 @@
+#include "stdafx.h"
+#include "PageResult.h"
+#include "utility/FileHelper.h"
+#include "utility/WinFile.h"
+
+CPageResult::CPageResult()
+{
+	wcscpy_s(PATH_STATE_2[0].nameOfPath, L"音乐文件");
+	wcscpy_s(PATH_STATE_2[1].nameOfPath, L"歌词文件");
+	PATH_STATE_2[0].isInited = false;
+	PATH_STATE_2[1].isInited = false;
+
+	P2_Line1 = NULL;
+	P2_Line2 = NULL;
+	P2_Line3 = NULL;
+	m_wndHighlight = NULL;
+	
+	emptyTip2= NULL;
+	
+	m_EditMusic   = NULL;
+	m_EditLyric   = NULL;
+	
+	m_txtMusic = NULL;
+	m_txtLyric = NULL;
+
+	m_txtTime = NULL;
+	m_ProgressTime = NULL;
+	
+	m_btnStart = NULL;
+	m_btnAdjust =NULL;
+	m_btnEndPreview = NULL;
+	m_btnLoad = NULL;
+}
+
+//初始化设置页面
+void CPageResult::Init(SHostWnd *pMainWnd)
+{
+	SASSERT(NULL != pMainWnd);
+
+	//保存主窗口对象
+	m_pMainWnd = pMainWnd;
+
+	//获得代码中常用的控件的指针
+	P2_Line1 = M()->FindChildByID2<SStatic>(R.id.name_2_line_1);
+	SASSERT(P2_Line1 != NULL);
+	P2_Line2 = M()->FindChildByID2<SStatic>(65001);
+	SASSERT(P2_Line2 != NULL);
+	P2_Line3 = M()->FindChildByID2<SStatic>(R.id.name_2_line_3);
+	SASSERT(P2_Line3 != NULL);
+	m_wndHighlight = m_pMainWnd->FindChildByID(R.id.highlight_bkgnd_2);
+	SASSERT(m_wndHighlight != NULL);
+
+	emptyTip2 = M()->FindChildByID2<SStatic>(R.id.empty_tip_block_2);
+	SASSERT(emptyTip2 != NULL);
+
+
+	m_EditMusic = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_music_2);
+	SASSERT(m_EditMusic != NULL);
+	m_EditLyric = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_lyric_2);
+	SASSERT(m_EditLyric != NULL);
+	
+	m_txtMusic = m_pMainWnd->FindChildByID2<SStatic>(R.id.line_music_2);
+	SASSERT(m_txtMusic != NULL);
+	m_txtLyric = m_pMainWnd->FindChildByID2<SStatic>(R.id.line_lyric_2);
+	SASSERT(m_txtLyric != NULL);
+	
+	m_txtTime = m_pMainWnd->FindChildByID2<SStatic>(R.id.text_time_2);
+	SASSERT(m_txtTime != NULL);
+	m_ProgressTime = m_pMainWnd->FindChildByID2<SProgress>(R.id.progress_music_2);
+	SASSERT(m_ProgressTime != NULL);
+	
+	m_btnStart = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_start_playing);
+	SASSERT(m_btnStart != NULL);
+	m_btnAdjust = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_manual_adjust);
+	SASSERT(m_btnAdjust != NULL);
+	m_btnEndPreview = M()->FindChildByID2<SButton>(R.id.btn_end_preview);
+	SASSERT(m_btnEndPreview != NULL);
+	m_btnLoad = M()->FindChildByID2<SButton>(R.id.btn_load_2);
+	SASSERT(m_btnLoad != NULL);
+}
+
+//获得主窗口对象
+CMainDlg* CPageResult::M()
+{
+	return (CMainDlg*)m_pMainWnd;
+}
+
+
+/*
+*	滚动预览页面的响应函数
+*/
+
+//两个路径的选择
+void CPageResult::OnBtnSelectMusic2()
+{
+	CBrowseDlg Browser;
+	BOOL bRet = Browser.DoFileBrowse(
+		::GetActiveWindow(),
+		L"音频文件(mp3,mp2,wma,wav,wv,ape,flac)\0*.mp3;*.mp2;*.wma;*.wav;*.wv;*.ape;*.flac;\0手机录音(amr)/手机铃声(mmf)\0*amr;*.mmf\0\0",
+		FileHelper::CheckFolderExist(M()->m_settingPage.m_default_music_path)? M()->m_settingPage.m_default_music_path.c_str():nullptr
+		);
+
+	if(bRet == TRUE)
+	{
+		if( CFileDialogEx::checkPathName(_T("*.mp3"),Browser.GetFilePath()) 
+		 || CFileDialogEx::checkPathName(_T("*.mp2"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.wma"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.wav"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.wv"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.ape"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.flac"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.amr"),Browser.GetFilePath())
+		 || CFileDialogEx::checkPathName(_T("*.mmf"),Browser.GetFilePath()))
+		{	
+			; //使用“或”条件判断( || )而 不用“且”条件判断（&&），以减少 checkPathName 调用的次数
+		}
+		else 
+		{
+			_MessageBox(M()->m_hWnd,_T("格式不支持\\n请确定文件格式为【选择对话框指定的文件类型】"),_T("提示"),MB_OK|MB_ICONINFORMATION);
+			return;
+		}
+
+		//显示新选择的文件
+		m_EditMusic->SetWindowTextW(Browser.GetFilePath());
+
+		PATH_STATE_2[0].isInited = true;
+
+		//歌词播放器
+		M()->player.setMusicPath(Browser.GetFilePath(), M()->m_hWnd);
+	}
+    
+}
+
+void CPageResult::OnBtnSelectLyric2()
+{
+	CBrowseDlg Browser;
+	BOOL bRet = Browser.DoFileBrowse(
+		::GetActiveWindow(),
+		L"LRC文本文件(*.lrc)\0*.lrc\0\0",
+		FileHelper::CheckFolderExist(M()->m_settingPage.m_default_output_path)? M()->m_settingPage.m_default_output_path.c_str():nullptr
+		);
+
+	if(bRet == TRUE)
+	{
+		if(!CFileDialogEx::checkPathName(_T("*.lrc"),Browser.GetFilePath()))
+		{
+			_MessageBox(M()->m_hWnd,_T("格式不支持\\n请确定文件格式为【*.lrc】"),_T("提示"),MB_OK|MB_ICONINFORMATION);
+			return;
+		}
+		
+		//显示新选择的文件
+		m_EditLyric->SetWindowTextW(Browser.GetFilePath());
+		
+		PATH_STATE_2[1].isInited = true;
+		
+		//加入歌词播放器
+		M()->player.setLyricPath(Browser.GetFilePath());
+	}
+}
+
+void CPageResult::OnBtnLoad2()
+{
+	//确保两个个路径的数据都已经初始化
+	if(!isPathReady_2())
+	{
+		//CMainDlg::getPathNotReady_2() 此时返回的正是 未初始化的路径 在 PATH_STATE 中对应的下标
+		_MessageBox(M()->m_hWnd,SStringT().Format(_T("您还没选择：\\n【%s】"),PATH_STATE_2[getPathNotReady_2()].nameOfPath),
+			_T("提示"),MB_OK|MB_ICONINFORMATION);
+		return;
+	}
+
+	//确保 歌词文件 和 音乐文件 路径有效
+	File lyricFile(M()->player.m_szLyricPathName,_T("r"));
+
+	if(!lyricFile.isValidFile()) 
+	{
+		_MessageBox(M()->m_hWnd,SStringT().Format(_T("文件打开失败:\\n【%s】\\n请确保文件有效!"),M()->player.m_szLyricPathName),
+			_T("失败提示"),MB_OK|MB_ICONWARNING);
+		return;
+	}
+
+	//重置 LyricPlayer的 歌词数据为空
+	M()->player.reloadPlayer();
+
+	//从文件获取带时间信息的每行歌词的集合向量
+	M()->player.m_vLineInfo = M()->player.getLyricWithLineInfo(lyricFile);
+
+	//没有歌词，不能播放
+	if(M()->player.m_vLineInfo.empty())
+	{
+		//清空 （可能存在的）页面的 当前音乐 和 当前歌词的信息
+		m_txtMusic->SetWindowTextW(_T(""));
+		m_txtLyric->SetWindowTextW(_T(""));
+
+		//清空 （可能存在的）第三行歌词
+		P2_Line3->SetWindowTextW(_T(""));
+
+		//禁用 （可能启用的）开始按钮
+		m_btnStart->EnableWindow(FALSE,TRUE); //第一个参数bEnable为 是否启用，第二个参数bUpdate为是否在改变状态后更新显示
+
+		//禁用 （可能启用的）手动微调时间轴
+		m_btnAdjust->EnableWindow(FALSE,TRUE); 
+
+		_MessageBox(M()->m_hWnd,SStringT().Format(_T("当前歌词文件没有可播放内容！\\n文件：\\n【%s】"),M()->player.m_szLyricPathName),
+			_T("失败提示"),MB_OK|MB_ICONWARNING);
+		return;
+	}
+
+	//更新 页面的 当前音乐 和 当前歌词的信息
+	m_txtMusic->SetWindowTextW(M()->player.m_szMusicPathName);
+	m_txtLyric->SetWindowTextW(M()->player.m_szLyricPathName);
+
+	//更新化页面的显示
+	//读取完毕，清空显示面板，显示第一条非空歌词
+	P2_Line1->SetWindowTextW(_T(""));
+	P2_Line2->SetWindowTextW(_T(""));
+	P2_Line3->SetWindowTextW(M()->player.m_vLineInfo[0].m_strLine);
+
+	//改变按钮的状态
+	m_btnStart->EnableWindow(TRUE,TRUE); //第一个参数bEnable为 是否启用，第二个参数bUpdate为是否在改变状态后更新显示
+
+	//启用用 “手动微调时间轴”按钮
+	m_btnAdjust->EnableWindow(TRUE,TRUE); 
+
+}
+
+//第二个页面(滚动预览)：回到“加载按钮”按下后的状态
+void CPageResult::backToInit_2()
+{
+	//结束播放和歌词滚动
+	M()->player.playingEnd(m_pMainWnd);
+
+	//重置显示面板，显示第一条非空歌词
+	P2_Line1->SetWindowTextW(_T(""));
+	P2_Line2->SetWindowTextW(_T(""));
+	P2_Line3->SetWindowTextW(M()->player.m_vLineInfo[0].m_strLine);
+
+	//隐藏空行提示
+	emptyTip2->SetVisible(FALSE,TRUE);
+
+	//改变按钮的状态
+	m_btnLoad->EnableWindow(TRUE,TRUE);
+	m_btnStart->EnableWindow(TRUE,TRUE);
+	m_btnEndPreview->EnableWindow(FALSE,TRUE);
+	
+	//取消歌词显示面板中的“当前行”的高亮背景
+	m_wndHighlight->SetVisible(FALSE,TRUE);
+
+	//重置时间标签和进度条
+	m_txtTime->SetWindowTextW(_T("00:00.000"));
+	m_ProgressTime->SetValue( 0 );//设置千分数值
+
+	//结束“播放预览”状态
+	M()->m_bIsLyricPlaying = FALSE;
+}
+
+//结束预览播放，重置状态
+void CPageResult::OnBtnEndPreview()
+{	
+	//重置状态
+	backToInit_2();
+}
+
+//开始播放歌词
+void CPageResult::OnBtnStartPlaying()
+{
+	//如果正在：制作歌词 的状态，则不允许播放预览歌词
+	if(M()->m_bIsLyricMaking == TRUE)
+	{
+		_MessageBox(M()->m_hWnd,_T("请先结束【歌词制作】！"),_T("提示"),MB_OK|MB_ICONINFORMATION);
+		return;
+	}
+
+	//开始播放和歌词滚动
+	M()->player.playingStart(m_pMainWnd);
+
+	//改变按钮的状态
+	m_btnLoad->EnableWindow(FALSE,TRUE);
+	m_btnStart->EnableWindow(FALSE,TRUE);
+	m_btnEndPreview->EnableWindow(TRUE,TRUE);
+	
+	//显示歌词显示面板中的“当前行”的高亮背景
+	SWindow *highLight = M()->FindChildByID(R.id.highlight_bkgnd_2);
+	m_wndHighlight->SetVisible(TRUE,TRUE);
+
+	//进入“播放预览”状态
+	M()->m_bIsLyricPlaying = TRUE;
+
+	//记录页面播放足迹，详看变量的说明
+	M()->FootPrintPage = 1;
+}
+
+void CPageResult::OnBtnManualAdjust()
+{	
+	if(_tcslen(M()->player.m_szLyricPathName)!=0)
+	{
+		//用window默认编辑器打开歌词文件
+		ShellExecute(NULL,L"open",L"notepad", M()->player.m_szLyricPathName,NULL,SW_SHOWNORMAL);
+	}
+}
+
+
+
+//判断第二个页面(滚动预览) 的 两个路径是否都选择完毕 */
+bool CPageResult::isPathReady_2()				
+{
+	bool ret = true;
+	for(int i=0; i< 2; i++)
+		if(!PATH_STATE_2[i].isInited)
+		{
+			ret = PATH_STATE_2[i].isInited;
+			break;
+		}
+	return ret;
+}
+
+/* 获得当前未初始化的第一个路径 在PATH_STATE_2 中对应的下标;都初始化了则返回-1 */
+int CPageResult::getPathNotReady_2()			
+{
+	int index = -1;
+	for(int i=0; i< sizeof(PATH_STATE_2)/sizeof(PATH_STATE_2[0]); i++)
+		if(!PATH_STATE_2[i].isInited)
+		{
+			index = i;
+			break;
+		}
+	return index;
+}
+
+
+//在滚动预览的页面，执行歌词显示 m_nCurLine
+void CPageResult::scrollToLyricCurLine()
+{
+	//player.m_nCurLine 的范围是1 ~ player.m_nTotalLine
+
+	//这里每个条件里的第二行本来可以拿出来先执行，但是由于还我不了解更新是依次刷新还是 一次全刷新，
+	//为保证显示顺序从上到下能依次刷新，这里选择累赘一点的分别写在各个条件中
+	if(M()->player.m_nCurLine == 1)
+	{
+		P2_Line1->SetWindowTextW(L"");
+
+		//更新第二行和第三行
+		P2_Line2->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine -1].m_strLine);
+		P2_Line3->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine+1 -1].m_strLine);
+	}
+	else if(M()->player.m_nCurLine < M()->player.m_nTotalLine)
+	{
+		//更新三行
+		P2_Line1->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine-1 -1].m_strLine);
+		P2_Line2->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine -1].m_strLine);
+		P2_Line3->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine+1 -1].m_strLine);
+	}
+	else // player.m_nCurLine == player.m_nTotalLine
+	{
+		//更新第一行和第二行
+		P2_Line1->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine-1 -1].m_strLine);
+		P2_Line2->SetWindowTextW(M()->player.m_vLineInfo[M()->player.m_nCurLine -1].m_strLine);
+
+		//将最后一行清空
+		P2_Line3->SetWindowTextW(L"");
+	}
+
+	//根据歌词是否为空，显示或隐藏空行提示
+	emptyTip2->SetVisible(M()->player.m_vLineInfo[M()->player.m_nCurLine -1].m_bIsEmptyLine,TRUE);
+}
+
+
+void CPageResult::OnBtnSoundOpen2()
+{
+	M()->OnBtnSoundOpen();
+}
+
+void CPageResult::OnBtnSoundClose2()
+{
+	M()->OnBtnSoundClose();
+}
+
+void  CPageResult::OnSliderPos2(EventArgs *pEvt)
+{
+	M()->OnSliderPos(false);
+}

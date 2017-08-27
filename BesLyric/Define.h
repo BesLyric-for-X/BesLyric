@@ -1,6 +1,8 @@
 /*
 	BesLyric  一款 操作简单、功能实用的 专门用于制作网易云音乐滚动歌词的 歌词制作软件。
-    Copyright (C) 2017  BensonLaur
+    Copyright (C) 2017  
+	Author: BensonLaur <BensonLaur@163.com>
+	Author:
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,7 +43,6 @@ using namespace std;
 #define MAX_BUFFER_SIZE	 (260 * 2)
 
 
-
 /* 结构定义 */
 
 //在制作歌词页面 和 滚动预览 页面中，需要选择音乐路径，歌词路径，输出路径等信息
@@ -51,8 +52,6 @@ typedef struct _PATH_STATE
 	TCHAR nameOfPath[_MAX_PATH];
 	bool isInited;
 }PATH_STATE; 
-
-
 
 enum ENCODING_TYPE			//文件编码类型
 {
@@ -76,19 +75,4 @@ static const wstring LINK_SEND_LOGIN = L"http://beslyric.320.io/BesBlog/beslyric
 static const wstring FILE_NAME_LAST_VERSION_INFO = L"version";					//文件名，从 LINK_LAST_VERSION_INFO 下载下来储存的文件
 static const wstring FILE_NAME_LAST_EXE_TEMP = L"BesLyric";						//文件名，从 LINK_LAST_EXE 下载下来储存的文件
 static const wstring SETTING_FILE_NAME = L"setting";							//文件名，储存设置
-
-//制作歌词页面 的路径 与选择状态
-static PATH_STATE PATH_STATE_1[] = 
-{
-	{_T("音乐文件"),false},
-	{_T("歌词文件"),false},
-	{_T("输出路径"),false}
-};
-
-//滚动预览页面 的路径 与选择状态
-static PATH_STATE PATH_STATE_2[] = 
-{
-	{_T("音乐文件"),false},
-	{_T("歌词文件"),false}
-};
 
