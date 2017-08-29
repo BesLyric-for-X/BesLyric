@@ -65,8 +65,7 @@ public:
 				iconExcl->SetVisible(FALSE,TRUE);
             break;
 
-			
-        case MB_ICONEXCLAMATION:
+		case MB_ICONWARNING: //MB_ICONEXCLAMATION
 			
 			if(iconInfo && iconInfo->IsVisible())
 				iconInfo->SetVisible(FALSE,TRUE);

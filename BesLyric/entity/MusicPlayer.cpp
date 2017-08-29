@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 #include "MusicPlayer.h"
+#include "../utility/WinFile.h"
 
 MusicPlayer::MusicPlayer()
 {
@@ -24,6 +25,28 @@ void MusicPlayer::init(LPCTSTR musicPathName, HWND hostWnd)
 	_tcscpy(this->m_szMusicPathName,musicPathName);
 	this->m_hdlHostWnd = hostWnd;
 	m_bIsParamReady = true;
+}
+
+//尝试打开使用设备打开文件
+bool MusicPlayer::openTest()
+{
+	if( isParamReady() )
+	{
+		MCIERROR mcierror = openDevice();
+		if(mcierror)
+		{
+			return false;
+		}
+		else
+		{
+			closeStop();
+			return true;
+		}
+	}else{
+		SMessageBox(this->m_hdlHostWnd,_T("播放参数还没设置好！"),_T("提示"),0);
+		return false;
+	}
+
 }
 
 //打开并播放音乐
@@ -189,3 +212,9 @@ void MusicPlayer::seek(int position)
 	mciSendCommand(m_mciOpen.wDeviceID,MCI_SEEK, MCI_TO, (DWORD)&m_mciSeek);
 }
 
+//获得当前音乐名称
+void MusicPlayer::GetMusicPathName(WCHAR* pszPathName, int nCount)
+{
+	if(pszPathName)
+		wcscpy_s(pszPathName,nCount, m_szMusicPathName);
+}

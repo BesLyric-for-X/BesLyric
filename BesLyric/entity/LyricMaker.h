@@ -53,7 +53,8 @@ public:
 	void reloadMaker();
 
 	//制作开始,记录开始制作的时间
-	void makingStart();
+	//成功播放返回true，需要转换格式返回false
+	bool makingStart();
 
 	//为下一行歌词 标记上 网易云音乐要求的 时间轴格式，写入m_vLyricOutput中
 	void markNextLine();
@@ -92,9 +93,9 @@ private:
 	//以 [00:33.490] 格式输出到 timeBuf
 	void msToLyricTimeString(int ms, LPTSTR timeBuf);
 
-	//播放音乐
-	void playMusic();
-	
+	//播放音乐 成功开始播放返回true， 需要转换格式返回false;
+	bool playMusic();
+
 public:
 	TCHAR m_szMusicPathName[_MAX_PATH];			/*存放 选择 的三个从界面选择的路径名*/
 	TCHAR m_szLyricPathName[_MAX_PATH];

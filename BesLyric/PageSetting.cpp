@@ -6,6 +6,7 @@
 #include "lib\tinyxml2.h"
 #include <sstream>
 #include "entity/AutoUpdateThread.h"
+#include "entity\CheckIntegrityThread.h"
 using namespace std;
 using namespace tinyxml2;
 
@@ -230,4 +231,10 @@ void CSettingPage::OnCheckAutoUpdateChanged()
 {
 	m_check_auto_update = check_auto_update->IsChecked();
 	AutoUpdateThread::getSingleton().SetBKeepUpdate(m_check_auto_update);
+}
+
+//检测程序完整性
+void CSettingPage::OnBtnCheckIntegrity()
+{
+	CCheckIntegrityThread::getSingleton().Start(true);
 }

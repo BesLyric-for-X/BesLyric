@@ -70,6 +70,9 @@ private:
 
 	/* 获得当前未初始化的第一个路径 在PATH_STATE_2 中对应的下标;都初始化了则返回-1 */
 	int getPathNotReady_2();
+	
+	//线程执行地址(格式转换线程)
+	static DWORD WINAPI ThreadConvertProc(LPVOID pParam);
 
 	//消息
 protected:

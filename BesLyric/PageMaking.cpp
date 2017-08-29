@@ -322,9 +322,20 @@ void CPageMaking::OnBtnStartMaking()
 		return;
 	}
 
+	bool bSuccess = M()->maker.makingStart();
+	if(!bSuccess)
+	{
+		//播放不成功，需要转换文件
+		
+		//打开失败，有可能是MCI初始化出错
+		//开启线程进行转换
+		::CreateThread(NULL, 0, ThreadConvertProc, this, 0 ,NULL);
+
+		return;
+	}
+	
 	//改变相应的数据状态
 	M()->m_bIsLyricMaking = TRUE;
-	M()->maker.makingStart();
 	
 	//改变按钮的状态
 	m_btnLoad->EnableWindow(FALSE,TRUE);
@@ -389,6 +400,92 @@ int CPageMaking::getPathNotReady_1()
 	return index;
 }
 
+
+//线程执行地址(格式转换线程)
+DWORD WINAPI CPageMaking::ThreadConvertProc(LPVOID pParam)
+{
+	CPageMaking* pPageMaking  = (CPageMaking*)pParam;
+
+	WCHAR szMusicPathName[_MAX_PATH];
+	pPageMaking->M()->maker.m_musicPlayer.GetMusicPathName(szMusicPathName, _MAX_PATH);
+
+	wstring strMusicPath(szMusicPathName);
+	wstring strDir = FileHelper::GetCurrentDirectoryStr();
+	wstring strName;
+	wstring strExt;
+	FileHelper::SplitPath(strMusicPath, NULL,NULL,&strName,&strExt);
+
+	if(strExt == L".wav")
+	{
+		_MessageBox(NULL,   (L"无法播放文件："+strName + L"\\n请尝试使用别的音乐文件，或转换格式").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	wstring strTargetDir = strDir + TEMP_WAV_FLODER_NAME ; //得到目标文件夹
+	wstring strTargetFilePath = strDir + TEMP_WAV_FLODER_NAME +L"\\"+ strName + L".wav"; //得到目标文件夹
+	wstring strFfmpegPath = strDir + TEMP_WAV_FLODER_NAME +L"\\ffmpeg.exe"; //得到目标文件夹
+
+	if(!FileHelper::CheckFolderExist(strTargetDir))
+	{
+		_MessageBox(NULL, (L"文件夹不存在："+strTargetDir + L"\\n试图转格式失败，请重新下载完整程序").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	if(!FileHelper::CheckFileExist(strFfmpegPath))
+	{
+		_MessageBox(NULL, (L"文件不存在："+strFfmpegPath + L"\\n试图转格式失败，请重新下载完整程序").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	//开始转码
+	WCHAR command[_MAX_PATH * 3];
+	_swprintf(command, L"-y -i \"%s\" \"%s\"",szMusicPathName, strTargetFilePath.c_str());
+
+	//ShellExecute(NULL,L"open",strFfmpegPath.c_str(), command ,NULL,SW_SHOWNORMAL);
+
+	SHELLEXECUTEINFO ShExecInfo = {0};
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = NULL;
+	ShExecInfo.lpVerb = NULL;
+	ShExecInfo.lpFile = strFfmpegPath.c_str();	
+	ShExecInfo.lpParameters = command;	
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_SHOWNORMAL;
+	ShExecInfo.hInstApp = NULL;	
+	
+	if(!FileHelper::CheckFileExist(strTargetFilePath))//不存在，则执行转换，已存在则不转换
+	{
+		ShellExecuteEx(&ShExecInfo);
+		WaitForSingleObject(ShExecInfo.hProcess,INFINITE);  //等待直到执行完毕，得到目标文件
+	}
+
+	if(!FileHelper::CheckFileExist(strTargetFilePath))
+	{
+		_MessageBox(NULL, (L"文件转格式失败："+ wstring(szMusicPathName)).c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	//pPageMaking->M()->maker.m_musicPlayer.m_szMusicPathName;
+	pPageMaking->M()->maker.setMusicPath(strTargetFilePath.c_str(),pPageMaking->M()->m_hWnd);
+
+	//注意：这里不能使用如下2种方式调用
+
+	//错误方式 一、
+	//发送消息给主窗口，触发 OnBtnStartMaking 函数
+	//EventCmd evt(pPageMaking->M());
+	//evt.idFrom = R.id.btn_start_making;
+	//pPageMaking->M()->FireEvent(evt);
+
+	//错误方式 二、
+	//pPageMaking->OnBtnStartMaking();
+
+	//因为这两种方式都是在本线程执行，对主线程不会产生影响，而是在当前线程直接播放
+
+	::PostMessage(pPageMaking->M()->m_hWnd,MSG_USER_MAKING_START_BUTTON,0,0);
+
+	return true;
+}
 
 
 

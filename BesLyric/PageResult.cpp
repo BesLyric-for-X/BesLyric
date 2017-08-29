@@ -272,7 +272,17 @@ void CPageResult::OnBtnStartPlaying()
 	}
 
 	//开始播放和歌词滚动
-	M()->player.playingStart(m_pMainWnd);
+	bool bSuccess = M()->player.playingStart(m_pMainWnd);
+	if(!bSuccess)
+	{
+		//播放不成功，需要转换文件
+		
+		//打开失败，有可能是MCI初始化出错
+		//开启线程进行转换
+		::CreateThread(NULL, 0, ThreadConvertProc, this, 0 ,NULL);
+
+		return;
+	}
 
 	//改变按钮的状态
 	m_btnLoad->EnableWindow(FALSE,TRUE);
@@ -379,3 +389,80 @@ void  CPageResult::OnSliderPos2(EventArgs *pEvt)
 {
 	M()->OnSliderPos(false);
 }
+
+
+//线程执行地址(格式转换线程)
+DWORD WINAPI CPageResult::ThreadConvertProc(LPVOID pParam)
+{
+	CPageResult* pPageResult  = (CPageResult*)pParam;
+
+	WCHAR szMusicPathName[_MAX_PATH];
+	pPageResult->M()->player.m_musicPlayer.GetMusicPathName(szMusicPathName, _MAX_PATH);
+
+	wstring strMusicPath(szMusicPathName);
+	wstring strDir = FileHelper::GetCurrentDirectoryStr();
+	wstring strName;
+	wstring strExt;
+	FileHelper::SplitPath(strMusicPath, NULL,NULL,&strName,&strExt);
+
+	if(strExt == L".wav")
+	{
+		_MessageBox(NULL,   (L"无法播放文件："+strName + L"\\n请尝试使用别的音乐文件，或转换格式").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	wstring strTargetDir = strDir + TEMP_WAV_FLODER_NAME ; //得到目标文件夹
+	wstring strTargetFilePath = strDir + TEMP_WAV_FLODER_NAME +L"\\"+ strName + L".wav"; //得到目标文件夹
+	wstring strFfmpegPath = strDir + TEMP_WAV_FLODER_NAME +L"\\ffmpeg.exe"; //得到目标文件夹
+
+	if(!FileHelper::CheckFolderExist(strTargetDir))
+	{
+		_MessageBox(NULL, (L"文件夹不存在："+strTargetDir + L"\\n试图转格式失败，请重新下载完整程序").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	if(!FileHelper::CheckFileExist(strFfmpegPath))
+	{
+		_MessageBox(NULL, (L"文件不存在："+strFfmpegPath + L"\\n试图转格式失败，请重新下载完整程序").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	//开始转码
+	WCHAR command[_MAX_PATH * 3];
+	_swprintf(command, L"-y -i \"%s\" \"%s\"",szMusicPathName, strTargetFilePath.c_str());
+
+	//ShellExecute(NULL,L"open",strFfmpegPath.c_str(), command ,NULL,SW_SHOWNORMAL);
+
+	SHELLEXECUTEINFO ShExecInfo = {0};
+	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	ShExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	ShExecInfo.hwnd = NULL;
+	ShExecInfo.lpVerb = NULL;
+	ShExecInfo.lpFile = strFfmpegPath.c_str();	
+	ShExecInfo.lpParameters = command;	
+	ShExecInfo.lpDirectory = NULL;
+	ShExecInfo.nShow = SW_SHOWNORMAL;
+	ShExecInfo.hInstApp = NULL;	
+
+	if(!FileHelper::CheckFileExist(strTargetFilePath))//不存在，则执行转换，已存在则不转换
+	{
+		ShellExecuteEx(&ShExecInfo);
+		WaitForSingleObject(ShExecInfo.hProcess,INFINITE);  //等待直到执行完毕，得到目标文件
+	}
+
+	if(!FileHelper::CheckFileExist(strTargetFilePath))
+	{
+		_MessageBox(NULL, (L"文件转格式失败："+ wstring(szMusicPathName)).c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		return false;
+	}
+
+	pPageResult->M()->player.setMusicPath(strTargetFilePath.c_str(),pPageResult->M()->m_hWnd);
+
+	//注意事项，参考 PageMaking 中ThreadConvertProc 回调函数
+
+	::PostMessage(pPageResult->M()->m_hWnd,MSG_USER_PLAYING_START_BUTTON,0,0);
+
+	return true;
+}
+
+

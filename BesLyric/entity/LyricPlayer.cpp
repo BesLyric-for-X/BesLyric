@@ -42,7 +42,7 @@ void LyricPlayer::reloadPlayer()
 }
 
 //播放歌曲与滚动歌词 预览开始
-void LyricPlayer::playingStart(SHostWnd *wnd)
+bool LyricPlayer::playingStart(SHostWnd *wnd)
 {
 	//更新基本的行数记录的数据
 	m_nTotalLine = this->m_vLineInfo.size();
@@ -53,7 +53,7 @@ void LyricPlayer::playingStart(SHostWnd *wnd)
 	//设置参照的时间起点
 	setStartPoint();
 
-	playMusic();
+	return playMusic();
 }
 
 //预览结束
@@ -65,9 +65,16 @@ void LyricPlayer::playingEnd(SHostWnd *wnd)
 }
 
 //播放音乐
-void LyricPlayer::playMusic()
+bool LyricPlayer::playMusic()
 {
+	if(m_musicPlayer.openTest() == false)
+	{
+		return false;
+	}
+
 	m_musicPlayer.openStart();
+	
+	return true;
 }
 
 //停止音乐

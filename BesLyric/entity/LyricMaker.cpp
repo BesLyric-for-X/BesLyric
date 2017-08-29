@@ -63,7 +63,8 @@ void LyricMaker::reloadMaker()
 }
 
 //制作开始,记录开始制作的时间
-void LyricMaker::makingStart()
+//成功播放返回true，需要转换格式返回false
+bool LyricMaker::makingStart()
 {
 	SYSTEMTIME		startPoint;				/* 记录开始的时间点 */
 	GetLocalTime(&startPoint);
@@ -77,7 +78,7 @@ void LyricMaker::makingStart()
 	//异步播放音乐
 	//PlaySound(m_szMusicPathName,NULL,SND_FILENAME|SND_ASYNC); //不支持MP3
 
-	playMusic();
+	return playMusic();
 }
 
 //为下一行歌词 标记上 网易云音乐要求的 时间轴格式，写入m_vLyricOutput中
@@ -246,7 +247,14 @@ void LyricMaker::msToLyricTimeString(int ms, LPTSTR timeBuf)
 }
 
 //播放音乐
-void LyricMaker::playMusic()
+bool LyricMaker::playMusic()
 {
+	if(m_musicPlayer.openTest() == false)
+	{
+		return false;
+	}
+
 	m_musicPlayer.openStart();
+	return true;
 }
+

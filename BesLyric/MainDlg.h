@@ -76,6 +76,9 @@ public:
 	//处理声音slider 位置的变化
 	void OnSliderPos(bool isPos1);
 
+	
+	int MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+
 private:
 	//设置程序的背景图片
 	void setBackSkin();
@@ -85,6 +88,8 @@ private:
 	BOOL PageMakingChainEvent(CPageMaking* pPageMaking,EventArgs* pEvt);
 	BOOL PageResultChainEvent(CPageResult* pPageResult,EventArgs* pEvt); //同上
 	
+
+	void test();//just for test
 protected:
 	//soui消息
 	EVENT_MAP_BEGIN()
@@ -126,6 +131,9 @@ protected:
 		}
 
 		MSG_WM_TIMER(OnTimer)
+			
+		MESSAGE_HANDLER(MSG_USER_MAKING_START_BUTTON, MessageButtonCommand)   //用于
+		MESSAGE_HANDLER(MSG_USER_PLAYING_START_BUTTON, MessageButtonCommand)
 
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()
