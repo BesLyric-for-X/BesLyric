@@ -276,21 +276,21 @@ bool  FileHelper::CheckFolderExist(const wstring &strPath)
 	return rValue;
 }
 
-void FileHelper::SplitPath(const string& strPathName, OUT string *pstrDrive, OUT string *pstrDirectory, OUT string* pstrName, OUT string* pstrExt)
+void FileHelper::SplitPath(const wstring& strPathName, OUT wstring *pstrDrive, OUT wstring *pstrDirectory, OUT wstring* pstrName, OUT wstring* pstrExt)
 {
-	string _strDrive = "";
-	string _strDirectory = "";
-	string _strName = "";
-	string _strExt = "";
+	wstring _strDrive = L"";
+	wstring _strDirectory = L"";
+	wstring _strName = L"";
+	wstring _strExt = L"";
 
 	//分号位置
-	auto posColon = strPathName.find_first_of(':');
+	auto posColon = strPathName.find_first_of(L':');
 	
 	if (posColon != string::npos)
 		_strDrive = strPathName.substr(0, posColon);
 
 	//最后一个分隔符号位置
-	auto posLastSep = strPathName.find_last_of("/\\");
+	auto posLastSep = strPathName.find_last_of(L"/\\");
 	if (posLastSep != string::npos)
 	{
 		_strDirectory = strPathName.substr(0, posLastSep +1);
@@ -304,7 +304,7 @@ void FileHelper::SplitPath(const string& strPathName, OUT string *pstrDrive, OUT
 	auto posEnd = strPathName.size();
 
 	//寻找拓展名的"."位置
-	auto posDot = strPathName.find_last_of('.');
+	auto posDot = strPathName.find_last_of(L'.');
 	if (posDot != string::npos)
 	{
 		//特殊处理，路径中含有 . 的情况可能有 ..\\test, 所以只有当 获得的“.”位置大于  posLastSep 时， 获得的“.”位置才是拓展名的"."位置

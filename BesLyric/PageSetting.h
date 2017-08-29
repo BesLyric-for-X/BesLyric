@@ -44,6 +44,7 @@ public:
 	void OnBtnSelectDefaultOutputPath();				//选择默认LRC歌词输出路径
 
 	void OnCheckAutoUpdateChanged();				//自动升级check 改变状态时
+	void OnBtnCheckIntegrity();						//检测程序完整性
 
 	//消息
 protected:
@@ -54,6 +55,8 @@ protected:
 		EVENT_NAME_COMMAND(L"btn_select_default_music_path", OnBtnSelectDefaultMusicPath)
 		EVENT_NAME_COMMAND(L"btn_select_default_lyric_path", OnBtnSelectDefaultLyricPath)
 		EVENT_NAME_COMMAND(L"btn_select_default_output_path", OnBtnSelectDefaultOutputPath)
+
+		EVENT_NAME_COMMAND(L"btn_check_integrity", OnBtnCheckIntegrity)
 
 		EVENT_NAME_COMMAND(R.name.check_auto_update, OnCheckAutoUpdateChanged)
 		

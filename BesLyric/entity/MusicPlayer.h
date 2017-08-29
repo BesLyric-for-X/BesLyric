@@ -37,6 +37,9 @@ public:
 	//设置音乐路径 和 目标窗口句柄
 	void init(LPCTSTR musicPathName, HWND hostWnd);
 
+	//尝试打开使用设备打开文件
+	bool openTest();
+
 	//打开并播放音乐
 	void openStart();
 
@@ -81,6 +84,9 @@ public:
 
 	//获得当前音量平均值（默认初始播放音量为最大值1000）
 	int getVolumn();
+
+
+	void GetMusicPathName(WCHAR* pszPathName,int nCount);//获得当前音乐名称
 
 private:
 	bool isParamReady(){return  _tcslen(m_szMusicPathName)==0?false:true;}

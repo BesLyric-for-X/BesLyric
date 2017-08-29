@@ -90,7 +90,7 @@ public:
 	*	@note	路径可以是全路径，如 C:\\document\\desktop\\test.pan
 	*				也可以不是，  如 ..\..\test\test.pan
 	*/
-	static void SplitPath(const string& strPathName, OUT string *strDrive = NULL, OUT string *strDirectory = NULL, OUT string* strName = NULL, OUT string* strExt = NULL);
+	static void SplitPath(const wstring& strPathName, OUT wstring *strDrive = NULL, OUT wstring *strDirectory = NULL, OUT wstring* strName = NULL, OUT wstring* strExt = NULL);
 };
 
   

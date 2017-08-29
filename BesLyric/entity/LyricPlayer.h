@@ -52,7 +52,7 @@ public:
 	void reloadPlayer();
 
 	//播放歌曲与滚动歌词 预览开始
-	void playingStart(SHostWnd *wnd);
+	bool playingStart(SHostWnd *wnd);
 
 	//预览结束
 	void playingEnd(SHostWnd *wnd);
@@ -76,7 +76,7 @@ public:
 
 private:
 	//播放音乐
-	void playMusic();
+	bool playMusic();
 
 	//停止音乐
 	void stopMusic();

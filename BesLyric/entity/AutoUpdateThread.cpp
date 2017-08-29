@@ -17,7 +17,7 @@ bool AutoUpdateThread::Start()
 	if(m_handleThread != NULL)
 		return true;
 
-	//创建时间，事件有信号时，表示停止等待
+	//创建事件，事件有信号时，表示停止等待
 	// ManualReset = false， 表示 WaitSingleObject 收到有信号的  m_EventStopWaiting 后，m_EventStopWaiting自动变为无信号
 	m_EventStopWaiting = ::CreateEvent(NULL, FALSE, FALSE,NULL);
 

@@ -45,6 +45,7 @@
     <IntDir>$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,7 +117,9 @@
   <ItemGroup>
     <ClCompile Include="BesLyric.cpp" />
     <ClCompile Include="BSMessageBox.cpp" />
+    <ClCompile Include="DlgCheckIntegrity.cpp" />
     <ClCompile Include="entity\AutoUpdateThread.cpp" />
+    <ClCompile Include="entity\CheckIntegrityThread.cpp" />
     <ClCompile Include="entity\LyricMaker.cpp" />
     <ClCompile Include="entity\LyricPlayer.cpp" />
     <ClCompile Include="entity\MusicPlayer.cpp" />
@@ -130,6 +133,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="utility\FileHelper.cpp" />
+    <ClCompile Include="utility\SplitFile.cpp" />
     <ClCompile Include="utility\WinFile.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -138,7 +142,9 @@
   <ItemGroup>
     <ClInclude Include="BSMessageBox.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="DlgCheckIntegrity.h" />
     <ClInclude Include="entity\AutoUpdateThread.h" />
+    <ClInclude Include="entity\CheckIntegrityThread.h" />
     <ClInclude Include="entity\LyricMaker.h" />
     <ClInclude Include="entity\LyricPlayer.h" />
     <ClInclude Include="entity\MusicPlayer.h" />
@@ -150,6 +156,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="utility\FileHelper.h" />
+    <ClInclude Include="utility\SplitFile.h" />
     <ClInclude Include="utility\SSingleton.h" />
     <ClInclude Include="utility\WinFile.h" />
   </ItemGroup>

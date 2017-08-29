@@ -13,7 +13,7 @@
 #include <helper/SDibHelper.h>
 #include "BSMessageBox.h"
 #include "entity/AutoUpdateThread.h"
-
+#include "entity\CheckIntegrityThread.h"
 
 //经过个人测试，音乐播放设备，在毫秒级访问时，（比如获取歌曲当前位置）会有一定的延迟，导致声音已经被设备播放，
 //但是在获取实时信息来显示时存在延迟，在此定义设备可能的延迟（单位：毫秒）
@@ -24,6 +24,20 @@
 #pragma comment(lib,"dwmapi.lib")
 #endif
 
+#include "utility\SplitFile.h"
+
+
+void CMainDlg::test()
+{
+	//just for test
+
+	//CSplitFile::SplitFile(L"C:\\Users\\BensonLaur\\Desktop\\ff.exe", L"C:\\Users\\BensonLaur\\Desktop",L"ff", 10 * 1024 * 1024);
+
+	//CSplitFile::MergeFile(L"C:\\Users\\BensonLaur\\Desktop",L"ff", L"C:\\Users\\BensonLaur\\Desktop");
+
+	//AutoUpdateThread::DownloadFile(L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe", L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
+}
+
 CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 {
 	m_bLayoutInited = FALSE;
@@ -33,6 +47,11 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 
 	//启动自动更新线程
 	AutoUpdateThread::getSingleton().Start();
+
+	//检测程序的完整性
+	CCheckIntegrityThread::getSingleton().Start(false);
+
+	//test();
 }
 
 CMainDlg::~CMainDlg()
@@ -661,3 +680,17 @@ void  CMainDlg::OnSliderPos(bool isPos1)
 	}
 }
 
+
+int CMainDlg::MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	if(uMsg == MSG_USER_MAKING_START_BUTTON)
+	{
+		m_pageMaking->OnBtnStartMaking();
+	}
+	else if(uMsg == MSG_USER_PLAYING_START_BUTTON)
+	{
+		m_pageResult->OnBtnStartPlaying();
+	}
+
+	return true;
+}

@@ -5,6 +5,7 @@
   <LAYOUT>
     <file name="XML_MAINWND" path="xml\dlg_main.xml"  />
     <file name="xml_messagebox" path="xml\messagebox.xml"/>
+    <file name="xml_check_integrity" path="xml\dlg_checking_integrity.xml"/>
   </LAYOUT>
   
   <values>

@@ -40,8 +40,14 @@ using namespace std;
 
 #endif
 
+#define RET_SUCCEEDED	0
 #define MAX_BUFFER_SIZE	 (260 * 2)
 
+#define MSG_USER_MAKING_START_BUTTON	WM_USER+1
+#define MSG_USER_PLAYING_START_BUTTON	WM_USER+2
+
+#define MSG_USER_UPDATE_CHECK_PROGRESS	WM_USER+3
+#define MSG_USER_CLOSE_CHECK_PROGRESS	WM_USER+4
 
 /* 结构定义 */
 
@@ -76,3 +82,11 @@ static const wstring FILE_NAME_LAST_VERSION_INFO = L"version";					//文件名，从 
 static const wstring FILE_NAME_LAST_EXE_TEMP = L"BesLyric";						//文件名，从 LINK_LAST_EXE 下载下来储存的文件
 static const wstring SETTING_FILE_NAME = L"setting";							//文件名，储存设置
 
+static const wstring TEMP_WAV_FLODER_NAME = L"wav";								//文件夹名称，存放临时转换得到的wav文件
+
+static const wstring SERVER_FILE_EXTENTION_W = L".zip";							//定义上传到 cnblog服务器的文件拓展名
+static const string SERVER_FILE_EXTENTION_A = ".zip";	
+
+static const wstring LINK_SERVER_PATH = L"http://files.cnblogs.com/files/BensonLaur/";		//链接，服务器地址
+
+static const wstring LINK_DOWNLOAD_SERVER = L"http://ovfwclhwl.bkt.clouddn.com/";			//链接，服务器地址2
