@@ -176,6 +176,9 @@
     <ClInclude Include="DlgCheckIntegrity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="entity\FileDroper.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="uires\uires.idx">

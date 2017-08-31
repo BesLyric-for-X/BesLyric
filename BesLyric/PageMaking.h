@@ -42,9 +42,9 @@ public:
 	
 	//各个页面按钮的响应函数
 
-	void OnBtnSelectMusic1();		//三个路径的选择	
-	void OnBtnSelectLyric1();
-	void OnBtnSelectOutput();
+	void OnBtnSelectMusic1(LPCWSTR pFilePath = NULL);		//三个路径的选择	
+	void OnBtnSelectLyric1(LPCWSTR pFilePath = NULL);
+	void OnBtnSelectOutput(LPCWSTR pDirPath = NULL);
 	void OnBtnLoad1();				//制作歌词：加载 (初始化 LyricMaker)
 	void OnBtnRestart();			//我要重制
 	void OnBtnStartMaking();		//开始制作

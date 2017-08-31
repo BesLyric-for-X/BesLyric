@@ -49,6 +49,8 @@ using namespace std;
 #define MSG_USER_UPDATE_CHECK_PROGRESS	WM_USER+3
 #define MSG_USER_CLOSE_CHECK_PROGRESS	WM_USER+4
 
+#define MSG_USER_DROP_FILE				WM_USER+5
+
 /* 结构定义 */
 
 //在制作歌词页面 和 滚动预览 页面中，需要选择音乐路径，歌词路径，输出路径等信息

@@ -20,15 +20,15 @@ translucent="0"
         <page title="歌词制作" tip="选择歌词和音乐文件 制作具有时间轴的歌词文件">
           <window pos="10,5,-5,-5">
               <text pos="5,5,@80,@30">选择音乐：</text>
-              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_music_1" ></edit>
+              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_music_1" cueText="  拖放文件到这里 或 点击“选择”" ></edit>
               <imgbtn name="btn_select_music_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
               <text pos="5,[5,@80,@30">选择歌词：</text>
-              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_lyric_1"></edit>
+              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_lyric_1" cueText="  拖放文件到这里 或 点击“选择”"></edit>
               <imgbtn name="btn_select_lyric_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
               <text pos="5,[5,@80,@30">输出目录：</text>
-              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_output" ></edit>
+              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_output" cueText="  拖放文件到这里 或 点击“选择”"></edit>
               <imgbtn name="btn_select_output" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
              <window pos="5,[30,-5,@30">
@@ -90,10 +90,10 @@ translucent="0"
         <page title="滚动预览" tip="选择歌词和音乐文件 预览歌词滚动效果">
           <window pos="10,5,-5,-5">
             <text pos="5,5,@80,@30">选择音乐：</text>
-            <edit pos="[5,{0,-60,@30" font="adding:1" readonly="-1"  name="edit_music_2"></edit>
+            <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="-1"  name="edit_music_2" cueText="  拖放文件到这里 或 点击“选择”"></edit>
             <imgbtn name="btn_select_music_2" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
             <text pos="5,[5,@80,@30">滚动歌词：</text>
-            <edit pos="[5,{0,-60,@30" font="adding:1" readonly="-1"  name="edit_lyric_2"></edit>
+            <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="-1"  name="edit_lyric_2" cueText="  拖放文件到这里 或 点击“选择”"></edit>
             <imgbtn name="btn_select_lyric_2" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
             <window pos="5,[30,-5,@30">

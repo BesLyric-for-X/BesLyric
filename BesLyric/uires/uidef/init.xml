@@ -13,7 +13,7 @@
   </style>
 
   <objattr>
-    <edit  margin-x="0" margin-y="0" colorBorder="@color/gray" colorBkgnd="#ffffff22" colorText="@color/white"/>
+    <edit  margin-x="0" margin-y="0" colorBorder="@color/gray" colorBkgnd="#ffffff22" colorText="@color/white" cueColor="#ffffff28"/>
     <text colorText="@color/white"></text>
   </objattr>
 </UIDEF>
