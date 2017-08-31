@@ -60,6 +60,10 @@ public:
 
 	void OnPageChanged(EventArgs *pEvt);	//主页面切换时
 
+	//在拖动文件到 Edit控件时
+	int MsgDropFile(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+	void OnDropFile(SEdit* pEdit, wstring strFilePath);
+
 	//接受键盘输入
 	void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
@@ -134,6 +138,8 @@ protected:
 			
 		MESSAGE_HANDLER(MSG_USER_MAKING_START_BUTTON, MessageButtonCommand)   //用于
 		MESSAGE_HANDLER(MSG_USER_PLAYING_START_BUTTON, MessageButtonCommand)
+
+		MESSAGE_HANDLER(MSG_USER_DROP_FILE, MsgDropFile)//拖放文件消息
 
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()

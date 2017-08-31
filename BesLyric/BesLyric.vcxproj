@@ -145,6 +145,7 @@
     <ClInclude Include="DlgCheckIntegrity.h" />
     <ClInclude Include="entity\AutoUpdateThread.h" />
     <ClInclude Include="entity\CheckIntegrityThread.h" />
+    <ClInclude Include="entity\FileDroper.h" />
     <ClInclude Include="entity\LyricMaker.h" />
     <ClInclude Include="entity\LyricPlayer.h" />
     <ClInclude Include="entity\MusicPlayer.h" />

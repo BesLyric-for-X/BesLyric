@@ -14,6 +14,7 @@
 #include "BSMessageBox.h"
 #include "entity/AutoUpdateThread.h"
 #include "entity\CheckIntegrityThread.h"
+#include "entity\FileDroper.h"
 
 //经过个人测试，音乐播放设备，在毫秒级访问时，（比如获取歌曲当前位置）会有一定的延迟，导致声音已经被设备播放，
 //但是在获取实时信息来显示时存在延迟，在此定义设备可能的延迟（单位：毫秒）
@@ -118,6 +119,14 @@ void CMainDlg::initPage()
 
 	maker.Init( &m_settingPage );//歌词制作需要用到设置页面的数据
 
+	//注册文件拖放
+	HRESULT hr=::RegisterDragDrop(m_hWnd,GetDropTarget());
+	RegisterDragDrop(m_pageMaking->m_EditMusic->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageMaking->m_EditMusic));
+	RegisterDragDrop(m_pageMaking->m_EditLyric->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageMaking->m_EditLyric));
+	RegisterDragDrop(m_pageMaking->m_EditOutPath->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageMaking->m_EditOutPath));
+	RegisterDragDrop(m_pageResult->m_EditMusic->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageResult->m_EditMusic));
+	RegisterDragDrop(m_pageResult->m_EditLyric->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageResult->m_EditLyric));
+
 	//初始化“本软件”页面
 
 	//版本号设置
@@ -145,6 +154,38 @@ void CMainDlg::OnPageChanged(EventArgs *pEvt)
 			//加入歌词制作器
 			maker.setm_szOutputPath(m_settingPage.m_default_output_path.c_str());
 		}
+	}
+}
+
+
+int CMainDlg::MsgDropFile(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	OnDropFile((SEdit*)wParam,(WCHAR*)lParam);
+	return 0;
+}
+
+//在拖动文件到 Edit控件时
+void CMainDlg::OnDropFile(SEdit* pEdit, wstring strFilePath)
+{
+	if(pEdit == this->m_pageMaking->m_EditMusic)
+	{
+		m_pageMaking->OnBtnSelectMusic1(strFilePath.c_str());
+	}
+	else if(pEdit == this->m_pageMaking->m_EditLyric)
+	{
+		m_pageMaking->OnBtnSelectLyric1(strFilePath.c_str());
+	}
+	else if(pEdit == this->m_pageMaking->m_EditOutPath)
+	{
+		m_pageMaking->OnBtnSelectOutput(strFilePath.c_str());
+	}
+	else if(pEdit == this->m_pageResult->m_EditMusic)
+	{
+		m_pageResult->OnBtnSelectMusic2(strFilePath.c_str());
+	}
+	else if(pEdit == this->m_pageResult->m_EditLyric)
+	{
+		m_pageResult->OnBtnSelectLyric2(strFilePath.c_str());
 	}
 }
 

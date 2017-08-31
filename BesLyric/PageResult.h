@@ -44,8 +44,8 @@ public:
 	
 	//各个页面按钮的响应函数
 
-	void OnBtnSelectMusic2();		//两个路径的选择
-	void OnBtnSelectLyric2();	
+	void OnBtnSelectMusic2(LPCWSTR pFilePath = NULL);		//两个路径的选择
+	void OnBtnSelectLyric2(LPCWSTR pFilePath = NULL);	
 	void OnBtnLoad2();
 	void OnBtnEndPreview();
 	void OnBtnStartPlaying();		//开始播放歌词

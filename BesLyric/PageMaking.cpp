@@ -98,26 +98,37 @@ CMainDlg* CPageMaking::M()
 */
 
 //三个路径的选择
-void CPageMaking::OnBtnSelectMusic1()
+void CPageMaking::OnBtnSelectMusic1(LPCWSTR pFilePath)
 {
-	CBrowseDlg Browser;
-	BOOL bRet = Browser.DoFileBrowse(
-		::GetActiveWindow(),
-		L"音频文件(mp3,mp2,wma,wav,wv,ape,flac)\0*.mp3;*.mp2;*.wma;*.wav;*.wv;*.ape;*.flac;\0手机录音(amr)/手机铃声(mmf)\0*amr;*.mmf\0\0",
-		FileHelper::CheckFolderExist(M()->m_settingPage.m_default_music_path)? M()->m_settingPage.m_default_music_path.c_str():nullptr
-		);
+	BOOL bRet = TRUE;
+	LPCWSTR pPath = NULL;
+
+	if(pFilePath == NULL)
+	{
+		CBrowseDlg Browser;
+		bRet = Browser.DoFileBrowse(
+			::GetActiveWindow(),
+			L"音频文件(mp3,mp2,wma,wav,wv,ape,flac)\0*.mp3;*.mp2;*.wma;*.wav;*.wv;*.ape;*.flac;\0手机录音(amr)/手机铃声(mmf)\0*amr;*.mmf\0\0",
+			FileHelper::CheckFolderExist(M()->m_settingPage.m_default_music_path)? M()->m_settingPage.m_default_music_path.c_str():nullptr
+			);
+
+		if(bRet == TRUE)
+			pPath = Browser.GetFilePath();
+	}
+	else
+		pPath = pFilePath;
 
 	if(bRet == TRUE)
 	{
-		if( CFileDialogEx::checkPathName(_T("*.mp3"),Browser.GetFilePath()) 
-		 || CFileDialogEx::checkPathName(_T("*.mp2"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.wma"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.wav"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.wv"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.ape"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.flac"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.amr"),Browser.GetFilePath())
-		 || CFileDialogEx::checkPathName(_T("*.mmf"),Browser.GetFilePath()))
+		if( CFileDialogEx::checkPathName(_T("*.mp3"),pPath) 
+		 || CFileDialogEx::checkPathName(_T("*.mp2"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.wma"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.wav"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.wv"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.ape"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.flac"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.amr"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.mmf"),pPath))
 		{	
 			; //使用“或”条件判断( || )而 不用“且”条件判断（&&），以减少 checkPathName 调用的次数
 		}
@@ -128,61 +139,86 @@ void CPageMaking::OnBtnSelectMusic1()
 		}
 
 		//显示新选择的文件
-		m_EditMusic->SetWindowTextW(Browser.GetFilePath());
+		m_EditMusic->SetWindowTextW(pPath);
 
 		PATH_STATE_1[0].isInited = true;
 
 		//加入歌词制作器
-		M()->maker.setMusicPath(Browser.GetFilePath(),M()->m_hWnd);
+		M()->maker.setMusicPath(pPath,M()->m_hWnd);
 	}
 }
 
-void CPageMaking::OnBtnSelectLyric1()
+void CPageMaking::OnBtnSelectLyric1(LPCWSTR pFilePath)
 {
-	CBrowseDlg Browser;
-	BOOL bRet = Browser.DoFileBrowse(
-		::GetActiveWindow(),
-		L"文本文件(*.txt)\0*.txt\0\0",
-		FileHelper::CheckFolderExist(M()->m_settingPage.m_default_lyric_path)? M()->m_settingPage.m_default_lyric_path.c_str():nullptr
-		);
+	BOOL bRet = TRUE;
+	LPCWSTR pPath = NULL;
+
+	if(pFilePath == NULL)
+	{
+		if(bRet == TRUE)
+			pPath = pPath;
+		CBrowseDlg Browser;
+		bRet = Browser.DoFileBrowse(
+			::GetActiveWindow(),
+			L"文本文件(*.txt)\0*.txt\0\0",
+			FileHelper::CheckFolderExist(M()->m_settingPage.m_default_lyric_path)? M()->m_settingPage.m_default_lyric_path.c_str():nullptr
+			);
+		
+		if(bRet == TRUE)
+			pPath = Browser.GetFilePath();
+	}
+	else
+		pPath = pFilePath;
 
 	if(bRet == TRUE)
 	{
-		if(!CFileDialogEx::checkPathName(_T("*.txt"),Browser.GetFilePath()))
+		if(!CFileDialogEx::checkPathName(_T("*.txt"),pPath))
 		{
 			_MessageBox(M()->m_hWnd,_T("格式不支持\\n请确定文件格式为【*.txt】"),_T("提示"),MB_OK|MB_ICONINFORMATION);
 			return;
 		}
 		
 		//显示新选择的文件
-		m_EditLyric->SetWindowTextW(Browser.GetFilePath());
+		m_EditLyric->SetWindowTextW(pPath);
 		
 		PATH_STATE_1[1].isInited = true;
 		
 		//加入歌词制作器
-		M()->maker.setLyricPath(Browser.GetFilePath());
+		M()->maker.setLyricPath(pPath);
 	}
 }
 
-void CPageMaking::OnBtnSelectOutput()
+void CPageMaking::OnBtnSelectOutput(LPCWSTR pDirPath)
 {
-	CBrowseDlg Browser;
-	BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【LRC歌词文件】 默认输出路径"), TRUE,M()->m_settingPage.m_default_output_path.c_str());
+	BOOL bRet = TRUE;
+	LPCWSTR pPath = NULL;
+
+	if(pDirPath == NULL)
+	{
+		CBrowseDlg Browser;
+		bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【LRC歌词文件】 默认输出路径"), TRUE,M()->m_settingPage.m_default_output_path.c_str());
+			
+		if(bRet == TRUE)
+			pPath = Browser.GetDirPath();
+	}
+	else
+		pPath = pDirPath;
+
 	if(bRet == TRUE)
 	{
-		if(!CFileDialogEx::checkPathName(_T(".."),Browser.GetDirPath()))
+		if(!CFileDialogEx::checkPathName(_T(".."),pPath))
 		{
 			_MessageBox(M()->m_hWnd,_T("格式不支持\\n请确定您选择【文件夹】"),_T("提示"),MB_OK|MB_ICONINFORMATION);
 			return;
 		}
 
 		//显示新选择的文件
-		m_EditOutPath->SetWindowTextW(Browser.GetDirPath());
+		m_EditOutPath->SetWindowTextW(pPath);
 		
 		PATH_STATE_1[2].isInited = true;
 		
 		//加入歌词制作器
-		M()->maker.setm_szOutputPath(Browser.GetDirPath());
+		M()->maker.setm_szOutputPath(pPath);
 	}
     
 }
