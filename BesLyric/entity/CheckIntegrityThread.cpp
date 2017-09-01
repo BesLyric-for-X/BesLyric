@@ -111,7 +111,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			}
 		}
 		
-		UpdateProgressUI(60, wstring( L"正在下载 ffmpeg.exe，请耐心等待 ...").c_str());
+		UpdateProgressUI(60, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...").c_str());
 		//先从 LINK_DOWNLOAD_SERVER 下载 ffmpeg
 		bool bFirstTrySucceed = AutoUpdateThread::DownloadFile(LINK_DOWNLOAD_SERVER + L"ffmpeg.exe", strFfmpeg);
 		if(!bFirstTrySucceed)//下载不成功
