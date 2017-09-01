@@ -48,6 +48,9 @@ public:
 	void OnBtnLoad1();				//制作歌词：加载 (初始化 LyricMaker)
 	void OnBtnRestart();			//我要重制
 	void OnBtnStartMaking();		//开始制作
+
+	void UpdataMakerLyricShowing(); //根据maker制作歌词的当前行数，更新界面数据
+
 	void OnBtnPreview();
 	void OnBtnOpenOutput();			//打开生成的文件
 

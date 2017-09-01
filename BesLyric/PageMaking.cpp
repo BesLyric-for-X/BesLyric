@@ -254,11 +254,12 @@ void CPageMaking::OnBtnLoad1()
 
 	//从文件读取每一行的歌词
 	M()->maker.m_vLyricOrigin = M()->maker.getLyricOrigin(lyricFile);
+	M()->maker.m_vLyricOriginWithEmptyLine = M()->maker.m_vLyricOrigin; //初始化 m_vLyricOriginWithEmptyLine
 	 
 	//读取完毕，清空显示面板，显示第一条非空歌词
 	P1_Line1->SetWindowTextW(_T(""));
 	P1_Line2->SetWindowTextW(_T(""));
-	P1_Line3->SetWindowTextW(M()->maker.m_vLyricOrigin[0]);
+	P1_Line3->SetWindowTextW(M()->maker.m_vLyricOriginWithEmptyLine[0]);
 
 	//改变按钮的状态
 	m_btnStart->EnableWindow(TRUE,TRUE); //第一个参数bEnable为 是否启用，第二个参数bUpdate为是否在改变状态后更新显示
@@ -312,13 +313,14 @@ void CPageMaking::OnBtnOpenOutput()
 //第一个页面(歌词制作)：回到“加载按钮”按下后的状态
 void CPageMaking::backToInit_1()
 {
+	M()->maker.m_vLyricOriginWithEmptyLine = M()->maker.m_vLyricOrigin;
 	M()->maker.m_vLyricOutput.clear();
 	M()->maker.stopMusic();
 
 	//重置显示面板，显示第一条非空歌词
 	P1_Line1->SetWindowTextW(_T(""));
 	P1_Line2->SetWindowTextW(_T(""));
-	P1_Line3->SetWindowTextW(M()->maker.m_vLyricOrigin[0]);
+	P1_Line3->SetWindowTextW(M()->maker.m_vLyricOrigin[0]); //第一条歌词数据
 
 	//隐藏空行提示
 	emptyTip1->SetVisible(FALSE,TRUE);
@@ -391,6 +393,45 @@ void CPageMaking::OnBtnStartMaking()
 	M()->FootPrintPage = 0;
 }
 
+//根据maker制作歌词的当前行数，更新界面数据
+void CPageMaking::UpdataMakerLyricShowing()
+{
+	if(M()->maker.m_nCurLine==0) //最开始
+	{
+		P1_Line1->SetWindowTextW(_T(""));
+		P1_Line2->SetWindowTextW(_T(""));
+		P1_Line3->SetWindowTextW( M()->maker.m_vLyricOrigin[0]); //第一条歌词数据
+		emptyTip1->SetVisible(FALSE,TRUE);
+	}
+	else
+	{
+		//第一次第一行没有数据
+		if(M()->maker.m_nCurLine == 1)
+		{
+			P1_Line1->SetWindowTextW( _T(""));
+		}else
+		{
+			P1_Line1->SetWindowTextW( M()->maker.GetOriginLyricAt(M()->maker.m_nCurLine -1));
+		}
+
+		P1_Line2->SetWindowTextW(  M()->maker.GetOriginLyricAt(M()->maker.m_nCurLine));
+	
+		if(M()->maker.m_nCurLine != M()->maker.m_nTotalLine)
+		{
+			P1_Line3->SetWindowTextW(  M()->maker.GetOriginLyricAt(M()->maker.m_nCurLine +1));
+		}
+		else//最后行后面数据为空
+		{
+			P1_Line3->SetWindowTextW(_T(""));
+		}
+
+		//根据上一行是否为空行，显示空行提示
+		if(M()->maker.isLastLineSpace())
+			emptyTip1->SetVisible(TRUE,TRUE);
+		else
+			emptyTip1->SetVisible(FALSE,TRUE);
+	}
+}
 
 void CPageMaking::OnBtnSoundOpen1()
 {
@@ -407,7 +448,6 @@ void  CPageMaking::OnSliderPos1(EventArgs *pEvt)
 {
 	M()->OnSliderPos(true);
 }
-
 
 
 //判断第一个页面(歌词制作) 的 三个路径是否都选择完毕 */

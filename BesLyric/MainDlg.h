@@ -63,7 +63,7 @@ public:
 	//在拖动文件到 Edit控件时
 	int MsgDropFile(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 	void OnDropFile(SEdit* pEdit, wstring strFilePath);
-
+	
 	//接受键盘输入
 	void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 

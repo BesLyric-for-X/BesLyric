@@ -20,6 +20,7 @@
     <file name="png_key_up"   path="image\key_up.png" />
     <file name="png_key_left"   path="image\key_left.png" />
     <file name="png_key_right"   path="image\key_right.png" />
+    <file name="png_key_back"   path="image\key_B.png" />
     <file name="png_key_space"   path="image\key_space.png" />
     <file name="png_key_return"   path="image\key_return.png" />
     

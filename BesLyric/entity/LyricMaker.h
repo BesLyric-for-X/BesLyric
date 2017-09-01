@@ -59,12 +59,19 @@ public:
 	//为下一行歌词 标记上 网易云音乐要求的 时间轴格式，写入m_vLyricOutput中
 	void markNextLine();
 
-	
 	//如果上一行不是空白行的话,添加
 	void markSpaceLine();
 
 	//将 m_vLyricOutput 写入输出文件m_szOutputPathName 中
 	void makingEnd();
+
+
+	//根据当前音乐位置，重新矫正储存的歌词数据
+	void RecorrectLyricData();
+
+	//获得原始歌词(包括插入的空行)；nPos 从第1行开始
+	SStringW GetOriginLyricAt(std::size_t nPos);
+
 
 	//获得当前的输出 文件名
 	void getOutputFileName(TCHAR* name, int lenth = _MAX_FNAME);
@@ -103,6 +110,7 @@ public:
 
 	TCHAR m_szOutputPathName[_MAX_PATH];		/*输出文件的文件 路径和名字 */
 
+	vector<SStringT> m_vLyricOriginWithEmptyLine; /* 带有空行的原歌词 */
 	vector<SStringT> m_vLyricOrigin;			/* 储存原歌词文件 （第一行储存位置为 0 不是 1）*/
 	vector<SStringT> m_vLyricOutput;			/* 储存输出歌词文件 */
 
@@ -114,7 +122,6 @@ public:
 private:
 	CSettingPage *m_pSettingPage;			/* 设置页面指针 */
 
-	ULARGE_INTEGER  startPointF;			/* 对应的 FILETIME ，为了得到时间差，使用FILETIME(单位100ns)*/ 
 	TCHAR outputFileName[_MAX_FNAME];		/* 输出文件的文件名 */
 
 	

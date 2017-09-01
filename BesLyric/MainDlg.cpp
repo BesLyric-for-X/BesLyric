@@ -279,14 +279,14 @@ void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 					//第一次第一行没有数据
 					if(maker.m_nCurLine != 1)
 					{
-						m_pageMaking->P1_Line1->SetWindowTextW(maker.m_vLyricOrigin[maker.m_nCurLine-1-1]);
+						m_pageMaking->P1_Line1->SetWindowTextW(maker.GetOriginLyricAt(maker.m_nCurLine-1));
 					}
 
-					m_pageMaking->P1_Line2->SetWindowTextW(maker.m_vLyricOrigin[maker.m_nCurLine-1]);
+					m_pageMaking->P1_Line2->SetWindowTextW(maker.GetOriginLyricAt(maker.m_nCurLine));
 				
 					if(maker.m_nCurLine != maker.m_nTotalLine)
 					{
-						m_pageMaking->P1_Line3->SetWindowTextW(maker.m_vLyricOrigin[maker.m_nCurLine-1+1]);
+						m_pageMaking->P1_Line3->SetWindowTextW(maker.GetOriginLyricAt(maker.m_nCurLine+1));
 					}
 					else//最后行后面数据为空
 					{
@@ -303,11 +303,12 @@ void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 				//else 执行“left”空出一行的操作
 
-			case VK_LEFT:
+			case VK_RIGHT:
 
 				//更新页面显示
 				if(maker.m_nCurLine == 0)
 				{
+					m_pageMaking->P1_Line1->SetWindowTextW(_T(""));
 					m_pageMaking->P1_Line2->SetWindowTextW(_T(""));
 				
 					//显示空行提示
@@ -315,29 +316,23 @@ void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 				else if(maker.m_nCurLine <= maker.m_nTotalLine )  
 				{
-					//如果上一行不是空行，则需要更新显示面板的第一行和第二行
-					if(!maker.isLastLineSpace())
-					{
-					
-						m_pageMaking->P1_Line1->SetWindowTextW(maker.m_vLyricOrigin[maker.m_nCurLine-1]);
-						m_pageMaking->P1_Line2->SetWindowTextW(_T(""));
+					//更新显示面板的第一行和第二行
 
-						//显示空行提示
-						m_pageMaking->emptyTip1->SetVisible(TRUE,TRUE);
-				
-					}
+					m_pageMaking->P1_Line1->SetWindowTextW(maker.GetOriginLyricAt(maker.m_nCurLine));
+					m_pageMaking->P1_Line2->SetWindowTextW(_T(""));
+
+					//显示空行提示
+					m_pageMaking->emptyTip1->SetVisible(TRUE,TRUE);
+
 					//else 保持原来页面的显示
 				}else if(maker.m_nCurLine == maker.m_nTotalLine+1)//此条件需要考虑到：在最后一行时按下VK_UP，则m_nCurLine m_nTotalLine +1
 				{
-					//如果上一行不是空行，则需要更新显示面板的第一行和第二行
-					if(!maker.isLastLineSpace())
-					{
-						m_pageMaking->P1_Line1->SetWindowTextW(maker.m_vLyricOrigin[maker.m_nCurLine-1-1]);
-						m_pageMaking->P1_Line2->SetWindowTextW(_T(""));
+					//更新显示面板的第一行和第二行
+					m_pageMaking->P1_Line1->SetWindowTextW(maker.GetOriginLyricAt(maker.m_nCurLine-1));
+					m_pageMaking->P1_Line2->SetWindowTextW(_T(""));
 				
-						//显示空行提示
-						m_pageMaking->emptyTip1->SetVisible(TRUE,TRUE);
-					}
+					//显示空行提示
+					m_pageMaking->emptyTip1->SetVisible(TRUE,TRUE);
 				}
 			
 				//更新插入数据
@@ -345,6 +340,7 @@ void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 					break;
 			case VK_RETURN:
+				{
 				this->m_bIsLyricMaking = FALSE;
 
 				//取得输出的文件名
@@ -371,15 +367,43 @@ void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 							或 在左边切换页面“滚动预览” 自己选择文件。"),outPathName),_T("预览提示"),MB_OK|MB_ICONINFORMATION);
 				}
 
-				//重置状态
-				m_pageMaking->backToInit_1();
+					//重置状态
+					m_pageMaking->backToInit_1();
 			
-				//改变预览按钮的状态
-				SButton *btn_preview = FindChildByID2<SButton>(R.id.btn_preview);
-				btn_preview->EnableWindow(TRUE,TRUE);
-				SButton *btn_open_output = FindChildByID2<SButton>(R.id.btn_open_output);
-				btn_open_output->EnableWindow(TRUE,TRUE);
-		
+					//改变预览按钮的状态
+					SButton *btn_preview = FindChildByID2<SButton>(R.id.btn_preview);
+					btn_preview->EnableWindow(TRUE,TRUE);
+					SButton *btn_open_output = FindChildByID2<SButton>(R.id.btn_open_output);
+					btn_open_output->EnableWindow(TRUE,TRUE);
+				}
+				break;
+								
+			case 'B'://回退5秒
+
+				//后退十秒
+				maker.m_musicPlayer.shift(-5*1000);
+				maker.m_musicPlayer.playAfterSeek();
+
+				//撤销 可能已经被标记的数据
+				//重新计算得到当前行数 m_nCurLine
+				maker.RecorrectLyricData();
+
+				//更新界面的显示为撤销后的数据
+				m_pageMaking->UpdataMakerLyricShowing();
+
+				break;
+			case VK_SPACE://暂停
+				
+				DWORD status = maker.m_musicPlayer.getModeStatus();
+				if(status == MCI_MODE_PLAY)
+				{
+					maker.m_musicPlayer.pause();
+				}
+				else if(status == MCI_MODE_PAUSE)
+				{
+					maker.m_musicPlayer.resume();
+				}
+
 				break;
 		}
 	}
@@ -422,12 +446,10 @@ void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if(status == MCI_MODE_PLAY)
 				{
 					player.m_musicPlayer.pause();
-					//this->KillTimer(102);
 				}
 				else if(status == MCI_MODE_PAUSE)
 				{
 					player.m_musicPlayer.resume();
-					//this->SetTimer(102,1);
 				}
 
 				break;

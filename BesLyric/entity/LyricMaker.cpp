@@ -55,6 +55,7 @@ void LyricMaker::setm_szOutputPath(LPCTSTR pathName)
 //重置 LyricMaker的 歌词数据为空, 生成输出的文件名
 void LyricMaker::reloadMaker()
 {
+	m_vLyricOriginWithEmptyLine.clear();
 	m_vLyricOrigin.clear();
 	m_vLyricOutput.clear();
 
@@ -66,17 +67,9 @@ void LyricMaker::reloadMaker()
 //成功播放返回true，需要转换格式返回false
 bool LyricMaker::makingStart()
 {
-	SYSTEMTIME		startPoint;				/* 记录开始的时间点 */
-	GetLocalTime(&startPoint);
-
-	SystemTimeToFileTime(&startPoint,(FILETIME*)&startPointF); 
-
 	//更新基本的行数记录的数据
 	m_nTotalLine = m_vLyricOrigin.size();
 	m_nCurLine = 0;
-
-	//异步播放音乐
-	//PlaySound(m_szMusicPathName,NULL,SND_FILENAME|SND_ASYNC); //不支持MP3
 
 	return playMusic();
 }
@@ -84,14 +77,7 @@ bool LyricMaker::makingStart()
 //为下一行歌词 标记上 网易云音乐要求的 时间轴格式，写入m_vLyricOutput中
 void LyricMaker::markNextLine()
 {
-	SYSTEMTIME		currentPoint;				/* 记录当前的时间点 */
-	ULARGE_INTEGER  currentPointF;				/* 对应的 FILETIME ，为了得到时间差，使用FILETIME*/ 
-
-	GetLocalTime(&currentPoint);
-	SystemTimeToFileTime(&currentPoint,(FILETIME*)&currentPointF); 
-	
-	unsigned __int64 dft=currentPointF.QuadPart-startPointF.QuadPart; 
-	int ms = (int)(dft/10000);//得到相差的毫秒数
+	int ms = m_musicPlayer.getPosition();
 
 	//根据用户设置的时间偏移，修改得到实际记录的毫秒数
 	ms -= m_pSettingPage->m_nTimeShift;
@@ -104,13 +90,13 @@ void LyricMaker::markNextLine()
 
 	//构建新的一行加入m_vLyricOutput中
 	SStringT newLine(timeBuf);
-	newLine.Append(m_vLyricOrigin.at(m_nCurLine-1));
+	newLine.Append(m_vLyricOriginWithEmptyLine.at(m_nCurLine-1));
 	newLine.Append(SStringT(_T("\n")));
 	m_vLyricOutput.push_back(newLine);
 
 	//MB(SStringT().Format(_T("%s"),m_vLyricOutput.at(m_nCurLine-1)));
 
-	setLastLineSpace(false);
+	//setLastLineSpace(false);
 }
 
 //如果上一行不是空白行的话,添加
@@ -118,14 +104,10 @@ void LyricMaker::markSpaceLine()
 {
 	if(!isLastLineSpace())
 	{
-		SYSTEMTIME		currentPoint;				/* 记录当前的时间点 */
-		ULARGE_INTEGER  currentPointF;				/* 对应的 FILETIME ，为了得到时间差，使用FILETIME*/ 
-		GetLocalTime(&currentPoint);
-	
-		SystemTimeToFileTime(&currentPoint,(FILETIME*)&currentPointF); 
-	
-		unsigned __int64 dft=currentPointF.QuadPart-startPointF.QuadPart; 
-		int ms = (int)(dft/10000);//得到相差的毫秒数
+		m_nCurLine += 1;//空行也要也是1行
+		m_nTotalLine += 1;
+
+		int ms = m_musicPlayer.getPosition();
 
 		//根据用户设置的时间偏移，修改得到实际记录的毫秒数
 		ms -= m_pSettingPage->m_nTimeShift;
@@ -139,13 +121,19 @@ void LyricMaker::markSpaceLine()
 		//构建新的一行加入m_vLyricOutput中 (只有时间的空白行)
 		SStringT newLine(timeBuf);
 		newLine.Append(SStringT(_T("\n")));
-
-		//if( m_nCurLine >= m_nTotalLine )//此时添加的空行在文件结尾，而原文件可能没有回车，所以这里多加个回车前缀
-		//	newLine.Insert(0,_T("\n"));
-
 		m_vLyricOutput.push_back(newLine);
 
-		setLastLineSpace(true);
+		// 同时更新 m_vLyricOriginWithEmptyLine
+		int nCount = 0;
+		for(auto iter = m_vLyricOriginWithEmptyLine.begin(); iter != m_vLyricOriginWithEmptyLine.end(); iter++)
+		{
+			if( ++nCount ==  m_nCurLine)//到达空行应该所在的行数，在此迭代器前添加1行空行
+			{
+				m_vLyricOriginWithEmptyLine.insert(iter, SStringW(L""));
+				break;
+			}
+		}
+
 	}
 }
 
@@ -165,6 +153,66 @@ void LyricMaker::makingEnd()
 	//停止播放音乐
 	stopMusic();
 }
+
+//根据当前音乐位置，重新矫正储存的歌词数据
+void LyricMaker::RecorrectLyricData()
+{
+	//撤销 可能已经被标记的数据
+	int msCurrentPos = m_musicPlayer.getPosition();
+
+	//重新填充 m_vLyricOriginWithEmptyLine
+	m_vLyricOriginWithEmptyLine.clear();
+	auto iterOriginLyric = m_vLyricOrigin.begin();
+
+	m_nCurLine = 0; //重新计算 当前行
+	for(auto iter = m_vLyricOutput.begin(); iter!= m_vLyricOutput.end(); iter++) //遍历已经存储的歌词
+	{
+		WCHAR* pBuffer = iter->GetBuffer(1);
+		int m,s,ms;
+		m = s = ms = 0;
+		WCHAR szBuffer[MAX_WCHAR_COUNT_OF_LINE]={0};
+		swscanf(pBuffer, L"[%d:%d.%d]%s", &m, &s, &ms, szBuffer); //获得歌词的时间信息
+		int msTotal = m * 60 * 1000 + s * 1000 + ms;
+		
+		if(msTotal <= msCurrentPos)
+		{
+			m_nCurLine++;
+			
+			//重新填充 m_vLyricOriginWithEmptyLine
+			if( 0 == wcslen(szBuffer))//加入空行
+				m_vLyricOriginWithEmptyLine.push_back(SStringW(L""));
+			else
+				m_vLyricOriginWithEmptyLine.push_back(*iterOriginLyric++);
+		}
+		else
+		{
+			//删除接下来所有剩下的时间行
+			while(iter!=m_vLyricOutput.end())
+			{
+				iter = m_vLyricOutput.erase(iter);
+			}
+			break;
+		}
+	}
+
+	//继续 填充 未填完的歌词
+	while(iterOriginLyric != m_vLyricOrigin.end())
+			m_vLyricOriginWithEmptyLine.push_back(*iterOriginLyric++);
+
+	//重新计算 m_nTotalLine
+	m_nTotalLine = m_vLyricOriginWithEmptyLine.size();
+}
+
+
+//获得原始歌词(包括插入的空行) 
+// nPos 从第1行开始
+SStringW LyricMaker::GetOriginLyricAt(std::size_t nPos)
+{
+	SASSERT( nPos > 0 && nPos <= m_vLyricOriginWithEmptyLine.size() && L"nPos 不在有效范围");
+
+	return m_vLyricOriginWithEmptyLine[nPos-1];
+}
+
 
 //获得当前的输出 文件名
 void LyricMaker::getOutputFileName(TCHAR* name, int lenth)
@@ -192,7 +240,21 @@ void LyricMaker::setLastLineSpace(bool value)
 //上一行是否为空白行
 bool LyricMaker::isLastLineSpace()
 {
-	return this->m_bLastLineSpace;
+	// 分析 m_vLyricOutput 数据，看最后一行数据是否只有时间标签
+	// 如若是，为是空行
+	bool bIsLastLineSpace = false;
+
+	if(m_vLyricOutput.begin() != m_vLyricOutput.end())
+	{
+		WCHAR* pBuffer = (m_vLyricOutput.end()-1)->GetBuffer(1);
+		int m,s,ms;
+		WCHAR szBuffer[MAX_WCHAR_COUNT_OF_LINE]={0};
+		swscanf(pBuffer, L"[%d:%d.%d]%s", &m, &s, &ms,szBuffer); //获得歌词的时间信息
+		if(wcslen(szBuffer)==0) //szBuffer 没有包含整行歌词，但是如果有数据，长度一定大于0
+			bIsLastLineSpace = true;
+	}
+
+	return bIsLastLineSpace;
 }
 
 //从文件获取每行歌词的集合向量
