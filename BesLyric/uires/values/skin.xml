@@ -8,6 +8,7 @@
   <imgframe name="skin_key_up"	src="imgx:png_key_up" />
   <imgframe name="skin_key_left"	src="imgx:png_key_left" />
   <imgframe name="skin_key_right"	src="imgx:png_key_right" />
+  <imgframe name="skin_key_back"	src="imgx:png_key_back" />
   <imgframe name="skin_key_space"	src="imgx:png_key_space" />
   <imgframe name="skin_key_return"	src="imgx:png_key_return" />
 

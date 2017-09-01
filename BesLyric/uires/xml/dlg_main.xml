@@ -32,13 +32,17 @@ translucent="0"
               <imgbtn name="btn_select_output" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
              <window pos="5,[30,-5,@30">
-                <text pos="5,0,@30,-0" valign="bottom">Tip:  </text>
-                <img skin="skin_key_up"></img>
-                <text pos="[5,0,@60,-0" valign="bottom">推上一行</text>
-               <img skin="skin_key_left"></img>
-               <text pos="[5,0,@80,-0" valign="bottom">空出一行</text>
-                <img skin="skin_key_return"></img>
-                <text pos="[5,0,@60,-0" valign="bottom">结束制作</text>
+                <text pos="5,0,@30,-0" valign="bottom">Tip: </text>
+                <img pos="[5,8" skin="skin_key_up"></img>
+                <text pos="[5,0,@56,-0" valign="bottom" font="adding:-1">推上1行</text>
+				<img pos="[5,8" skin="skin_key_right"></img>
+				<text pos="[5,0,@66,-0" valign="bottom" font="adding:-1">空出1行</text>
+				<img pos="[5,8" skin="skin_key_back"></img>
+				<text pos="[5,0,@56,-0" valign="bottom" font="adding:-1">回退5秒</text>
+				<img pos="[5,8" skin="skin_key_space"></img>
+				<text pos="[5,0,@40,-0" valign="bottom" font="adding:-1">暂停</text>
+                <img pos="[5,8" skin="skin_key_return"></img>
+                <text pos="[5,0,@60,-0" valign="bottom" font="adding:-1">结束</text>
 
                 <imgbtn name="btn_load_1" pos="-105,0,@100,-0" skin="app_button" class="normalbtn" tip="从上面路径中载入最新的文件内容">载入最新</imgbtn>
               </window>
@@ -98,12 +102,12 @@ translucent="0"
 
             <window pos="5,[30,-5,@30">
               <text pos="5,0,@30,-0" valign="bottom">Tip:  </text>
-              <img skin="skin_key_left"></img>
-              <text pos="[5,0,@70,-0" valign="bottom">倒退十秒</text>
-              <img skin="skin_key_space"></img>
-              <text pos="[5,0,@45,-0" valign="bottom">暂停</text>
-              <img skin="skin_key_right"></img>
-              <text pos="[5,0,@70,-0" valign="bottom">前进十秒</text>
+              <img pos="[5,8" skin="skin_key_left"></img>
+              <text pos="[5,0,@70,-0" valign="bottom" font="adding:-1">倒退10秒</text>
+              <img pos="[5,8" skin="skin_key_space"></img>
+              <text pos="[5,0,@45,-0" valign="bottom" font="adding:-1">暂停</text>
+              <img pos="[5,8" skin="skin_key_right"></img>
+              <text pos="[5,0,@70,-0" valign="bottom" font="adding:-1">前进10秒</text>
               
               <imgbtn name="btn_load_2" pos="-105,0,@100,-0" skin="app_button" class="normalbtn" tip="从上面路径中载入最新的文件内容">载入最新</imgbtn>
             </window>

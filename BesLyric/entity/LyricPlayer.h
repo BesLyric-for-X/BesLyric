@@ -57,14 +57,6 @@ public:
 	//预览结束
 	void playingEnd(SHostWnd *wnd);
 
-	//设置startPointF 初始值
-	void setStartPoint();
-
-	//得到与startPointF 的毫秒差值
-	// note: 本来用于滚动歌词，利用和播放起点的 本地时间的差值来计算出当前的 绝对时间偏移，由此来决定是否滚动新的一行歌词
-	//		 但在加入了暂停 、前进、后退等功能后，该时间差值已无法用来判断 歌词是否应该滚动，故暂时启用该函数
-	int getMsDiffFromStartPoint();
-
 	//如果快进或者后退都会导致，当前行发生变化，故需要先更新再取值
 	void updateCurLine();
 
@@ -91,10 +83,6 @@ public:
 	int				m_nTotalLine;			/* 带时间信息的 总行数（不包括空行，但包括有时间但是没歌词的行） */
 	
 	MusicPlayer		m_musicPlayer;			/* 负责歌词滚动预览过程中音乐的播放 */
-private:
-	ULARGE_INTEGER  startPointF;			/* 对应的 FILETIME ，为了得到时间差，使用FILETIME(单位100ns)*/ 
-											/* 使用 函数 setStartPoint 设置startPointF 初始值*/
-											/*使用函数 getMsDiffFromStartPoint 得到与startPointF 的毫秒差值 */
 };
 
 

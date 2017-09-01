@@ -50,8 +50,6 @@ bool LyricPlayer::playingStart(SHostWnd *wnd)
 
 	//启动间隔为1毫秒的Timer来更新页面的显示
 	wnd->SetTimer(102,1);
-	//设置参照的时间起点
-	setStartPoint();
 
 	return playMusic();
 }
@@ -81,31 +79,6 @@ bool LyricPlayer::playMusic()
 void LyricPlayer::stopMusic()
 {
 	m_musicPlayer.closeStop();
-}
-
-//设置startPointF 初始值
-void LyricPlayer::setStartPoint()
-{
-	SYSTEMTIME		currentPoint;				/* 记录当前的时间点 */
-	GetLocalTime(&currentPoint);
-	
-	//转换得到得到 startPointF
-	SystemTimeToFileTime(&currentPoint,(FILETIME*)&startPointF);
-}
-
-//得到与startPointF 的毫秒差值
-int LyricPlayer::getMsDiffFromStartPoint()
-{
-	SYSTEMTIME		currentPoint;				/* 记录当前的时间点 */
-	ULARGE_INTEGER  currentPointF;				/* 对应的 FILETIME ，为了得到时间差，使用FILETIME*/ 
-	GetLocalTime(&currentPoint);
-	
-	SystemTimeToFileTime(&currentPoint,(FILETIME*)&currentPointF); 
-	
-	unsigned __int64 dft=currentPointF.QuadPart-startPointF.QuadPart; 
-	int ms = (int)(dft/10000);//得到相差的毫秒数
-	
-	return ms;
 }
 
 //如果快进或者后退都会导致，当前行发生变化，故需要先更新再取值
