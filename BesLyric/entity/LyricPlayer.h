@@ -86,12 +86,49 @@ public:
 };
 
 
+class LrcProcessor{
+public:
+	//使用读取的的文件的所有行初始化Lrc处理器
+	LrcProcessor(vector<SStringW> vecLines, bool bDealOffset = true);
+
+	//当前歌词文件是否有效
+	bool IsLrcFileValid();
+
+	//获得网易云音乐支持的格式
+	vector<TimeLineInfo> GetNeteaseLrc();
+
+	//生成Lrc文件
+	bool GenerateNeteaseLrcFile(SStringW strFilePath);
+
+private:
+	//处理1行
+	bool DealOneLine(SStringW strLine);
+
+	//按歌词时间升序比较
+	bool CompareWithIncreaceTime(const TimeLineInfo & L1, const TimeLineInfo & L2);
+
+private:
+	bool m_bDealOffset;						/* 表示是否处理LRC文件中的时间偏移 */
+	SStringW	m_strTitle;					/* 歌曲标题 */
+	SStringW	m_strArtist;				/* 艺术家 */
+	SStringW	m_strAlbum;					/* 专辑 */
+	SStringW	m_strEditor;				/* 编辑的人 */
+	int			m_nOffset;					/* 时间偏移量，为正数表示整体提前 */
+
+	vector<TimeLineInfo> m_vecNeteaseLrc;	/* 储存用于网易云的歌词信息 */
+
+	bool	m_bIsLrcFileValid;				/* 表示歌词文件是否有效 */
+};
+
+
 /*
 *	@brief 储存处理一行歌词文件； 处理lrc文件（带时间轴的歌词文件）的辅助类
 */
 class TimeLineInfo
 {
 public:
+	TimeLineInfo(){}//无参构造函数
+
 	TimeLineInfo(SStringT timeLine)
 	{
 		//初始化类的基本成员的信息
@@ -107,6 +144,11 @@ public:
 		else
 			m_bIsEmptyLine = false;
 	}
+	
+	 bool operator < (const TimeLineInfo &m)const {
+                return m_nmSesonds < m.m_nmSesonds;
+      }
+
 private:
 	//从时间标签字符串得到对应的毫秒时间
 	int TimeStringToMSecond(LPCTSTR timeStr, int length)

@@ -307,7 +307,8 @@ void AutoUpdateThread::SendLoginInfo()
 			{
 				auto beg = iter->Find(L'[')+1;
 				auto end = iter->Find(L']');
-				strIP = iter->Right(beg).Left(end);
+				strIP = iter->Left(end);
+				strIP = strIP.substr(beg);
 				break;
 			}
 		}

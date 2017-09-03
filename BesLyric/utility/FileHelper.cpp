@@ -18,6 +18,8 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 	m_lpszMode = NULL;
 	m_pf = NULL;
 	m_encodingType = ENCODING_TYPE::OTHER;
+	char *szBufferTest = NULL;
+	int nTestLen = 0;
 
 	if(_tcscmp(mode,_T("r")) == 0)
 	{
@@ -32,7 +34,7 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 			in.seekg(0,ios::end);
 			len = in.tellg();
 			buf = new char[len];
-			in.seekg(0,SEEK_SET);
+			in.seekg(0,ios::beg);
 			in.read(buf,len);
 
 			if(len < 2)//文件内容太少，读取失败
@@ -40,6 +42,14 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 			
 			firstByte = buf[0];
 			secondByte = buf[1];
+
+			//读取1000个字节（或整个文件长度），为后面区别 utf-8 无Bom 和 ascii 提供测试数据
+			nTestLen = len < 1000? len : 1000;
+			szBufferTest = new char[nTestLen];
+			
+			in.clear();				//clear 后 seekg 才有效
+			in.seekg(0,ios::beg);
+			in.read(szBufferTest,nTestLen);
 
 			in.close();
 			delete buf;
@@ -53,10 +63,19 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 		else if(firstByte == 0xfe && secondByte == 0xff)
 			m_encodingType = ENCODING_TYPE::UNICODE_BIG_ENDIAN;
 		else 
-			m_encodingType = ENCODING_TYPE::ASCII;	//默认ascii 码和其他编码，以ascii 方式处理
+		{
+			//测试是否是 utf-8 无bom格式
+			if(IsUTF8WithNoBom(szBufferTest, nTestLen))
+				m_encodingType = ENCODING_TYPE::UTF_8_NO_BOM;
+			else
+				m_encodingType = ENCODING_TYPE::ASCII;	//默认ascii 码和其他编码，以ascii 方式处理
+		}
+
+		if(szBufferTest)
+			delete szBufferTest;
 
 		//根据不同的编码，打开文件
-		if(m_encodingType == ENCODING_TYPE::UTF_8)
+		if(m_encodingType == ENCODING_TYPE::UTF_8 || m_encodingType == ENCODING_TYPE::UTF_8_NO_BOM)
 			m_pf = _tfopen(pathFile, _T("r,ccs=utf-8"));
 		else if(m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN)
 			m_pf = _tfopen(pathFile, _T("r,ccs=UNICODE"));
@@ -113,6 +132,56 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 
 	m_lpszPathFile = pathFile;
 	m_lpszMode = mode;
+}
+
+//测试数据是否是UTF-8 无Bom格式 
+bool File::IsUTF8WithNoBom(const void* pBuffer, long size)
+{
+	//参考 http://blog.csdn.net/bladeandmaster88/article/details/54767487
+
+	bool IsUTF8 = true;     
+    unsigned char* start = (unsigned char*)pBuffer;     
+    unsigned char* end = (unsigned char*)pBuffer + size;     
+    while (start < end)     
+    {     
+        if (*start < 0x80) // (10000000): 值小于0x80的为ASCII字符     
+        {     
+            start++;     
+        }     
+        else if (*start < (0xC0)) // (11000000): 值介于0x80与0xC0之间的为无效UTF-8字符     
+        {     
+            IsUTF8 = false;     
+            break;     
+        }     
+        else if (*start < (0xE0)) // (11100000): 此范围内为2字节UTF-8字符     
+        {     
+            if (start >= end - 1)      
+                break;     
+            if ((start[1] & (0xC0)) != 0x80)     
+            {     
+                IsUTF8 = false;     
+                break;     
+            }     
+            start += 2;     
+        }      
+        else if (*start < (0xF0)) // (11110000): 此范围内为3字节UTF-8字符     
+        {     
+            if (start >= end - 2)      
+                break;     
+            if ((start[1] & (0xC0)) != 0x80 || (start[2] & (0xC0)) != 0x80)     
+            {     
+                IsUTF8 = false;     
+                break;     
+            }     
+            start += 3;     
+        }      
+        else    
+        {     
+            IsUTF8 = false;     
+            break;     
+        }     
+    }     
+    return IsUTF8;     
 }
 
 

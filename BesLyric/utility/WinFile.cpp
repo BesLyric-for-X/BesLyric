@@ -57,7 +57,7 @@ bool FileOperator::ReadAllLinesW(File& encodingFile,  OUT vector<SStringW> *line
 		return false;
 	
 	if(encodingFile.m_encodingType == ENCODING_TYPE::UTF_8 || encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_BIG_ENDIAN 
-		|| encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN )
+		|| encodingFile.m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN || encodingFile.m_encodingType == ENCODING_TYPE::UTF_8_NO_BOM)
 	{
 		wchar_t line[MAX_WCHAR_COUNT_OF_LINE+1];
 	
