@@ -24,7 +24,8 @@ translucent="0"
               <imgbtn name="btn_select_music_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
               <text pos="5,[5,@80,@30">选择歌词：</text>
-              <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_lyric_1" cueText="  拖放文件到这里 或 点击“选择”"></edit>
+              <edit pos="[5,{0,-115,@30" font="adding:-1" readonly="1" name="edit_lyric_1" cueText="  拖放文件到这里 或 点击“选择”"></edit>
+              <imgbtn name="btn_edit_origin_lyric" pos="[5,{0,@50,@30" tip="编辑后点击“载入最新”按钮后生效" skin="app_button" class="normalbtn">编辑</imgbtn>
               <imgbtn name="btn_select_lyric_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
               <text pos="5,[5,@80,@30">输出目录：</text>

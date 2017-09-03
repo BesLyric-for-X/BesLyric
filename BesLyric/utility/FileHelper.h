@@ -63,6 +63,10 @@ public:
 		//如果已存在，则释放资源
 		if(m_pf) fclose(m_pf);
 	}
+private:
+	//测试数据是否是UTF-8 无Bom格式  
+	bool IsUTF8WithNoBom(const void* pBuffer, long size);   
+
 public:
 	LPCTSTR m_lpszPathFile;		/* 文件路径和名字串*/
 	LPCTSTR m_lpszMode;			/* 打开文件的模式 */

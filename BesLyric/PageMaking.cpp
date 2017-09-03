@@ -310,6 +310,20 @@ void CPageMaking::OnBtnOpenOutput()
 	}
 }
 
+//打开编辑选中的歌词文件
+void CPageMaking::OnEditLyric()
+{
+	if(_tcslen(M()->maker.m_szLyricPathName)!=0)
+	{	
+		//用window默认编辑器打开歌词文件
+		ShellExecute(NULL,L"open",L"notepad", M()->maker.m_szLyricPathName,NULL,SW_SHOWNORMAL);
+	}
+	else
+	{
+		_MessageBox(M()->m_hWnd, L"请先选择歌词文件 :)", L"提示", MB_OK|MB_ICONINFORMATION);
+	}
+}
+
 //第一个页面(歌词制作)：回到“加载按钮”按下后的状态
 void CPageMaking::backToInit_1()
 {
