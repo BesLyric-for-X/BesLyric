@@ -1,0 +1,63 @@
+<include>
+	<window pos="10,5,-5,-5">
+		  <text pos="5,5,@80,@30">选择音乐：</text>
+		  <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="-1"  name="edit_music_2" cueText="  拖放文件到这里 或 点击“选择”"></edit>
+		  <imgbtn name="btn_select_music_2" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
+		  <text pos="5,[5,@80,@30">滚动歌词：</text>
+		  <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="-1"  name="edit_lyric_2" cueText="  拖放文件到这里 或 点击“选择”"></edit>
+		  <imgbtn name="btn_select_lyric_2" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
+
+		  <window pos="5,[30,-5,@30">
+			<text pos="5,0,@30,-0" valign="bottom">Tip:  </text>
+			<img pos="[5,8" skin="skin_key_left"></img>
+			<text pos="[5,0,@70,-0" valign="bottom" font="adding:-1">倒退10秒</text>
+			<img pos="[5,8" skin="skin_key_space"></img>
+			<text pos="[5,0,@45,-0" valign="bottom" font="adding:-1">暂停</text>
+			<img pos="[5,8" skin="skin_key_right"></img>
+			<text pos="[5,0,@70,-0" valign="bottom" font="adding:-1">前进10秒</text>
+			
+			<imgbtn name="btn_load_2" pos="-105,0,@100,-0" skin="app_button" class="normalbtn" tip="从上面路径中载入最新的文件内容">载入最新</imgbtn>
+		  </window>
+
+		  <window pos="5,[10,-5,@80" colorBkgnd="#ffffff22" colorBorder="#000000"  margin-x="1" margin-y="1">
+			<text name="line_music_2" pos="80,|0,-8,@28" font="adding:-1" valign="center" colorBkgnd="#ffffff44"  colorBorder="@color/gray" margin-x="1" margin-y="1"  offset="0,-1.1" padding="5"></text>
+			<text name="line_lyric_2" pos="80,|0,-8,@28" font="adding:-1" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1" offset="0,0.1" padding="5" ></text>
+
+			<text pos="5,|0,75,@25" align="center" valign="center" offset="0,-1.1">当前音乐：</text>
+			<text pos="5,|0,75,@25" align="center" valign="center" offset="0,0.1">当前歌词：</text>
+		  </window>
+    
+		  <window name ="wnd_lyric_display" pos="5,[2,-5,@130" colorBkgnd="#ffffff22" colorBorder="#000000"  margin-x="1" margin-y="1">
+			<text name="highlight_bkgnd_2" pos="sib.left@65001:-2,sib.top@65001:-2,sib.right@65001:2,sib.bottom@65001:2"
+				  colorBkgnd="#3366ff44" visible="0"/>
+
+			<text name="2_line_1" pos="80,|0,-8,@30" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1"  offset="0,-1.8" padding="5"></text>
+			<text name="2_line_2" pos="80,|0,-8,@30" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1" offset="0,-0.5" padding="5" id="65001"></text>
+			<text name="2_line_3" pos="80,|0,-8,@30" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1" offset="0,0.8" padding="5"></text>
+
+			<text pos="5,|0,75,@30" align="center" valign="center" offset="0,-1.8" name="text_time_2" colorBkgnd="#ffffff44">00:00.000</text>
+			<text pos="5,|0,75,@30" align="center" valign="center" offset="0,-0.5">当前行：</text>
+			<text pos="5,|0,75,@30" align="center" valign="center" offset="0,0.8">下一行：</text>
+
+			<text name="empty_tip_block_2" pos="sib.right@65001:-50,sib.top@65001:2,sib.right@65001:-2,sib.bottom@65001:-2"
+				  colorBkgnd="#000000aa" colorText="#99aaffee" align="center" visible="0" >空行</text>
+		  </window>
+      
+		<window pos="5,[5,-5,@15" >
+			<progress name="progress_music_2" bkgndSkin="skin_progress_background" posSkin="skin_progress_pos" pos="0,0,-0,4" offset="0,0" value="0" min="0" max="1000"/>
+		</window>
+      
+		<window pos="5,[5,-5,@30">
+			<imgbtn name="btn_manual_adjust" pos="5,0,@120,-0" enable="0" skin="app_button" class="normalbtn" tip="手动修改歌词文件">手动微调时间轴</imgbtn>
+        
+			<imgbtn name="btn_start_playing" pos="-105,0,@100,-0" enable="0" skin="app_button" class="normalbtn">开始播放</imgbtn>
+			<imgbtn name="btn_end_preview" pos="{-105,0,@100,-0" enable="0" skin="app_button" class="normalbtn">结束预览</imgbtn>
+
+			<imgbtn name="btn_sound_open_2" pos="{-150,7" visible="1" skin="skin_btn_sound_open" class="normalbtn"></imgbtn>
+			<imgbtn name="btn_sound_close_2" pos="{0,7" visible="0" skin="skin_btn_sound_close" class="normalbtn"></imgbtn>
+
+			<sliderbar name="slider_sound_2" pos="[3,3,@120,30" thumbInRail="0" value="100" min="0" max="100" thumbSkin="skin_slider_thumb"  bkgndSkin="skin_slider_background" posSkin="skin_slider_frontground"/>
+
+        </window>
+	</window>
+</include>

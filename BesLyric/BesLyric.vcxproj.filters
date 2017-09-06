@@ -112,6 +112,9 @@
     <ClCompile Include="DlgCheckIntegrity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PageSearchLyric.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -178,6 +181,12 @@
     </ClInclude>
     <ClInclude Include="entity\FileDroper.h">
       <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="PageSearchLyric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\Downloader.h">
+      <Filter>Header Files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

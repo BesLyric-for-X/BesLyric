@@ -201,7 +201,7 @@ LrcProcessor::LrcProcessor(vector<SStringW> vecLines, bool bDealOffset)
 	{
 		for(auto iter = m_vecNeteaseLrc.begin(); iter != m_vecNeteaseLrc.end(); iter++)
 		{
-			iter->m_nmSesonds = iter->m_nmSesonds + m_nOffset < 0 ? 0 : iter->m_nmSesonds + m_nOffset;
+			iter->m_nmSesonds = iter->m_nmSesonds - m_nOffset < 0 ? 0 : iter->m_nmSesonds - m_nOffset;
 		}
 	}
 }

@@ -5,6 +5,7 @@
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
 
+#include "..\utility\Downloader.h"
 #include "..\utility\SplitFile.h"
 #include "..\DlgCheckIntegrity.h"
 
@@ -113,7 +114,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 		
 		UpdateProgressUI(60, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...").c_str());
 		//先从 LINK_DOWNLOAD_SERVER 下载 ffmpeg
-		bool bFirstTrySucceed = AutoUpdateThread::DownloadFile(LINK_DOWNLOAD_SERVER + L"ffmpeg.exe", strFfmpeg);
+		bool bFirstTrySucceed = CDownloader::DownloadFile(LINK_DOWNLOAD_SERVER + L"ffmpeg.exe", strFfmpeg);
 		if(!bFirstTrySucceed)//下载不成功
 		{
 			//备用下载方案
@@ -125,7 +126,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			wstring strLinkExt = LINK_SERVER_PATH + strNameExt;
 
 			//下载 ffmpeg.ext.zip
-			bool bRet = AutoUpdateThread::DownloadFile(strLinkExt, strFileExt);
+			bool bRet = CDownloader::DownloadFile(strLinkExt, strFileExt);
 		
 
 			//下载 ffmpeg.1.zip - ffmpeg.4.zip 4个文件
@@ -139,7 +140,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 					wstring strFileSplited = strDir +L"\\"+ strNameSplited;
 					wstring strLinkSplited = LINK_SERVER_PATH + strNameSplited;
 
-					bRet = AutoUpdateThread::DownloadFile(strLinkSplited, strFileSplited);
+					bRet = CDownloader::DownloadFile(strLinkSplited, strFileSplited);
 					if(false == bRet)
 						break;
 				}

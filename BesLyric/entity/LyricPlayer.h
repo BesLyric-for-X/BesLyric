@@ -181,6 +181,8 @@ private:
 
 		for(j=0, i = pos2+1; i<pos3; i++,j++ )
 			szMSecond[j] = timeStr[i];
+		while(j<=2)
+			szMSecond[j++] = L'0';
 		szMSecond[j] = _T('\0');
 
 		int millisecond = DecStrToDecimal(szMinute) * 60000 + DecStrToDecimal(szSecond)*1000 + DecStrToDecimal(szMSecond);

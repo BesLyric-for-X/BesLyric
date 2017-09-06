@@ -1,0 +1,35 @@
+<include>
+	<window pos="10,10,-10,-10">
+    
+		<text pos="5,[5,@80,@30" font="adding:4" >时间轴</text>
+		<window pos="0,[10,-10,@40" tip="设置后，制作歌词时插入的时间的值 将提前这里所指定的时间值，一般为正数，建议设置300-500">
+			<text pos="5,5,@100,@30" font="adding:-1">提前毫秒数：</text>
+			<edit pos="[0,{0,@100,@30"  notifyChange="1" number="1" name="edit_time_shift"></edit>
+			<imgbtn name="btn_modify_setting_shift_time" pos="[10,{0,@80,@30" enable="1" skin="app_button" class="normalbtn">修改</imgbtn>
+		</window>
+		
+		<hr pos="5,[15,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff22"/>
+		
+		<text pos="5,[15,@80,@30" font="adding:4">默认目录</text>
+		<window pos="0,[10,-10,@120"  tip="默认目录为选择文件、文件夹时默认打开的目录">
+		  <imgbtn pos="5,[5,@50,@30" name="btn_select_default_music_path" skin="app_button" class="normalbtn">选择</imgbtn>
+		  <text pos="[15,{0,@80,@30">音乐目录：</text>
+		  <text pos="[5,{0,-5,@30" font="adding:-1"  name="text_default_music_path" >默认</text>
+
+		  <imgbtn pos="5,[5,@50,@30" name="btn_select_default_lyric_path"  skin="app_button" class="normalbtn">选择</imgbtn>
+		  <text pos="[15,{0,@80,@30">歌词目录：</text>
+		  <text pos="[5,{0,-5,@30" font="adding:-1"  name="text_default_lyric_path" >默认</text>
+
+		  <imgbtn pos="5,[5,@50,@30"  name="btn_select_default_output_path" skin="app_button" class="normalbtn">选择</imgbtn>
+		  <text pos="[15,{0,@80,@30">输出目录：</text>
+		  <text pos="[5,{0,-5,@30" font="adding:-1"  name="text_default_output_path" >默认</text>
+		</window>
+		<hr pos="5,[15,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff22"/>
+		
+		<text pos="5,[15,@120,@30" font="adding:4" >升级与检测</text>
+		<window pos="0,[10,-10,@100" tip="升级检测间隔为10分钟1次，另外，每次勾选都会触发一次检测">
+			<check pos="5,0" focusable="0" font="adding:0" skin="skin_check" name="check_auto_update">自动检测升级</check>
+			<imgbtn pos="0,[15,@100,@30"  name="btn_check_integrity" skin="app_button" class="normalbtn">完整性检测</imgbtn>
+		</window>
+	</window>
+</include>

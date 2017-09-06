@@ -127,6 +127,7 @@
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="PageMaking.cpp" />
     <ClCompile Include="PageResult.cpp" />
+    <ClCompile Include="PageSearchLyric.cpp" />
     <ClCompile Include="PageSetting.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -153,9 +154,11 @@
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="PageMaking.h" />
     <ClInclude Include="PageResult.h" />
+    <ClInclude Include="PageSearchLyric.h" />
     <ClInclude Include="PageSetting.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="utility\Downloader.h" />
     <ClInclude Include="utility\FileHelper.h" />
     <ClInclude Include="utility\SplitFile.h" />
     <ClInclude Include="utility\SSingleton.h" />

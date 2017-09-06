@@ -4,7 +4,7 @@
   	<imglist name="skin_traymenu_icons"	src="img:traymenu_icons" states="9"/>
 
   <imglist name="skin_tab_main" src="imgx:png_tab_main" states="3"/>
-  <imglist name="skin_page_icons"	src="imgx:png_page_icons" states="4" alpha="240"/>
+  <imglist name="skin_page_icons"	src="imgx:png_page_icons" states="5" alpha="240"/>
   <imgframe name="skin_key_up"	src="imgx:png_key_up" />
   <imgframe name="skin_key_left"	src="imgx:png_key_left" />
   <imgframe name="skin_key_right"	src="imgx:png_key_right" />
@@ -35,5 +35,13 @@
   
   <imglist focusable="0" name="skin_check" src="imgx:png_check" states="8"/>
   
+  <imglist name="skin_tab_red" src="imgx:png_tab_red" states="3"/>
+  <imglist name="skin_tab_red_frame" src="imgx:png_tab_red_frame" states="1"/>
+  <imglist name="skin_button_download" src="imgx:png_button_download" states="3"/>
+  <imglist name="skin_button_search" src="imgx:png_button_search" states="3"/>
+
+  <imgframe name="skin_lcex_header" src="imgx:png_lcex_header" states="4" margin-x="2" margin-y="2"/>
+  <imgframe name="skin_lcex_header_arrow" src="imgx:png_lcex_header_arrow" states="2"  />
   
+  <vscrollbar name="skin_vscrollbar" src="imgx:png_vscroll" states="3" margin="4"/>
 </skin>

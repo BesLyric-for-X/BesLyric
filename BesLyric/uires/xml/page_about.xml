@@ -1,0 +1,42 @@
+<include>
+    <window pos="10,10,-10,-10">
+           
+        <text pos="15,[15,@200,@30" multilines="1" maxWidth="550">
+            本软件 名称：BesLyric  
+        </text>
+
+        <text pos="[15,{0,@60,@30" multilines="1" maxWidth="550">
+            版本号：
+        </text>
+		
+        <text pos="[0,{0,@50,@30" name="txt_version_number" multilines="1" maxWidth="550">
+           
+        </text>
+		
+		
+
+      <text pos="15,[15,-5,@40" multilines="1">
+        本软件 试图提供给用户一个 上手简单、功能实用的 滚动歌词制作软件，为广大网易云音乐爱好者提供一个良好的歌词制作体验。
+      </text>
+
+      <text pos="15,[10,@260,@20">查看软件详细说明 以及 解决遇到问题: </text>
+      <link href="http://www.cnblogs.com/BensonLaur/p/6262565.html" class="cls_btn_weblink">点击这里</link>
+      
+
+      <hr pos="10,[20,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff55"/>
+      
+      <text pos="15,[35,-5,@30" multilines="1">
+        本软件 自由开源，LICENSE 为GPL，对软件实现感兴趣的童鞋可以访问实现的代码。
+      </text>
+      
+      <text pos="15,[5,@95,@20">Github 源码: </text>
+      <link href="https://github.com/BensonLaur/BesLyric" class="cls_btn_weblink">点击这里</link>
+
+      <text pos="15,[30,-5,@40" multilines="1">
+        本软件 使用SOUI开源界面库进行开发（一个基于win32 API的 C++ 开源界面库，LICENSE: MIT），没有这个库有就没有这个个人非常喜爱的界面，在此非常感谢SOUI group。
+      </text>
+      <text pos="15,[10,@85,@25">SOUI 介绍: </text>
+      <link href="https://www.oschina.net/p/soui" class="cls_btn_weblink">点击这里</link>
+
+    </window>
+</include>

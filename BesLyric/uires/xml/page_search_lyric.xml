@@ -1,0 +1,104 @@
+<include>
+    <window pos="0,0,-0,-0">
+		<window pos="0,0,-0,@160">
+			<text pos="18,[5,@80,@30" font="adding:5" >歌词搜索</text>
+			<window pos="{0,[10,@250,@65" font="adding:-1" >
+				<text pos="5,[5,@60,@25" colorText="#ffffffbb" align="right" >歌曲名:</text>
+				<edit pos="[10,{0,@150,@25"  name="edit_search_lyric_name" cueText=" 必填"></edit>
+				<text pos="5,[5,@60,@25" colorText="#ffffffbb" align="right" >歌手:</text>
+				<edit pos="[10,{0,@150,@25" name="edit_search_lyric_artist" cueText=" 选填"></edit>
+			</window>
+			<window  pos="[0,{0,-0,@65" font="adding:-1" >
+				<imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_lyric_using_program" skin="skin_button_search" class="normalbtn_light" tip="不填歌手一般将搜出更多结果">软件搜索</imgbtn>
+				<imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_lyric_using_baidu" skin="skin_button_search" class="normalbtn_light" >百度搜索</imgbtn>
+			</window>
+			<window name="window_search_lyric_tip" font="adding:-1" pos="18,[10,-0,@30" >
+				<text pos="5,[5" >搜索</text> 
+				<window pos="[2,{0" >
+					<text pos="[0,{0"> 歌曲名</text>
+					<text pos="[0,{0" name="txt_search_lyric_name_tip" colorText="#4682B4">“我们的歌”</text>
+				</window>
+				<window pos="[0,{0" name="window_search_lyric_artist_tip" display="0">
+					<text pos="[0,{0">、歌手</text>
+					<text pos="[0,{0" name="txt_search_lyric_artist_tip" colorText="#4682B4">“王力宏”</text>
+				</window>
+				<text pos="[0,{0" name="txt_search_lyric_result_tip">，找到10个歌词文件</text>
+			</window>
+		</window>
+		
+		<window  pos="0,[0,-0,-0">
+			<tabctrl pos="0,0,-0,-0" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="33" tabWidth="85"  icon-x="5" icon-y="4" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffffbb">
+				<page title="歌词列表">
+					
+					 <mclistview name="mclv_lyric" pos="0,1,-0,-0" headerHeight="30" >
+						<header align="center" colorText="#ffffffbb"  sortSkin="skin_lcex_header_arrow" itemSkin="skin_lcex_header" itemSwapEnable="0" fixWidth="0" font="underline:0,adding:-3" sortHeader="1" >
+						  <items>
+							<item width="30"></item>
+							<item width="200">音乐标题</item>
+							<item width="100">歌手</item>
+							<item width="100">来源</item>
+							<item width="200">操作</item>
+						  </items>
+						</header>
+						<template itemHeight="28" colorHover="#ffffff10" colorSelected="#ffffff20">
+						  <window name="col1" clipClient="1">
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_lyric_num" ></text>
+						  </window>
+						  <window name="col2" clipClient="1">
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_name" font="adding:-3"  dotted="1"></text>
+						  </window>
+						  <window name="col3" clipClient="1">
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_artist"   font="adding:-3"  ></text>
+						  </window>
+						  <window name="col4" clipClient="1">
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_origin"  font="adding:-3" ></text>
+						  </window>
+						  <window name="col5" clipClient="1">
+							<imgbtn pos="0,3,|-2,@23" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view_origin">查看原歌词</imgbtn>
+							<imgbtn pos="|2,3,-0,@23" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view_lrc">查看LRC歌词</imgbtn>
+						  </window>            
+						</template>
+
+					  </mclistview>
+				</page>
+				<page title="原歌词" font="adding:-2">
+					<window pos="0,[5,-1,@40">
+						<text pos="5,6,@70,@25">保存路径：</text>
+						<edit pos="[0,{0,-60,@25" font="adding:-1" readonly="1" name="edit_origin_lyric_path" cueText="  拖放文件夹到这里 或 点击“选择”"></edit>
+						<imgbtn name="btn_select_origin_lyric_path" pos="[5,{0,-5,@25" skin="app_button" class="normalbtn_light">选择</imgbtn>
+					</window>
+					<window pos="0,[0,-1,@30">
+						<text pos="5,2,@70,@25">音乐标题：</text>
+						<edit pos="[0,{0,@200,@25" font="adding:-1" readonly="1" name="edit_origin_lyric_name"></edit>
+						<text pos="|-15,{0,@40,@25">歌手：</text>
+						<edit pos="[5,{0,@140,@25" font="adding:-1" readonly="1" name="edit_origin_lyric_artist"></edit>
+						<imgbtn name="btn_select_origin_lyric_path" pos="-125,{0,-5,@25" padding="25,0,0,0" skin="skin_button_download" class="normalbtn_light">保存原歌词</imgbtn>
+					</window>
+					<edit pos="0,[5,-5,-5" multiLines="1" readonly="0" name="edit_origin_lyric_content" vscrollBar="1" sbSkin="skin_vscrollbar" wordWrap="1"  autoVscroll="1" hscrollBar="0">
+						
+					</edit>
+				</page>
+				<page title="LRC歌词" font="adding:-2">
+					<window pos="0,[5,-1,@40">
+						<text pos="5,6,@70,@25">保存路径：</text>
+						<edit pos="[0,{0,-60,@25" font="adding:-1" readonly="1" name="edit_lrc_lyric_path" cueText="  拖放文件夹到这里 或 点击“选择”"></edit>
+						<imgbtn name="btn_select_lrc_lyric_path" pos="[5,{0,-5,@25" skin="app_button" class="normalbtn_light">选择</imgbtn>
+					</window>
+					<window pos="0,[0,-1,@30">
+						<text pos="5,2,@70,@25">音乐标题：</text>
+						<edit pos="[0,{0,@200,@25" font="adding:-1" readonly="1" name="edit_lrc_lyric_name"></edit>
+						<text pos="|-15,{0,@40,@25">歌手：</text>
+						<edit pos="[5,{0,@140,@25" font="adding:-1" readonly="1" name="edit_lrc_lyric_artist"></edit>
+						<imgbtn name="btn_select_lrc_lyric_path" pos="-135,{0,-5,@25" padding="25,0,0,0" skin="skin_button_download" class="normalbtn_light">保存LRC歌词</imgbtn>
+					</window>
+					<edit pos="0,[5,-5,-5" multiLines="1" readonly="0" name="edit_lrc_lyric_content" vscrollBar="1" sbSkin="skin_vscrollbar" wordWrap="1"  autoVscroll="1" hscrollBar="0">
+						
+					</edit>
+				
+				</page>
+			</tabctrl>
+		</window>
+		
+		<!-- tabInterSkin="skin_tab_left_splitter" iconSkin="skin_small_icons" -->
+	</window>
+</include>
