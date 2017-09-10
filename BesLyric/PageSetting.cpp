@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "PageSetting.h"
 #include <fstream>
-#include "utility/FileHelper.h"
-#include "utility/WinFile.h"
-#include "lib\tinyxml2.h"
+#include "utility\WinDialog.h"
+#include "utility\WinFile.h"
+#include "lib\xml\tinyxml2.h"
 #include <sstream>
-#include "entity/AutoUpdateThread.h"
+#include "entity\AutoUpdateThread.h"
 #include "entity\CheckIntegrityThread.h"
 using namespace std;
 using namespace tinyxml2;

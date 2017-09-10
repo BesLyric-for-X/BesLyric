@@ -1,0 +1,73 @@
+<include>
+     <window pos="10,5,-5,-5">
+        <text pos="5,5,@80,@30">选择音乐：</text>
+        <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_music_1" cueText="  拖放文件到这里 或 点击“选择”" ></edit>
+        <imgbtn name="btn_select_music_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
+
+        <text pos="5,[5,@80,@30">选择歌词：</text>
+        <edit pos="[5,{0,-115,@30" font="adding:-1" readonly="1" name="edit_lyric_1" cueText="  拖放文件到这里 或 点击“选择”"></edit>
+        <imgbtn name="btn_edit_origin_lyric" pos="[5,{0,@50,@30" tip="编辑后点击“载入最新”按钮后生效" skin="app_button" class="normalbtn_light">编辑</imgbtn>
+        <imgbtn name="btn_select_lyric_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
+
+        <text pos="5,[5,@80,@30">输出目录：</text>
+        <edit pos="[5,{0,-60,@30" font="adding:-1" readonly="1" name="edit_output" cueText="  拖放文件到这里 或 点击“选择”"></edit>
+        <imgbtn name="btn_select_output" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
+
+       <window pos="5,[30,-5,@30">
+          <text pos="5,0,@30,-0" valign="bottom">Tip: </text>
+          <img pos="[5,8" skin="skin_key_up"></img>
+          <text pos="[5,0,@56,-0" valign="bottom" font="adding:-1">推上1行</text>
+		<img pos="[5,8" skin="skin_key_right"></img>
+		<text pos="[5,0,@66,-0" valign="bottom" font="adding:-1">空出1行</text>
+		<img pos="[5,8" skin="skin_key_back"></img>
+		<text pos="[5,0,@56,-0" valign="bottom" font="adding:-1">回退5秒</text>
+		<img pos="[5,8" skin="skin_key_space"></img>
+		<text pos="[5,0,@40,-0" valign="bottom" font="adding:-1">暂停</text>
+          <img pos="[5,8" skin="skin_key_return"></img>
+          <text pos="[5,0,@60,-0" valign="bottom" font="adding:-1">结束</text>
+
+          <imgbtn name="btn_load_1" pos="-105,0,@100,-0" skin="app_button" class="normalbtn" tip="从上面路径中载入最新的文件内容">载入最新</imgbtn>
+        </window>
+
+        <window pos="5,[8,-5,@80" colorBkgnd="#ffffff22" colorBorder="#000000"  margin-x="1" margin-y="1">
+          <text name="line_music_1" pos="80,|0,-8,@28" font="adding:-1" valign="center" colorBkgnd="#ffffff44"  colorBorder="@color/gray" margin-x="1" margin-y="1"  offset="0,-1.1" padding="5"></text>
+          <text name="line_lyric_1" pos="80,|0,-8,@28" font="adding:-1" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1" offset="0,0.1" padding="5" ></text>
+
+          <text pos="5,|0,75,@25" align="center" valign="center" offset="0,-1.1">当前音乐：</text>
+          <text pos="5,|0,75,@25" align="center" valign="center" offset="0,0.1">当前歌词：</text>
+        </window>
+      
+        <window pos="5,[2,-5,@130" colorBkgnd="#ffffff22" colorBorder="#000000"  margin-x="1" margin-y="1">
+          <text name="highlight_bkgnd" pos="sib.left@65000:-2,sib.top@65000:-2,sib.right@65000:2,sib.bottom@65000:2"
+                colorBkgnd="#3366ff44" visible="0"/>
+          
+          <text name="1_line_1" pos="80,|0,-8,@30" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1"  offset="0,-1.8" padding="5"></text>
+          <text name="1_line_2" pos="80,|0,-8,@30" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1" offset="0,-0.5" padding="5" id="65000"></text>
+          <text name="1_line_3" pos="80,|0,-8,@30" valign="center" colorBkgnd="#ffffff44" colorBorder="@color/gray" margin-x="1" margin-y="1" offset="0,0.8" padding="5"></text>
+
+          <text pos="5,|0,75,@30" align="center" valign="center" offset="0,-1.8" name="text_time_1">00:00.000</text>
+          <text pos="5,|0,75,@30" align="center" valign="center" offset="0,-0.5">当前行：</text>
+          <text pos="5,|0,75,@30" align="center" valign="center" offset="0,0.8">下一行：</text>
+
+          <text name="empty_tip_block" pos="sib.right@65000:-50,sib.top@65000:2,sib.right@65000:-2,sib.bottom@65000:-2"
+                colorBkgnd="#00000088" colorText="#99aaffee" align="center" visible="0" >空行</text>
+        </window>
+      
+      <window pos="5,[5,-5,@15" >
+        <progress name="progress_music_1" bkgndSkin="skin_progress_background" posSkin="skin_progress_pos" pos="0,0,-0,4" offset="0,0" value="0" min="0" max="1000"/>
+      </window>
+
+        <window pos="5,[5,-5,@30">
+          <imgbtn name="btn_preview" pos="5,0,@100,-0" enable="0" skin="app_button" class="normalbtn" tip="进入 滚动预览 页面，预览 歌词制作效果">预览效果</imgbtn>
+          <imgbtn name="btn_open_output" pos="[5,0,@110,-0" enable="0" skin="app_button" class="normalbtn" tip="打开歌词文件夹，以及打开歌词文件">打开生成文件</imgbtn>
+          
+          <imgbtn name="btn_start_making" pos="-105,0,@100,-0" enable="0" skin="app_button" class="normalbtn">开始制作</imgbtn>
+          <imgbtn name="btn_restart" pos="{-105,0,@100,-0" enable="0" skin="app_button" class="normalbtn">我要重制</imgbtn>
+
+          <imgbtn name="btn_sound_open_1" pos="{-150,7" visible="1" skin="skin_btn_sound_open" class="normalbtn"></imgbtn>
+          <imgbtn name="btn_sound_close_1" pos="{0,7" visible="0" skin="skin_btn_sound_close" class="normalbtn"></imgbtn>
+
+          <sliderbar name="slider_sound_1" pos="[3,3,@120,30" thumbInRail="0" value="100" min="0" max="100"  thumbSkin="skin_slider_thumb"  bkgndSkin="skin_slider_background" posSkin="skin_slider_frontground"/>
+        </window>
+    </window>
+</include>

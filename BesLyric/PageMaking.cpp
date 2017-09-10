@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "PageMaking.h"
-#include "utility/FileHelper.h"
+#include "utility/WinDialog.h"
 #include "utility/WinFile.h"
 
 CPageMaking::CPageMaking()

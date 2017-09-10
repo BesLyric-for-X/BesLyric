@@ -9,12 +9,13 @@
 
 #include "stdafx.h"
 #include "MainDlg.h"
-#include "utility/FileHelper.h"
+#include "utility/WinDialog.h"
 #include <helper/SDibHelper.h>
 #include "BSMessageBox.h"
 #include "entity/AutoUpdateThread.h"
 #include "entity\CheckIntegrityThread.h"
 #include "entity\FileDroper.h"
+#include "utility\Downloader.h"
 
 //经过个人测试，音乐播放设备，在毫秒级访问时，（比如获取歌曲当前位置）会有一定的延迟，导致声音已经被设备播放，
 //但是在获取实时信息来显示时存在延迟，在此定义设备可能的延迟（单位：毫秒）
@@ -26,7 +27,8 @@
 #endif
 
 #include "utility\SplitFile.h"
-
+#include <fstream>
+using namespace std;
 
 void CMainDlg::test()
 {
@@ -37,6 +39,19 @@ void CMainDlg::test()
 	//CSplitFile::MergeFile(L"C:\\Users\\BensonLaur\\Desktop",L"ff", L"C:\\Users\\BensonLaur\\Desktop");
 
 	//AutoUpdateThread::DownloadFile(L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe", L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
+
+	//wstring strSaveBuffer;
+	//CDownloader::DownloadString( L"http://gecimi.com/api/lyric/我们的歌", strSaveBuffer);
+	//
+	//locale &loc=locale::global(locale(locale(),"",LC_CTYPE)); 
+	//wofstream ofstream("C:\\Users\\BensonLaur\\Desktop\\json.json");
+	//ofstream << strSaveBuffer << endl;
+	//ofstream << L"中文1 test1"  << endl;
+	//ofstream << L"中文2 test2"  << endl;
+	//ofstream.close();
+	//_tfopen(L"C:\\Users\\BensonLaur\\Desktop\\json.test", L"w");
+
+	//CDownloader::DownloadString( L"http://s.gecimi.com/lrc/388/38847/3884774.lrc", strSaveBuffer);
 }
 
 CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
@@ -45,6 +60,7 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 	
 	m_pageMaking = NULL;
 	m_pageResult = NULL;
+	m_pageSearchLyric = NULL;
 
 	//启动自动更新线程
 	AutoUpdateThread::getSingleton().Start();
@@ -98,6 +114,7 @@ void CMainDlg::initPage()
 {
 	m_pageMaking = new CPageMaking;
 	m_pageResult = new CPageResult;
+	m_pageSearchLyric = new CPageSearchLyric;
 
 	//初始化“歌词制作页面”
 	//默认输出路径有效时设置输出路径
@@ -116,6 +133,7 @@ void CMainDlg::initPage()
 	m_settingPage.Init(this);
 	m_pageMaking->Init(this);
 	m_pageResult->Init(this);
+	m_pageSearchLyric->Init(this);
 
 	maker.Init( &m_settingPage );//歌词制作需要用到设置页面的数据
 
@@ -126,6 +144,9 @@ void CMainDlg::initPage()
 	RegisterDragDrop(m_pageMaking->m_EditOutPath->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageMaking->m_EditOutPath));
 	RegisterDragDrop(m_pageResult->m_EditMusic->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageResult->m_EditMusic));
 	RegisterDragDrop(m_pageResult->m_EditLyric->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageResult->m_EditLyric));
+	RegisterDragDrop(m_pageSearchLyric->m_editLrcLyricPath->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageSearchLyric->m_editLrcLyricPath));
+	RegisterDragDrop(m_pageSearchLyric->m_editOriginLyricPath->GetSwnd(),new CFileDroper( this->m_hWnd ,m_pageSearchLyric->m_editOriginLyricPath));
+	
 
 	//初始化“本软件”页面
 
@@ -186,6 +207,14 @@ void CMainDlg::OnDropFile(SEdit* pEdit, wstring strFilePath)
 	else if(pEdit == this->m_pageResult->m_EditLyric)
 	{
 		m_pageResult->OnBtnSelectLyric2(strFilePath.c_str());
+	}
+	else if(pEdit == this->m_pageSearchLyric->m_editOriginLyricPath)
+	{
+		m_pageSearchLyric->OnBtnSelectOriginLyricPath(strFilePath.c_str());
+	}
+	else if(pEdit == this->m_pageSearchLyric->m_editLrcLyricPath)
+	{
+		m_pageSearchLyric->OnBtnSelectLrcLyricPath(strFilePath.c_str());
 	}
 }
 
@@ -252,6 +281,14 @@ BOOL CMainDlg::PageResultChainEvent(CPageResult* pPageResult,EventArgs* pEvt)
 		return FALSE;
 
 	return pPageResult->_HandleEvent(pEvt);
+}
+
+BOOL CMainDlg::PageSearchLyricChainEvent(CPageSearchLyric* pPageSearchLyric,EventArgs* pEvt)
+{
+	if(pPageSearchLyric == NULL)
+		return FALSE;
+
+	return pPageSearchLyric->_HandleEvent(pEvt);
 }
 
 //键盘消息
@@ -743,7 +780,7 @@ void  CMainDlg::OnSliderPos(bool isPos1)
 	}
 }
 
-
+//用于处理格式转换线程结束后，通知主线程播放
 int CMainDlg::MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
 {
 	if(uMsg == MSG_USER_MAKING_START_BUTTON)
@@ -755,5 +792,17 @@ int CMainDlg::MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 		m_pageResult->OnBtnStartPlaying();
 	}
 
-	return true;
+	return TRUE;
+}
+
+
+//处理消息，显示搜索到的歌词
+int CMainDlg::MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	LyricSearchResult* pResult = (LyricSearchResult*)wParam;
+
+	m_pageSearchLyric->ShowLyricResult(pResult);
+
+	delete pResult;
+	return TRUE;
 }

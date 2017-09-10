@@ -26,6 +26,7 @@
 
 #pragma once
 #include "stdafx.h"
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -51,6 +52,8 @@ using namespace std;
 
 #define MSG_USER_DROP_FILE				WM_USER+5
 
+#define MSG_USER_SHOW_LYRIC_RESULT		WM_USER+6
+
 /* 结构定义 */
 
 //在制作歌词页面 和 滚动预览 页面中，需要选择音乐路径，歌词路径，输出路径等信息
@@ -71,6 +74,23 @@ enum ENCODING_TYPE			//文件编码类型
 	OTHER
 };
 
+//储存获取的单个歌词信息
+struct LyricInfo
+{
+	wstring strPlaneText;
+	wstring strLabelText;
+	wstring strSong;
+	wstring strArtist;
+	wstring strLyricFrom;
+};
+
+struct LyricSearchResult
+{
+	vector<LyricInfo> vecLyricInfoTotal;			//所有获得的歌词
+	bool bShowUnexpectedResultTip;					//是否显示意外结果的提示
+	SStringW strUnexpectedResultTip;				//意外结果的提示
+};
+
 
 /* 全局变量定义 */
 /* 版本格式说明：X.Y.Z  
@@ -78,7 +98,7 @@ X表示主版本，架构性修改时更新
 Y表示次版本，较大修改时更新
 Z表示修改号，小问题时更新
 */
-static const wstring VERSION_NUMBER = L"2.1.2";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
+static const wstring VERSION_NUMBER = L"2.1.3";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
 
 static const wstring  LINK_VERSION_LOG= L"http://files.cnblogs.com/files/BensonLaur/versionLog.zip";			//链接，指向版本日志文件
 static const wstring  LINK_LAST_VERSION_INFO= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.zip";		//链接，指向最后版本信息的文件

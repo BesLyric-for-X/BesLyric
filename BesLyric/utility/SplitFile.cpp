@@ -1,7 +1,7 @@
 #include "stdAfx.h"
 #include "SplitFile.h"
 #include "WinFile.h"
-#include "FileHelper.h"
+#include "WinDialog.h"
 
 bool CSplitFile::SplitFile(wstring strSrcFile, wstring strToPath, wstring strToName, unsigned int nBlockSize)
 {

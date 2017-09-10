@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "AutoUpdateThread.h"
 #include "Define.h"
+#include "../utility/Downloader.h"
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
 #define MAXBLOCKSIZE 1024  
@@ -90,12 +91,12 @@ bool AutoUpdateThread::AutoUpdate()
 	wstring strVersionLog =  FileHelper::GetCurrentDirectoryStr()+ L"versionLog.txt";
 	if(FileHelper::CheckFileExist(strVersionLog))
 		_wremove(strVersionLog.c_str());
-	bool bRet = DownloadFile( LINK_VERSION_LOG, strVersionLog );
+	bool bRet = CDownloader::DownloadFile( LINK_VERSION_LOG, strVersionLog );
 	if(bRet == false)
 		return false;
 
 	//下载最新的执行文件  BesLyric.exe（服务器的名称为 BesLyricExe.zip） 到 strLastExe （BesLyric）中
-	bRet = DownloadFile( LINK_LAST_EXE , strLastExe);
+	bRet = CDownloader::DownloadFile( LINK_LAST_EXE , strLastExe);
 	if(bRet == false)
 		return false;
 
@@ -155,7 +156,7 @@ bool AutoUpdateThread::IfUpdateAvailable()
 	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
 
 	/*下载最新版本配置信息 */
-	bool bRet = DownloadFile( LINK_LAST_VERSION_INFO, strVersionFile);
+	bool bRet = CDownloader::DownloadFile( LINK_LAST_VERSION_INFO, strVersionFile);
 	if(bRet == false)
 		return false;//访问出错
 
@@ -220,48 +221,6 @@ int AutoUpdateThread::VersionCompare(const SStringW v1, const SStringW v2)
 
 }
 
-
-/*将Url指向的地址的文件下载到save_as指向的本地文件*/
-bool AutoUpdateThread::DownloadFile(const wstring strUrl, const wstring strSaveAs)
-{
-	byte Temp[MAXBLOCKSIZE];
-	ULONG Number = 1;
-
-	FILE *stream;
-	HINTERNET hSession = InternetOpen(L"RookIE/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-	if (hSession != NULL)
-	{
-		HINTERNET handle2 = InternetOpenUrl(hSession, strUrl.c_str(), NULL, 0, INTERNET_FLAG_DONT_CACHE, 0);
-		if (handle2 != NULL)
-		{
-			if ((_wfopen_s(&stream, strSaveAs.c_str(), L"wb")) == 0)
-			{
-				while (Number > 0)
-				{
-					InternetReadFile(handle2, Temp, MAXBLOCKSIZE - 1, &Number);
-
-					fwrite(Temp, sizeof (char), Number, stream);
-				}
-				fclose(stream);
-			}
-			else
-				return false;
-
-			InternetCloseHandle(handle2);
-			handle2 = NULL;
-		}
-		else
-			return false;
-		InternetCloseHandle(hSession);
-		hSession = NULL;
-	}
-
-	return true;
-}
-
-
-
-
 //发送登录信息（ip地址）
 void AutoUpdateThread::SendLoginInfo()
 {
@@ -281,7 +240,7 @@ void AutoUpdateThread::SendLoginInfo()
 		if(FileHelper::CheckFileExist(strTempFile))
 			_wremove(strTempFile.c_str());
 	
-		bool bRet = DownloadFile(L"http://www.ip138.com/ip2city.asp",strTempFile);
+		bool bRet = CDownloader::DownloadFile(L"http://www.ip138.com/ip2city.asp",strTempFile);
 		if(bRet == false)
 		{
 			//可能没网络，或网络异常，也可能读取文件失败
@@ -319,5 +278,5 @@ void AutoUpdateThread::SendLoginInfo()
 
 	//访问链接，服务端负责记录登录信息
 	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP;
-	DownloadFile(strSendLink, strTempFile);
+	CDownloader::DownloadFile(strSendLink, strTempFile);
 }

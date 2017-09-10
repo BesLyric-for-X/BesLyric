@@ -52,8 +52,6 @@ public:
 			SetEvent(m_EventStopWaiting);
 	}
 
-	//从网络下载文件
-	static bool DownloadFile(const wstring strUrl, const wstring strSaveAs);
 private:
 	
 	//线程执行地址

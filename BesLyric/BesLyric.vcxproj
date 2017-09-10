@@ -63,8 +63,8 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SOUIPATH)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>utilitiesd.lib;souid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\json\;$(SOUIPATH)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>utilitiesd.lib;souid.lib;%(AdditionalDependencies);lib_json_debug.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,8 +81,8 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SOUIPATH)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>utilities.lib;soui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\json\;$(SOUIPATH)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>utilities.lib;soui.lib;%(AdditionalDependencies);lib_json_release.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -120,19 +120,24 @@
     <ClCompile Include="DlgCheckIntegrity.cpp" />
     <ClCompile Include="entity\AutoUpdateThread.cpp" />
     <ClCompile Include="entity\CheckIntegrityThread.cpp" />
+    <ClCompile Include="entity\LrcHandler.cpp" />
     <ClCompile Include="entity\LyricMaker.cpp" />
     <ClCompile Include="entity\LyricPlayer.cpp" />
     <ClCompile Include="entity\MusicPlayer.cpp" />
-    <ClCompile Include="lib\tinyxml2.cpp" />
+    <ClCompile Include="entity\SearcherGecimi.cpp" />
+    <ClCompile Include="entity\SearchLyricThread.cpp" />
+    <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="PageMaking.cpp" />
     <ClCompile Include="PageResult.cpp" />
+    <ClCompile Include="PageSearchLyric.cpp" />
     <ClCompile Include="PageSetting.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="utility\FileHelper.cpp" />
+    <ClCompile Include="utility\StringHelper.cpp" />
+    <ClCompile Include="utility\WinDialog.cpp" />
     <ClCompile Include="utility\SplitFile.cpp" />
     <ClCompile Include="utility\WinFile.cpp" />
   </ItemGroup>
@@ -141,22 +146,42 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BSMessageBox.h" />
+    <ClInclude Include="controlEx\LyricListView.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DlgCheckIntegrity.h" />
     <ClInclude Include="entity\AutoUpdateThread.h" />
     <ClInclude Include="entity\CheckIntegrityThread.h" />
     <ClInclude Include="entity\FileDroper.h" />
+    <ClInclude Include="entity\ISearcher.h" />
+    <ClInclude Include="entity\LrcHandler.h" />
     <ClInclude Include="entity\LyricMaker.h" />
     <ClInclude Include="entity\LyricPlayer.h" />
+    <ClInclude Include="entity\LyricSearcherFactory.h" />
     <ClInclude Include="entity\MusicPlayer.h" />
-    <ClInclude Include="lib\tinyxml2.h" />
+    <ClInclude Include="entity\SearcherGecimi.h" />
+    <ClInclude Include="entity\SearchLyricThread.h" />
+    <ClInclude Include="lib\json\allocator.h" />
+    <ClInclude Include="lib\json\assertions.h" />
+    <ClInclude Include="lib\json\autolink.h" />
+    <ClInclude Include="lib\json\config.h" />
+    <ClInclude Include="lib\json\features.h" />
+    <ClInclude Include="lib\json\forwards.h" />
+    <ClInclude Include="lib\json\json.h" />
+    <ClInclude Include="lib\json\reader.h" />
+    <ClInclude Include="lib\json\value.h" />
+    <ClInclude Include="lib\json\version.h" />
+    <ClInclude Include="lib\json\writer.h" />
+    <ClInclude Include="lib\xml\tinyxml2.h" />
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="PageMaking.h" />
     <ClInclude Include="PageResult.h" />
+    <ClInclude Include="PageSearchLyric.h" />
     <ClInclude Include="PageSetting.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="utility\FileHelper.h" />
+    <ClInclude Include="utility\Downloader.h" />
+    <ClInclude Include="utility\StringHelper.h" />
+    <ClInclude Include="utility\WinDialog.h" />
     <ClInclude Include="utility\SplitFile.h" />
     <ClInclude Include="utility\SSingleton.h" />
     <ClInclude Include="utility\WinFile.h" />

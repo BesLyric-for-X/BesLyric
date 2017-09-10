@@ -31,15 +31,18 @@
 #include  "PageSetting.h"
 #include "PageMaking.h"
 #include "PageResult.h"
+#include "PageSearchLyric.h"
 
 class CPageMaking;						//嵌套定义，先声明
 class CPageResult;
+class CPageSearchLyric;
 
 /* 程序的主窗口类 */
 class CMainDlg : public SHostWnd
 {
 	friend class CPageMaking;
 	friend class CPageResult;
+	friend class CPageSearchLyric;
 
 public:
 	CMainDlg();
@@ -80,8 +83,11 @@ public:
 	//处理声音slider 位置的变化
 	void OnSliderPos(bool isPos1);
 
-	
+	 //用于处理格式转换线程结束后，通知主线程播放
 	int MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+
+	//处理消息，显示搜索到的歌词
+	int MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 
 private:
 	//设置程序的背景图片
@@ -91,7 +97,7 @@ private:
 	// 而CMainDlg 中宏定义 CHAIN_EVENT_MAP_MEMBER 实际上会直接使用 CPageMaking 的 _HandleEvent；故封装该函数，在实现中调用_HandleEvent
 	BOOL PageMakingChainEvent(CPageMaking* pPageMaking,EventArgs* pEvt);
 	BOOL PageResultChainEvent(CPageResult* pPageResult,EventArgs* pEvt); //同上
-	
+	BOOL PageSearchLyricChainEvent(CPageSearchLyric* pPageSearchLyric,EventArgs* pEvt);
 
 	void test();//just for test
 protected:
@@ -109,7 +115,8 @@ protected:
 		CHAIN_EVENT_MAP_MEMBER(m_settingPage)
 
 		 if(PageMakingChainEvent(m_pageMaking,pEvt))return TRUE;           
-		 if(PageResultChainEvent(m_pageResult,pEvt))return TRUE;  
+		 if(PageResultChainEvent(m_pageResult,pEvt))return TRUE;           
+		 if(PageSearchLyricChainEvent(m_pageSearchLyric,pEvt))return TRUE; 
 
 	EVENT_MAP_END()
 
@@ -136,10 +143,12 @@ protected:
 
 		MSG_WM_TIMER(OnTimer)
 			
-		MESSAGE_HANDLER(MSG_USER_MAKING_START_BUTTON, MessageButtonCommand)   //用于
+		MESSAGE_HANDLER(MSG_USER_MAKING_START_BUTTON, MessageButtonCommand)   //用于格式转换线程结束后，通知主线程播放
 		MESSAGE_HANDLER(MSG_USER_PLAYING_START_BUTTON, MessageButtonCommand)
 
 		MESSAGE_HANDLER(MSG_USER_DROP_FILE, MsgDropFile)//拖放文件消息
+		
+		MESSAGE_HANDLER(MSG_USER_SHOW_LYRIC_RESULT, MessageShowLyricResult)//显示歌词结果消息
 
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()
@@ -149,6 +158,7 @@ public:
 	CSettingPage m_settingPage;				/* 设置页面 */
 	CPageMaking *m_pageMaking;				/* 歌词制作页面 */
 	CPageResult *m_pageResult;				/* 歌词预览页面 */
+	CPageSearchLyric *m_pageSearchLyric;	/* 搜索歌词页面 */
 
 public:
 	LyricMaker maker;						/* 歌词制作器 */
