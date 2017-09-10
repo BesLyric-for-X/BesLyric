@@ -23,8 +23,42 @@
 #include <string>
 #include <Windows.h> 
 #include <vector>
-#include "FileHelper.h"
+#include "WinFile.h"
 using namespace std;
+
+
+/*
+*   @brief	文件读取类，支持Windows多种编码
+*					应用RAII思想，管理文件文件的资源
+*/
+class File{
+
+public:
+	File():m_pf(NULL),m_lpszPathFile(NULL),m_lpszMode(NULL){}
+	
+	//读取文件打开时，支持ascii\unicode little endian\ unicode big endian \utf-8 编码格式
+	//写入打开文件时，直接由函数 wideCharToMultiChar 以ascii 方式打开
+	//mode : “r”“w”
+	File(LPCTSTR pathFile,LPCTSTR mode);
+
+	inline BOOL isValidFile(){return m_pf!=NULL;}
+
+	~File(){
+		//如果已存在，则释放资源
+		if(m_pf) fclose(m_pf);
+	}
+private:
+	//测试数据是否是UTF-8 无Bom格式  
+	bool IsUTF8WithNoBom(const void* pBuffer, long size);   
+
+public:
+	LPCTSTR m_lpszPathFile;		/* 文件路径和名字串*/
+	LPCTSTR m_lpszMode;			/* 打开文件的模式 */
+
+	FILE *m_pf;					/* 存放当前打开文件的指针*/
+	ENCODING_TYPE m_encodingType;	/* 存放文件编码格式 */
+};
+
 
 /*
 *	@brief	负责文件的读写操作

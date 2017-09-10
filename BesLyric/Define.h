@@ -26,6 +26,7 @@
 
 #pragma once
 #include "stdafx.h"
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -51,6 +52,8 @@ using namespace std;
 
 #define MSG_USER_DROP_FILE				WM_USER+5
 
+#define MSG_USER_SHOW_LYRIC_RESULT		WM_USER+6
+
 /* 结构定义 */
 
 //在制作歌词页面 和 滚动预览 页面中，需要选择音乐路径，歌词路径，输出路径等信息
@@ -69,6 +72,23 @@ enum ENCODING_TYPE			//文件编码类型
 	UTF_8,
 	UTF_8_NO_BOM,
 	OTHER
+};
+
+//储存获取的单个歌词信息
+struct LyricInfo
+{
+	wstring strPlaneText;
+	wstring strLabelText;
+	wstring strSong;
+	wstring strArtist;
+	wstring strLyricFrom;
+};
+
+struct LyricSearchResult
+{
+	vector<LyricInfo> vecLyricInfoTotal;			//所有获得的歌词
+	bool bShowUnexpectedResultTip;					//是否显示意外结果的提示
+	SStringW strUnexpectedResultTip;				//意外结果的提示
 };
 
 

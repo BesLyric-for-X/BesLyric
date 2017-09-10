@@ -1,9 +1,187 @@
 #include "stdafx.h"
 #include "winfile.h"
-#include "FileHelper.h"
+#include "WinDialog.h"
+#include "StringHelper.h"
 
 #include <fstream> 
 using namespace std;
+
+
+/* 文件类 */
+
+File::File(LPCTSTR pathFile,LPCTSTR mode)
+{
+	m_lpszPathFile = NULL;
+	m_lpszMode = NULL;
+	m_pf = NULL;
+	m_encodingType = ENCODING_TYPE::OTHER;
+	char *szBufferTest = NULL;
+	int nTestLen = 0;
+
+	if(_tcscmp(mode,_T("r")) == 0)
+	{
+		//读取文件的前两个字节，判断编码
+		int len = 0;
+		char *buf = NULL;
+		byte firstByte = '\0';
+		byte secondByte = '\0';
+		ifstream in(pathFile);
+		if(in)
+		{
+			in.seekg(0,ios::end);
+			len = in.tellg();
+			buf = new char[len];
+			in.seekg(0,ios::beg);
+			in.read(buf,len);
+
+			if(len < 2)//文件内容太少，读取失败
+				return ;
+			
+			firstByte = buf[0];
+			secondByte = buf[1];
+
+			//读取1000个字节（或整个文件长度），为后面区别 utf-8 无Bom 和 ascii 提供测试数据
+			nTestLen = len < 1000? len : 1000;
+			szBufferTest = new char[nTestLen];
+			
+			in.clear();				//clear 后 seekg 才有效
+			in.seekg(0,ios::beg);
+			in.read(szBufferTest,nTestLen);
+
+			in.close();
+			delete buf;
+		}
+		else return;//打开文件失败
+
+		if(firstByte == 0xef && secondByte == 0xbb)
+			m_encodingType = ENCODING_TYPE::UTF_8;
+		else if(firstByte == 0xff && secondByte == 0xfe)
+			m_encodingType = ENCODING_TYPE::UNICODE_LITTLE_ENDIAN;
+		else if(firstByte == 0xfe && secondByte == 0xff)
+			m_encodingType = ENCODING_TYPE::UNICODE_BIG_ENDIAN;
+		else 
+		{
+			//测试是否是 utf-8 无bom格式
+			if(IsUTF8WithNoBom(szBufferTest, nTestLen))
+				m_encodingType = ENCODING_TYPE::UTF_8_NO_BOM;
+			else
+				m_encodingType = ENCODING_TYPE::ASCII;	//默认ascii 码和其他编码，以ascii 方式处理
+		}
+
+		if(szBufferTest)
+			delete szBufferTest;
+
+		//根据不同的编码，打开文件
+		if(m_encodingType == ENCODING_TYPE::UTF_8 || m_encodingType == ENCODING_TYPE::UTF_8_NO_BOM)
+			m_pf = _tfopen(pathFile, _T("r,ccs=utf-8"));
+		else if(m_encodingType == ENCODING_TYPE::UNICODE_LITTLE_ENDIAN)
+			m_pf = _tfopen(pathFile, _T("r,ccs=UNICODE"));
+		else if(m_encodingType == ENCODING_TYPE::UNICODE_BIG_ENDIAN)
+		{	
+			//UNICODE_BIG_ENDIAN 不支持_tfopen(pathFile, _T("r,ccs=UNICODE")); 方式读取
+
+			//转换为UNICODE_LITTLE_ENDIAN文本，然后再读取
+
+			//使用c方式读取文件
+			int len = 0;
+			FILE *in = _tfopen(pathFile,_T("rb"));
+			if(in)
+			{
+				fseek(in, 0, SEEK_END);
+				len = ftell(in);
+				buf = new char[len];
+				fseek(in, 0, SEEK_SET);
+				fread(buf, sizeof(char), len, in);
+
+				WCHAR *pWC;
+				pWC = reinterpret_cast<WCHAR*>(buf);
+
+				int index = 0;
+				while(index < len/2)  //对每一个宽字节交换字节序
+				{
+					WCHAR temp = *pWC >> 8;
+					temp |= *pWC << 8;
+					*pWC = temp;
+					pWC++;
+					index++;
+				}
+
+				//以c的形式写入临时文件
+				FILE* tFile = _tfopen(_T("temp_unicode_little_endian.txt"),_T("wb"));
+				if(tFile)
+				{
+					fwrite(buf, sizeof(char), len, tFile);
+					fclose(tFile);
+				}
+				else return;//写入文件失败
+			}
+			else return;//打开文件失败
+			
+			m_pf = _tfopen(_T("temp_unicode_little_endian.txt"), _T("r,ccs=UNICODE"));
+		}
+		else //m_encodingType == ENCODING_TYPE::ASCII
+			m_pf = _tfopen(pathFile,mode);
+
+	}
+	else //if(_tcscmp(mode,_T("r"))
+		m_pf = _tfopen(pathFile,mode);
+
+
+	m_lpszPathFile = pathFile;
+	m_lpszMode = mode;
+}
+
+//测试数据是否是UTF-8 无Bom格式 
+bool File::IsUTF8WithNoBom(const void* pBuffer, long size)
+{
+	//参考 http://blog.csdn.net/bladeandmaster88/article/details/54767487
+
+	bool IsUTF8 = true;     
+    unsigned char* start = (unsigned char*)pBuffer;     
+    unsigned char* end = (unsigned char*)pBuffer + size;     
+    while (start < end)     
+    {     
+        if (*start < 0x80) // (10000000): 值小于0x80的为ASCII字符     
+        {     
+            start++;     
+        }     
+        else if (*start < (0xC0)) // (11000000): 值介于0x80与0xC0之间的为无效UTF-8字符     
+        {     
+            IsUTF8 = false;     
+            break;     
+        }     
+        else if (*start < (0xE0)) // (11100000): 此范围内为2字节UTF-8字符     
+        {     
+            if (start >= end - 1)      
+                break;     
+            if ((start[1] & (0xC0)) != 0x80)     
+            {     
+                IsUTF8 = false;     
+                break;     
+            }     
+            start += 2;     
+        }      
+        else if (*start < (0xF0)) // (11110000): 此范围内为3字节UTF-8字符     
+        {     
+            if (start >= end - 2)      
+                break;     
+            if ((start[1] & (0xC0)) != 0x80 || (start[2] & (0xC0)) != 0x80)     
+            {     
+                IsUTF8 = false;     
+                break;     
+            }     
+            start += 3;     
+        }      
+        else    
+        {     
+            IsUTF8 = false;     
+            break;     
+        }     
+    }     
+    return IsUTF8;     
+}
+
+
 
 /* FileOperator */
 
@@ -160,7 +338,11 @@ bool FileOperator::WriteToUtf8File(const wstring file, vector<SStringW> lines)
 	char line[400];
 	for(auto i=lines.begin(); i != lines.end(); i++)
 	{
-		int ret = WideCharToMultiByte(CP_UTF8,  0,(*i),-1,line,400,NULL,NULL);
+		//去掉一行当中可能存在的\r, 因为 fputs 会自动在 \n 前添加\r，如果不去掉，输出结尾为 \r\r\n
+		SStringW _line = CStringHelper::Trim(*i,L" \t\r\n");
+		_line += L"\n";
+
+		int ret = WideCharToMultiByte(CP_UTF8,  0,_line,-1,line,400,NULL,NULL);
 		
 		if(ret == 0)
 			return false;

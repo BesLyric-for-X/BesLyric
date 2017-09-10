@@ -21,6 +21,8 @@
   </values>
 
   <IMGX>
+	<file name="cmn.scrollbar" path="image\cmn.scrollbar.png" />
+
     <file name="png_tab_main"  path="image\netease\netease_menu_tab.png" />
     <file name="png_page_icons"   path="image\netease\netease_page_icon.png" />
     <file name="png_key_up"   path="image\key_up.png" />

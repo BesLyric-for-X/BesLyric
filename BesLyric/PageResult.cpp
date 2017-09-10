@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "PageResult.h"
-#include "utility/FileHelper.h"
+#include "utility/WinDialog.h"
 #include "utility/WinFile.h"
 
 CPageResult::CPageResult()

@@ -1,168 +1,10 @@
 #include "stdafx.h"
 #include "PageSearchLyric.h"
-#include <helper/SAdapterBase.h>
-//#include "utility/FileHelper.h"
-//#include "utility/WinFile.h"
-
-//MC ListView 适配器类，用于处理 MCListView 的逻辑
-class CLyricMcAdapterFix : public SMcAdapterBase
-{
-public:
-    struct LYRIC_INFO
-    {
-        wstring strMusicName;
-        wstring strMusicArtist;
-        wstring strLyricFrom;
-    };
-
-    SArray<LYRIC_INFO> m_lyricInfo;
-
-public:
-    CLyricMcAdapterFix(){}
-
-    virtual int getCount()
-	{
-		//m_lyricInfo.GetCount();
-        return 2;
-    }   
-    
-    virtual void getView(int position, SWindow * pItem,pugi::xml_node xmlTemplate)
-    {
-        if(pItem->GetChildrenCount()==0)
-        {
-            pItem->InitFromXml(xmlTemplate);
-        }
-        //pItem->FindChildByName(L"txt_mclv_music_name")->SetWindowText(S_CW2T(psi->pszDesc));
-        //pItem->FindChildByName(L"txt_index")->SetWindowText(SStringT().Format(_T("第%d行"),position+1));
-        
-        LYRIC_INFO *pli =m_lyricInfo.GetData()+position;
-
-        pItem->FindChildByName(L"txt_mclv_lyric_num")->SetWindowText(L"1");
-        pItem->FindChildByName(L"txt_mclv_music_name")->SetWindowText(L"我们的歌");
-        pItem->FindChildByName(L"txt_mclv_music_artist")->SetWindowText(L"王力宏");
-        pItem->FindChildByName(L"txt_mclv_origin")->SetWindowText(L"歌词迷");
-		
-        SButton *pBtnViewOrigin = pItem->FindChildByName2<SButton>(L"btn_mclv_view_origin");
-        pBtnViewOrigin->SetUserData(position);
-        pBtnViewOrigin->GetEventSet()->subscribeEvent(EVT_CMD,Subscriber(&CLyricMcAdapterFix::OnButtonOrignClick,this));
-        SButton *pBtnViewLrc = pItem->FindChildByName2<SButton>(L"btn_mclv_view_lrc");
-        pBtnViewLrc->SetUserData(position);
-        pBtnViewLrc->GetEventSet()->subscribeEvent(EVT_CMD,Subscriber(&CLyricMcAdapterFix::OnButtonLrcClick,this));
-    }
-
-    bool OnButtonOrignClick(EventArgs *pEvt)
-    {
-        SButton *pBtn = sobj_cast<SButton>(pEvt->sender);
-        int iItem = pBtn->GetUserData();
-        
-        if(SMessageBox(NULL,SStringT().Format(_T("click OnButtonOrignClick [%d] ?"),iItem),_T("tip"),MB_OK)==IDOK)
-        {
-
-        }
-        return true;
-    }
-	
-    bool OnButtonLrcClick(EventArgs *pEvt)
-    {
-        SButton *pBtn = sobj_cast<SButton>(pEvt->sender);
-        int iItem = pBtn->GetUserData();
-		
-        if(SMessageBox(NULL,SStringT().Format(_T("click OnButtonLrcClick [%d] ?"),iItem),_T("tip"),MB_OK)==IDOK)
-        {
-
-        }
-        return true;
-    }
-	
-    //删除一行，提供外部调用。
-    void DeleteItem(int iPosition)
-    {
-        if(iPosition>=0 && iPosition<getCount())
-        {
-            m_lyricInfo.RemoveAt(iPosition);
-            notifyDataSetChanged();
-        }
-    }
-	   
-	//删除所有行，提供外部调用。
-    void DeleteAllItem()
-    {
-		m_lyricInfo.RemoveAll();
-        notifyDataSetChanged();
-    }
-	
-    //添加一行，提供外部调用。
-	void AddItem(wstring strMusicName, wstring strMusicArtist, wstring strLyricFrom)
-	{
-		LYRIC_INFO lyricInfo;
-		lyricInfo.strMusicName = strMusicName;
-		lyricInfo.strMusicArtist = strMusicArtist;
-		lyricInfo.strLyricFrom = strLyricFrom;
-		m_lyricInfo.Add(lyricInfo);
-	}
-
-    virtual SStringW GetColumnName(int iCol) const{
-        return SStringW().Format(L"col%d",iCol+1);
-    }
-    
-    struct SORTCTX
-    {
-        int iCol;
-        SHDSORTFLAG stFlag;
-    };
-    
-    bool OnSort(int iCol,SHDSORTFLAG * stFlags,int nCols)
-    {
-        if(iCol==0 || iCol==4) //第1列序号和最后一列 “操作”不支持排序
-            return false;
-        
-        SHDSORTFLAG stFlag = stFlags[iCol];
-        switch(stFlag)
-        {
-            case ST_NULL:stFlag = ST_UP;break;
-            case ST_DOWN:stFlag = ST_UP;break;
-            case ST_UP:stFlag = ST_DOWN;break;
-        }
-        for(int i=0;i<nCols;i++)
-        {
-            stFlags[i]=ST_NULL;
-        }
-        stFlags[iCol]=stFlag;
-        
-        SORTCTX ctx={iCol,stFlag};
-        qsort_s(m_lyricInfo.GetData(),m_lyricInfo.GetCount(),sizeof(LYRIC_INFO),SortCmp,&ctx);
-        return true;
-    }
-    
-    static int __cdecl SortCmp(void *context,const void * p1,const void * p2)
-    {
-        SORTCTX *pctx = (SORTCTX*)context;
-        const LYRIC_INFO *pLI1=(const LYRIC_INFO*)p1;
-        const LYRIC_INFO *pLI2=(const LYRIC_INFO*)p2;
-        int nRet =0;
-        switch(pctx->iCol)
-        {
-            case 0://序号
-                break;
-            case 1://strMusicName
-				nRet = wcscmp(pLI1->strMusicName.c_str(), pLI2->strMusicName.c_str());
-                break;
-            case 2://strMusicArtist
-				nRet = wcscmp(pLI1->strMusicArtist.c_str(), pLI2->strMusicArtist.c_str());
-                break;
-            case 3://strLyricFrom
-				nRet = wcscmp(pLI1->strLyricFrom.c_str(), pLI2->strLyricFrom.c_str());
-                break;
-
-            case 4://操作
-                break;
-
-        }
-        if(pctx->stFlag == ST_UP)
-            nRet = -nRet;
-        return nRet;
-    }
-};
+#include "controlEx\LyricListView.h"
+#include "utility\WinDialog.h"
+#include "utility\WinFile.h"
+#include "utility\StringHelper.h"
+#include "entity\SearchLyricThread.h"
 
 
 CPageSearchLyric::CPageSearchLyric()
@@ -178,6 +20,7 @@ CPageSearchLyric::CPageSearchLyric()
 	m_txtSearchArtistTip = NULL;
 	m_wndSearchArtistTip = NULL;
 	m_txtSearchResultTip = NULL;
+	m_txtIsSearchingLyricTip = NULL;
 
 	m_editOriginLyricPath = NULL;
 	m_editLrcLyricPath = NULL;
@@ -209,16 +52,17 @@ void CPageSearchLyric::Init(SHostWnd *pMainWnd)
 	m_editSearchLyricArtist = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_search_lyric_artist);
 
 	m_btnSearchHere = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_program);
-	m_btnSearchBaidu = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_baidu);;
+	m_btnSearchBaidu = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_baidu);
 
-	m_wndSearchLyricTip = m_pMainWnd->FindChildByID2<SWindow>(R.id.window_search_lyric_tip);;
-	m_txtSearchNameTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_search_lyric_name_tip);;
-	m_txtSearchArtistTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_search_lyric_artist_tip);;
-	m_wndSearchArtistTip = m_pMainWnd->FindChildByID2<SWindow>(R.id.window_search_lyric_artist_tip);;
-	m_txtSearchResultTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_search_lyric_result_tip);;
+	m_wndSearchLyricTip = m_pMainWnd->FindChildByID2<SWindow>(R.id.window_search_lyric_tip);
+	m_txtSearchNameTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_search_lyric_name_tip);
+	m_txtSearchArtistTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_search_lyric_artist_tip);
+	m_wndSearchArtistTip = m_pMainWnd->FindChildByID2<SWindow>(R.id.window_search_lyric_artist_tip);
+	m_txtSearchResultTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_search_lyric_result_tip);
+	m_txtIsSearchingLyricTip = m_pMainWnd->FindChildByID2<SStatic>(R.id.txt_is_searching_lyric_tip);
 
-	m_editOriginLyricPath = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_origin_lyric_path);;
-	m_editLrcLyricPath = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_lrc_lyric_path);;
+	m_editOriginLyricPath = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_origin_lyric_path);
+	m_editLrcLyricPath = m_pMainWnd->FindChildByID2<SEdit>(R.id.edit_lrc_lyric_path);
 	
 	m_btnSelectOriginLyricPath = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_select_origin_lyric_path);;
 	m_btnSelectLrcLyricPath = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_select_lrc_lyric_path);;
@@ -240,6 +84,7 @@ void CPageSearchLyric::Init(SHostWnd *pMainWnd)
 	SASSERT(m_txtSearchArtistTip != NULL);
 	SASSERT(m_wndSearchArtistTip != NULL);
 	SASSERT(m_txtSearchResultTip != NULL);
+	SASSERT(m_txtIsSearchingLyricTip != NULL);
 	SASSERT(m_editOriginLyricPath != NULL);
 	SASSERT(m_editLrcLyricPath != NULL);
 	SASSERT(m_btnSelectOriginLyricPath != NULL);
@@ -251,12 +96,18 @@ void CPageSearchLyric::Init(SHostWnd *pMainWnd)
 	SASSERT(m_editOriginLyricContent != NULL);
 	SASSERT(m_editLrcLyricContent != NULL);
 
+	m_wndSearchLyricTip->SetVisible(FALSE, TRUE);	//隐藏搜索提示
+
+	//初始化歌词保存路径
+	m_editOriginLyricPath->SetWindowTextW(M()->m_settingPage.m_default_lyric_path.c_str());
+	m_editLrcLyricPath->SetWindowTextW(M()->m_settingPage.m_default_output_path.c_str());
 
 	//多列listview
-    SMCListView * pMcListView = m_pMainWnd->FindChildByName2<SMCListView>("mclv_lyric");
+    CLyricListView * pMcListView = m_pMainWnd->FindChildByName2<CLyricListView>("mclv_lyric");
     if(pMcListView)
     {
-        IMcAdapter *pAdapter = new CLyricMcAdapterFix;
+        IMcAdapter *pAdapter = m_lrcListAdapter =new CLyricMcAdapterFix;
+		m_lrcListAdapter->AttachMainDlgPointer(M());
         pMcListView->SetAdapter(pAdapter);
         pAdapter->Release();
     }
@@ -273,22 +124,15 @@ CMainDlg* CPageSearchLyric::M()
 *	滚动预览页面的响应函数
 */
 
+//在百度搜索歌词
 void CPageSearchLyric::OnBtnSearchBaidu()
 {
-	SStringW strMusicName = m_editSearchLyricName->GetWindowTextW();
-	SStringW strMusicArtist = m_editSearchLyricArtist->GetWindowTextW();
-	
-	strMusicName.Trim(' ');//简单去除前后空格
-	strMusicName.Trim('\t');
-	strMusicArtist.Trim(' ');
-	strMusicArtist.Trim('\t');
+	SStringW strMusicName = L"";
+	SStringW strMusicArtist = L"";
 
-	if(strMusicName.GetLength() == 0)
-	{
-		_MessageBox(m_pMainWnd->m_hWnd, L"歌曲名不能为空", L"提示", MB_OK|MB_ICONINFORMATION);
+	if(!GetMusicAndArtist(strMusicName, strMusicArtist))
 		return;
-	}
-
+	
 	//将链接中的字符进行转换，以使得链接能够支持
 	/*
 	"\"单反斜杠  %5C 
@@ -371,5 +215,184 @@ void CPageSearchLyric::OnBtnSearchBaidu()
 	
 }
 
+
+//通过本软件内获取歌词
+void CPageSearchLyric::OnBtnSearchInProgram()
+{
+	SStringW strMusicName = L"";
+	SStringW strMusicArtist = L"";
+
+	if(!GetMusicAndArtist(strMusicName, strMusicArtist))
+		return;
+
+	//切换回列表页面
+	M()->FindChildByID2<STabCtrl>(R.id.tab_lyric_list)->SetCurSel(0);
+
+	//显示正在搜索
+	m_txtSearchNameTip->SetWindowTextW(L"“"+ strMusicName  + L"”");
+	m_txtSearchArtistTip->SetWindowTextW(L"“"+ strMusicArtist  + L"”");
+
+	m_wndSearchArtistTip->SetVisible( strMusicArtist.GetLength() == 0 ? FALSE:TRUE, TRUE);
+	m_txtSearchResultTip->SetVisible(FALSE,TRUE);
+	m_txtIsSearchingLyricTip->SetVisible(TRUE,TRUE);
+	
+	m_wndSearchLyricTip->SetVisible(TRUE, TRUE); //显示提示
+
+	//隐藏按钮，不让继续搜索
+	m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_program)->EnableWindow(FALSE, TRUE);
+	
+
+	//开启搜索歌词线程
+	CSearchLyricThread::getSingleton().Start(M()->m_hWnd, strMusicName,strMusicArtist);
+}
+
+void CPageSearchLyric::ShowLyricResult(LyricSearchResult* pResult)
+{
+	//删除列表中所有的已有数据
+	m_lrcListAdapter->DeleteAllItem();
+
+	SStringW strResultTip = L"";
+	if(pResult->bShowUnexpectedResultTip)
+		strResultTip = pResult->strUnexpectedResultTip;
+
+	//显示搜索结果
+	m_txtSearchResultTip->SetWindowTextW(SStringW().Format(L"，找到%d个歌词文件。 %s", pResult->vecLyricInfoTotal.size(), strResultTip.GetBuffer(1) ));
+	m_txtIsSearchingLyricTip->SetVisible(FALSE,TRUE);
+	m_txtSearchResultTip->SetVisible(TRUE,TRUE);
+
+	for(auto iter = pResult->vecLyricInfoTotal.begin(); iter != pResult->vecLyricInfoTotal.end(); iter++)
+		m_lrcListAdapter->AddItem( iter->strSong, iter->strArtist, iter->strLyricFrom,iter->strPlaneText, iter->strLabelText);
+	m_lrcListAdapter->notifyDataSetChanged();
+	
+	//恢复按钮，可以下一次继续搜索
+	m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_program)->EnableWindow(TRUE, TRUE);
+
+}
+
+//选择原歌词保存路径
+void CPageSearchLyric::OnBtnSelectOriginLyricPath(LPCWSTR pFilePath)
+{
+	BOOL bRet = TRUE;
+	LPCWSTR pPath = NULL;
+
+	if(pFilePath == NULL)
+	{
+		SStringW pathBefore = m_editOriginLyricPath->GetWindowTextW();
+		CBrowseDlg Browser;
+		BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【原歌词】 保存路径"), TRUE, pathBefore);
+
+		if(bRet == TRUE)
+			pPath = Browser.GetDirPath();
+	}
+	else
+		pPath = pFilePath;
+
+	if(bRet == TRUE)
+	{
+		m_editOriginLyricPath->SetWindowTextW(pPath);
+	}
+}
+
+//选择Lrc歌词保存路径
+void CPageSearchLyric::OnBtnSelectLrcLyricPath(LPCWSTR pFilePath)
+{
+	BOOL bRet = TRUE;
+	LPCWSTR pPath = NULL;
+
+	if(pFilePath == NULL)
+	{
+		SStringW pathBefore = m_editLrcLyricPath->GetWindowTextW();
+		CBrowseDlg Browser;
+		BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【LRC歌词】 保存路径"), TRUE, pathBefore);
+		
+		if(bRet == TRUE)
+			pPath = Browser.GetDirPath();
+	}
+	else
+		pPath = pFilePath;
+
+	if(bRet == TRUE)
+	{
+		m_editLrcLyricPath->SetWindowTextW(pPath);
+	}
+}	
+
+//保存原歌词
+void CPageSearchLyric::OnBtnSaveOriginLyricPath()
+{
+	SStringW strContent = CStringHelper::Trim(m_editOriginLyricContent->GetWindowTextW(),L" \t\r\n");
+
+	if(strContent.GetLength() == 0)
+	{
+		_MessageBox(M()->m_hWnd, L"歌词内容为空，无法保存！", L"提示", MB_OK|MB_ICONINFORMATION);
+		return;
+	}
+
+	SStringW strPath = m_editOriginLyricPath->GetWindowTextW();
+	SStringW strSong = CStringHelper::Trim(m_editOriginLyricName->GetWindowTextW());
+	SStringW strArtist = CStringHelper::Trim(m_editOriginLyricArtist->GetWindowTextW());
+	SStringW strConnector = (strSong.GetLength()!=0 && strArtist.GetLength() != 0)? L"-":L"";
+
+	CFileDialogEx saveDlg(FALSE, strArtist+ strConnector+ strSong ,strPath.GetBuffer(1),L"txt",L"原歌词文件(txt)\0*.txt;\0\0",OFN_OVERWRITEPROMPT, M()->m_hWnd);
+	int ret = saveDlg.DoModal();
+	if(ret == TRUE)
+	{
+		//将文本内容保存到文件中
+		SStringW savePath = saveDlg.m_szFileName;
+		if(FileOperator::WriteToUtf8File(wstring(savePath.GetBuffer(1)), wstring(strContent.GetBuffer(1))))
+			_MessageBox(M()->m_hWnd, (L"原歌词已保存！\\n\\n保存路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONINFORMATION);
+		else
+			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
+	}
+}
+
+//保存Lrc歌词
+void CPageSearchLyric::OnBtnSaveLrcLyricPath()
+{
+	SStringW strContent = CStringHelper::Trim(m_editLrcLyricContent->GetWindowTextW(),L" \t\r\n");
+
+	if(strContent.GetLength() == 0)
+	{
+		_MessageBox(M()->m_hWnd, L"歌词内容为空，无法保存！", L"提示", MB_OK|MB_ICONINFORMATION);
+		return;
+	}
+
+	SStringW strPath = m_editLrcLyricPath->GetWindowTextW();
+	SStringW strSong = CStringHelper::Trim(m_editLrcLyricName->GetWindowTextW());
+	SStringW strArtist = CStringHelper::Trim(m_editLrcLyricArtist->GetWindowTextW());
+	SStringW strConnector = (strSong.GetLength()!=0 && strArtist.GetLength() != 0)? L"-":L"";
+
+	CFileDialogEx saveDlg(FALSE, strSong+ strConnector+ strArtist ,strPath.GetBuffer(1),L"lrc",L"LRC歌词文件(lrc)\0*.lrc;\0\0",OFN_OVERWRITEPROMPT, M()->m_hWnd);
+	int ret = saveDlg.DoModal();
+	if(ret == TRUE)
+	{
+		//将文本内容保存到文件中
+		SStringW savePath = saveDlg.m_szFileName;
+		if(FileOperator::WriteToUtf8File(wstring(savePath.GetBuffer(1)), wstring(strContent.GetBuffer(1))))
+			_MessageBox(M()->m_hWnd, (L"LRC歌词已保存！\\n\\n保存路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONINFORMATION);
+		else
+			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
+	}
+
+}	
+
+
+//获得界面上填写的歌曲名和歌手名
+bool CPageSearchLyric::GetMusicAndArtist(SStringW &strMusicName, SStringW &strMusicArtist)
+{
+	strMusicName = m_editSearchLyricName->GetWindowTextW();
+	strMusicArtist = m_editSearchLyricArtist->GetWindowTextW();
+	
+	strMusicName = CStringHelper::Trim(strMusicName);
+	strMusicArtist = CStringHelper::Trim(strMusicArtist);
+
+	if(strMusicName.GetLength() == 0)
+	{
+		_MessageBox(m_pMainWnd->m_hWnd, L"歌曲名不能为空", L"提示", MB_OK|MB_ICONINFORMATION);
+		return false;
+	}
+
+	return true;
+}
 
 

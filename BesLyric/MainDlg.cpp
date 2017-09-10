@@ -9,7 +9,7 @@
 
 #include "stdafx.h"
 #include "MainDlg.h"
-#include "utility/FileHelper.h"
+#include "utility/WinDialog.h"
 #include <helper/SDibHelper.h>
 #include "BSMessageBox.h"
 #include "entity/AutoUpdateThread.h"
@@ -27,7 +27,8 @@
 #endif
 
 #include "utility\SplitFile.h"
-
+#include <fstream>
+using namespace std;
 
 void CMainDlg::test()
 {
@@ -39,10 +40,18 @@ void CMainDlg::test()
 
 	//AutoUpdateThread::DownloadFile(L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe", L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
 
-	wstring strSaveBuffer;
-	CDownloader::DownloadString( L"http://gecimi.com/api/lyric/我们的歌", strSaveBuffer);
-	CDownloader::DownloadString( L"http://s.gecimi.com/lrc/388/38847/3884774.lrc", strSaveBuffer);
-	
+	//wstring strSaveBuffer;
+	//CDownloader::DownloadString( L"http://gecimi.com/api/lyric/我们的歌", strSaveBuffer);
+	//
+	//locale &loc=locale::global(locale(locale(),"",LC_CTYPE)); 
+	//wofstream ofstream("C:\\Users\\BensonLaur\\Desktop\\json.json");
+	//ofstream << strSaveBuffer << endl;
+	//ofstream << L"中文1 test1"  << endl;
+	//ofstream << L"中文2 test2"  << endl;
+	//ofstream.close();
+	//_tfopen(L"C:\\Users\\BensonLaur\\Desktop\\json.test", L"w");
+
+	//CDownloader::DownloadString( L"http://s.gecimi.com/lrc/388/38847/3884774.lrc", strSaveBuffer);
 }
 
 CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
@@ -201,12 +210,11 @@ void CMainDlg::OnDropFile(SEdit* pEdit, wstring strFilePath)
 	}
 	else if(pEdit == this->m_pageSearchLyric->m_editOriginLyricPath)
 	{
-		//TODOTODO
-		//m_pageSearchLyric->OnBtnSelectLyric2(strFilePath.c_str());
+		m_pageSearchLyric->OnBtnSelectOriginLyricPath(strFilePath.c_str());
 	}
 	else if(pEdit == this->m_pageSearchLyric->m_editLrcLyricPath)
 	{
-		//m_pageSearchLyric->OnBtnSelectLyric2(strFilePath.c_str());
+		m_pageSearchLyric->OnBtnSelectLrcLyricPath(strFilePath.c_str());
 	}
 }
 
@@ -772,7 +780,7 @@ void  CMainDlg::OnSliderPos(bool isPos1)
 	}
 }
 
-
+//用于处理格式转换线程结束后，通知主线程播放
 int CMainDlg::MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
 {
 	if(uMsg == MSG_USER_MAKING_START_BUTTON)
@@ -784,5 +792,17 @@ int CMainDlg::MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 		m_pageResult->OnBtnStartPlaying();
 	}
 
-	return true;
+	return TRUE;
+}
+
+
+//处理消息，显示搜索到的歌词
+int CMainDlg::MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	LyricSearchResult* pResult = (LyricSearchResult*)wParam;
+
+	m_pageSearchLyric->ShowLyricResult(pResult);
+
+	delete pResult;
+	return TRUE;
 }

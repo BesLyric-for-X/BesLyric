@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #include "stdafx.h"
 #include "LyricMaker.h"
-#include "../utility/FileHelper.h"
+#include "../utility/WinDialog.h"
 #include "../utility/WinFile.h"
 #include "Windows.h"
 #include <mmsystem.h> 

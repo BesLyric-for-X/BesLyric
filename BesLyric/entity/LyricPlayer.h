@@ -27,7 +27,8 @@
 #pragma once
 #include "stdafx.h"
 #include "MusicPlayer.h"
-#include "../utility/FileHelper.h"
+#include "LrcHandler.h"
+#include "../utility/WinFile.h"
 
 #include <vector>
 using namespace std;
@@ -83,128 +84,4 @@ public:
 	int				m_nTotalLine;			/* 带时间信息的 总行数（不包括空行，但包括有时间但是没歌词的行） */
 	
 	MusicPlayer		m_musicPlayer;			/* 负责歌词滚动预览过程中音乐的播放 */
-};
-
-
-class LrcProcessor{
-public:
-	//使用读取的的文件的所有行初始化Lrc处理器
-	LrcProcessor(vector<SStringW> vecLines, bool bDealOffset = true);
-
-	//当前歌词文件是否有效
-	bool IsLrcFileValid();
-
-	//获得网易云音乐支持的格式
-	vector<TimeLineInfo> GetNeteaseLrc();
-
-	//生成Lrc文件
-	bool GenerateNeteaseLrcFile(SStringW strFilePath);
-
-private:
-	//处理1行
-	bool DealOneLine(SStringW strLine);
-
-	//按歌词时间升序比较
-	bool CompareWithIncreaceTime(const TimeLineInfo & L1, const TimeLineInfo & L2);
-
-private:
-	bool m_bDealOffset;						/* 表示是否处理LRC文件中的时间偏移 */
-	SStringW	m_strTitle;					/* 歌曲标题 */
-	SStringW	m_strArtist;				/* 艺术家 */
-	SStringW	m_strAlbum;					/* 专辑 */
-	SStringW	m_strEditor;				/* 编辑的人 */
-	int			m_nOffset;					/* 时间偏移量，为正数表示整体提前 */
-
-	vector<TimeLineInfo> m_vecNeteaseLrc;	/* 储存用于网易云的歌词信息 */
-
-	bool	m_bIsLrcFileValid;				/* 表示歌词文件是否有效 */
-};
-
-
-/*
-*	@brief 储存处理一行歌词文件； 处理lrc文件（带时间轴的歌词文件）的辅助类
-*/
-class TimeLineInfo
-{
-public:
-	TimeLineInfo(){}//无参构造函数
-
-	TimeLineInfo(SStringT timeLine)
-	{
-		//初始化类的基本成员的信息
-		m_strTimeLine = timeLine;
-		int pos = m_strTimeLine.Find(_T(']'));
-		SStringT timeStr = m_strTimeLine.Left(pos+1);
-
-		m_strLine = m_strTimeLine.Right(m_strTimeLine.GetLength()-pos-1);
-		m_nmSesonds = TimeStringToMSecond(timeStr,timeStr.GetLength());
-
-		if(m_strLine.GetLength()==0)
-			m_bIsEmptyLine = true;
-		else
-			m_bIsEmptyLine = false;
-	}
-	
-	 bool operator < (const TimeLineInfo &m)const {
-                return m_nmSesonds < m.m_nmSesonds;
-      }
-
-private:
-	//从时间标签字符串得到对应的毫秒时间
-	int TimeStringToMSecond(LPCTSTR timeStr, int length)
-	{
-		//TODO：异常抛出处理
-
-		TCHAR szMinute[5];	//分钟
-		TCHAR szSecond[5];	//秒
-		TCHAR szMSecond[5];	//毫秒
-
-		int i,j;
-		//得到: 和. 的位置
-		int pos1 = -1,pos2 = -1,pos3 = length-1;
-		for(i=0; i<length; i++)
-		{
-			if(_T(':') == timeStr[i])
-				pos1 = i;
-			if(_T('.') == timeStr[i])
-				pos2 = i;
-		}
-
-		//得到三个时间段的字符串
-		for(j=0,i=1; i < pos1; i++,j++)
-			szMinute[j] = timeStr[i];
-		szMinute[j] = _T('\0');
-
-		for(j=0, i = pos1+1; i<pos2; i++, j++)
-			szSecond[j] = timeStr[i];
-		szSecond[j] = _T('\0');
-
-		for(j=0, i = pos2+1; i<pos3; i++,j++ )
-			szMSecond[j] = timeStr[i];
-		while(j<=2)
-			szMSecond[j++] = L'0';
-		szMSecond[j] = _T('\0');
-
-		int millisecond = DecStrToDecimal(szMinute) * 60000 + DecStrToDecimal(szSecond)*1000 + DecStrToDecimal(szMSecond);
-		return millisecond;
-	}
-
-	//返回无符号十进制串对应的数字（十进制串可以是 023、12、04 等形式，数值为0到999）
-	int DecStrToDecimal(LPCTSTR timeStr)
-	{
-		int bit = _tcslen(timeStr);
-		int result = 0;
-		for(int i=0; i< bit; i++)
-		{
-			result *= 10;
-			result += timeStr[i]-_T('0');
-		}
-		return result;
-	}
-
-public:
-	SStringT m_strTimeLine;		/* 直接存储 从文件读取的一整行 */
-	SStringT m_strLine;			/* 存储去除时间标记之后的内容 */
-	int	m_nmSesonds;			/* 存储时间标记对应的毫秒时间 */
-	bool m_bIsEmptyLine;		/* 是否为空行（只有时间标记） */
 };

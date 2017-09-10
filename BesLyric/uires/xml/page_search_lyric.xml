@@ -22,44 +22,47 @@
 					<text pos="[0,{0">、歌手</text>
 					<text pos="[0,{0" name="txt_search_lyric_artist_tip" colorText="#4682B4">“王力宏”</text>
 				</window>
-				<text pos="[0,{0" name="txt_search_lyric_result_tip">，找到10个歌词文件</text>
+				<text pos="[0,{0" display="0" name="txt_search_lyric_result_tip">，找到10个歌词文件</text>
+				<text pos="[0,{0" display="0" name="txt_is_searching_lyric_tip">，正在搜索中 . . . . . .</text> 
 			</window>
+			
 		</window>
 		
 		<window  pos="0,[0,-0,-0">
-			<tabctrl pos="0,0,-0,-0" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="33" tabWidth="85"  icon-x="5" icon-y="4" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffffbb">
+			<tabctrl pos="0,0,-0,-0" name="tab_lyric_list" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="33" tabWidth="85"  icon-x="5" icon-y="8" font="adding:-3" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffff">
 				<page title="歌词列表">
 					
-					 <mclistview name="mclv_lyric" pos="0,1,-0,-0" headerHeight="30" >
-						<header align="center" colorText="#ffffffbb"  sortSkin="skin_lcex_header_arrow" itemSkin="skin_lcex_header" itemSwapEnable="0" fixWidth="0" font="underline:0,adding:-3" sortHeader="1" >
+					 <lyriclistview name="mclv_lyric" pos="0,1,-0,-10" headerHeight="27"   sbSkin="cmn.scrollbar">
+					 
+						<header align="center" colorText="#ffffffaa"  sortSkin="skin_lcex_header_arrow" itemSkin="skin_lcex_header" itemSwapEnable="0" fixWidth="0" font="underline:0,adding:-3" sortHeader="1" >
 						  <items>
-							<item width="30"></item>
-							<item width="200">音乐标题</item>
-							<item width="100">歌手</item>
+							<item width="30"></item>			<!-- 注意 lyriclistview 的项的宽度不在此设置，在 OnSize函数里 -->
+							<item width="183">音乐标题</item>
+							<item width="91">歌手</item>
 							<item width="100">来源</item>
 							<item width="200">操作</item>
 						  </items>
 						</header>
-						<template itemHeight="28" colorHover="#ffffff10" colorSelected="#ffffff20">
+						<template itemHeight="28" colorHover="#ffffff10" colorSelected="#ffffff20" >
 						  <window name="col1" clipClient="1">
-							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_lyric_num" ></text>
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_lyric_num" font="adding:-3"></text>
 						  </window>
 						  <window name="col2" clipClient="1">
-							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_name" font="adding:-3"  dotted="1"></text>
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_name" font="adding:-3" ></text>
 						  </window>
 						  <window name="col3" clipClient="1">
-							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_artist"   font="adding:-3"  ></text>
+							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_artist"   font="adding:-3"  colorText="#ffffff"></text>
 						  </window>
 						  <window name="col4" clipClient="1">
 							<text pos="5,5" class="cls_txt_light"  name="txt_mclv_origin"  font="adding:-3" ></text>
 						  </window>
 						  <window name="col5" clipClient="1">
-							<imgbtn pos="0,3,|-2,@23" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view_origin">查看原歌词</imgbtn>
-							<imgbtn pos="|2,3,-0,@23" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view_lrc">查看LRC歌词</imgbtn>
+							<imgbtn pos="5,3,|-2,@23" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view_origin">查看原歌词</imgbtn>
+							<imgbtn pos="|2,3,-5,@23" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view_lrc">查看LRC歌词</imgbtn>
 						  </window>            
 						</template>
 
-					  </mclistview>
+					  </lyriclistview>
 				</page>
 				<page title="原歌词" font="adding:-2">
 					<window pos="0,[5,-1,@40">
@@ -69,12 +72,12 @@
 					</window>
 					<window pos="0,[0,-1,@30">
 						<text pos="5,2,@70,@25">音乐标题：</text>
-						<edit pos="[0,{0,@200,@25" font="adding:-1" readonly="1" name="edit_origin_lyric_name"></edit>
+						<edit pos="[0,{0,@200,@25" font="adding:-1"  name="edit_origin_lyric_name"></edit>
 						<text pos="|-15,{0,@40,@25">歌手：</text>
-						<edit pos="[5,{0,@140,@25" font="adding:-1" readonly="1" name="edit_origin_lyric_artist"></edit>
-						<imgbtn name="btn_select_origin_lyric_path" pos="-125,{0,-5,@25" padding="25,0,0,0" skin="skin_button_download" class="normalbtn_light">保存原歌词</imgbtn>
+						<edit pos="[5,{0,@140,@25" font="adding:-1"  name="edit_origin_lyric_artist"></edit>
+						<imgbtn name="btn_save_origin_lyric_path" pos="-125,{0,-5,@25" padding="25,0,0,0" skin="skin_button_download" class="normalbtn_light">保存原歌词</imgbtn>
 					</window>
-					<edit pos="0,[5,-5,-5" multiLines="1" readonly="0" name="edit_origin_lyric_content" vscrollBar="1" sbSkin="skin_vscrollbar" wordWrap="1"  autoVscroll="1" hscrollBar="0">
+					<edit pos="0,[5,-5,-5" multiLines="1"  name="edit_origin_lyric_content" vscrollBar="1" sbSkin="skin_vscrollbar" wordWrap="1"  autoVscroll="1" hscrollBar="0">
 						
 					</edit>
 				</page>
@@ -86,12 +89,12 @@
 					</window>
 					<window pos="0,[0,-1,@30">
 						<text pos="5,2,@70,@25">音乐标题：</text>
-						<edit pos="[0,{0,@200,@25" font="adding:-1" readonly="1" name="edit_lrc_lyric_name"></edit>
+						<edit pos="[0,{0,@200,@25" font="adding:-1"  name="edit_lrc_lyric_name"></edit>
 						<text pos="|-15,{0,@40,@25">歌手：</text>
-						<edit pos="[5,{0,@140,@25" font="adding:-1" readonly="1" name="edit_lrc_lyric_artist"></edit>
-						<imgbtn name="btn_select_lrc_lyric_path" pos="-135,{0,-5,@25" padding="25,0,0,0" skin="skin_button_download" class="normalbtn_light">保存LRC歌词</imgbtn>
+						<edit pos="[5,{0,@140,@25" font="adding:-1"  name="edit_lrc_lyric_artist"></edit>
+						<imgbtn name="btn_save_lrc_lyric_path" pos="-135,{0,-5,@25" padding="25,0,0,0" skin="skin_button_download" class="normalbtn_light">保存LRC歌词</imgbtn>
 					</window>
-					<edit pos="0,[5,-5,-5" multiLines="1" readonly="0" name="edit_lrc_lyric_content" vscrollBar="1" sbSkin="skin_vscrollbar" wordWrap="1"  autoVscroll="1" hscrollBar="0">
+					<edit pos="0,[5,-5,-5" multiLines="1" name="edit_lrc_lyric_content" vscrollBar="1" sbSkin="skin_vscrollbar" wordWrap="1"  autoVscroll="1" hscrollBar="0">
 						
 					</edit>
 				

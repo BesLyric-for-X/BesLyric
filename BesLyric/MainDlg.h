@@ -83,8 +83,11 @@ public:
 	//处理声音slider 位置的变化
 	void OnSliderPos(bool isPos1);
 
-	
+	 //用于处理格式转换线程结束后，通知主线程播放
 	int MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+
+	//处理消息，显示搜索到的歌词
+	int MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 
 private:
 	//设置程序的背景图片
@@ -140,10 +143,12 @@ protected:
 
 		MSG_WM_TIMER(OnTimer)
 			
-		MESSAGE_HANDLER(MSG_USER_MAKING_START_BUTTON, MessageButtonCommand)   //用于
+		MESSAGE_HANDLER(MSG_USER_MAKING_START_BUTTON, MessageButtonCommand)   //用于格式转换线程结束后，通知主线程播放
 		MESSAGE_HANDLER(MSG_USER_PLAYING_START_BUTTON, MessageButtonCommand)
 
 		MESSAGE_HANDLER(MSG_USER_DROP_FILE, MsgDropFile)//拖放文件消息
+		
+		MESSAGE_HANDLER(MSG_USER_SHOW_LYRIC_RESULT, MessageShowLyricResult)//显示歌词结果消息
 
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()

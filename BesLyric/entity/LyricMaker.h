@@ -28,7 +28,7 @@
 #include "stdafx.h"
 #include "MusicPlayer.h"
 #include <vector>
-#include "../utility/FileHelper.h"
+#include "../utility/WinFile.h"
 #include  "PageSetting.h"
 using namespace std;
 

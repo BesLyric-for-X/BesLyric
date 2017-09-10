@@ -32,6 +32,15 @@
     <Filter Include="Header Files\entity">
       <UniqueIdentifier>{5345c7b8-25c5-4189-ae9a-3fd69e8f909d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\controlEx">
+      <UniqueIdentifier>{e123a482-fc25-4f65-b2ed-b36da37f0cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lib\json">
+      <UniqueIdentifier>{64f17359-9002-4c68-a13f-040a6e3eccbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lib\xml">
+      <UniqueIdentifier>{3031c9a7-6496-42cc-ac04-b5ff5b1286e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\soui_res.rc2">
@@ -76,9 +85,6 @@
     <ClCompile Include="BSMessageBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lib\tinyxml2.cpp">
-      <Filter>Header Files\lib</Filter>
-    </ClCompile>
     <ClCompile Include="entity\LyricMaker.cpp">
       <Filter>Source Files\entity</Filter>
     </ClCompile>
@@ -87,9 +93,6 @@
     </ClCompile>
     <ClCompile Include="entity\MusicPlayer.cpp">
       <Filter>Source Files\entity</Filter>
-    </ClCompile>
-    <ClCompile Include="utility\FileHelper.cpp">
-      <Filter>Source Files\utility</Filter>
     </ClCompile>
     <ClCompile Include="utility\WinFile.cpp">
       <Filter>Source Files\utility</Filter>
@@ -114,6 +117,24 @@
     </ClCompile>
     <ClCompile Include="PageSearchLyric.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\LrcHandler.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\WinDialog.cpp">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\xml\tinyxml2.cpp">
+      <Filter>Header Files\lib\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="utility\StringHelper.cpp">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\SearcherGecimi.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\SearchLyricThread.cpp">
+      <Filter>Source Files\entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -140,9 +161,6 @@
     <ClInclude Include="PageSetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lib\tinyxml2.h">
-      <Filter>Header Files\lib</Filter>
-    </ClInclude>
     <ClInclude Include="entity\LyricMaker.h">
       <Filter>Header Files\entity</Filter>
     </ClInclude>
@@ -151,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="entity\MusicPlayer.h">
       <Filter>Header Files\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="utility\FileHelper.h">
-      <Filter>Header Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="utility\SSingleton.h">
       <Filter>Header Files\utility</Filter>
@@ -187,6 +202,66 @@
     </ClInclude>
     <ClInclude Include="utility\Downloader.h">
       <Filter>Header Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="controlEx\LyricListView.h">
+      <Filter>Header Files\controlEx</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\LyricSearcherFactory.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\ISearcher.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\LrcHandler.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\SearcherGecimi.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\WinDialog.h">
+      <Filter>Header Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\StringHelper.h">
+      <Filter>Header Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\xml\tinyxml2.h">
+      <Filter>Header Files\lib\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\allocator.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\assertions.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\autolink.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\config.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\features.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\forwards.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\json.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\reader.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\value.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\version.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\json\writer.h">
+      <Filter>Header Files\lib\json</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\SearchLyricThread.h">
+      <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
