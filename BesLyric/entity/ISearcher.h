@@ -33,7 +33,14 @@ using namespace std;
 class ISearcher: public IObjRef
 {
 public:
-	//搜索歌词
+	/*
+		@brief	搜索歌词
+		@param	strSong			搜索的歌曲名
+		@param	strArtist		搜索的歌手
+		@param	vecLyricInfo	获得的歌词数据
+		@return	false —— 网络连接异常 或 数据格式出错
+		@note	注意该函数需要将操作的结果写入 m_strLastResult，
+	*/
     virtual bool SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo) = 0;
     
 	virtual void GetLastResult(SStringW& strResult)

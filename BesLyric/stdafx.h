@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#include <WinSock2.h>
 
 #define  _CRT_SECURE_NO_WARNINGS
 #define	 DLL_SOUI

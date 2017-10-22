@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SearcherGecimi.h"
 
+//ËÑË÷¸è´Ê
 bool SearcherGecimi::SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo)
 {
 	wstring strSearchUrl = L"http://gecimi.com/api/lyric";
@@ -92,7 +93,7 @@ bool SearcherGecimi::GetLyricLinkFromJson(wstring strLyricJson, vector<string>& 
 	Json::Value root;
 
 	Json::Reader reader(features);
-	bool parsingSuccessful = reader.parse(input.data(), input.data() + input.size(), root);
+	bool parsingSuccessful = reader.parse(input.data(), input.data() + input.size(), root); //½âÎöÊý¾Ý
 	if (!parsingSuccessful) {
 		return false;
 	}

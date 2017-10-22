@@ -28,9 +28,11 @@
 #include "stdafx.h"
 #include "ISearcher.h"
 #include "SearcherGecimi.h"
+#include "SearcherNetEaseCloud.h"
 
 enum SEARCH_FROM{
 	SF_GECIMI = 0,
+	SF_NETEASE = 1,
 	UNDEFINED		//将 UNDEFINED 置于最后，PageSearchLyric.cpp 中会遍历UNDEFINED 前的所有搜索来源
 };
 
@@ -50,6 +52,9 @@ private:
 		{
 		case SF_GECIMI:
 			*ref = new SearcherGecimi();
+			break;
+		case SF_NETEASE:
+			*ref = new SearcherNetEaseCloud();
 			break;
 		default:
 			SASSERT(false && "未知的歌词搜索类型");

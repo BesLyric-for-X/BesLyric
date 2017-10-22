@@ -125,6 +125,7 @@
     <ClCompile Include="entity\LyricPlayer.cpp" />
     <ClCompile Include="entity\MusicPlayer.cpp" />
     <ClCompile Include="entity\SearcherGecimi.cpp" />
+    <ClCompile Include="entity\SearcherNetEaseCloud.cpp" />
     <ClCompile Include="entity\SearchLyricThread.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
@@ -136,7 +137,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utility\HttpRequest.cpp" />
     <ClCompile Include="utility\StringHelper.cpp" />
+    <ClCompile Include="utility\UrlEncoding.cpp" />
     <ClCompile Include="utility\WinDialog.cpp" />
     <ClCompile Include="utility\SplitFile.cpp" />
     <ClCompile Include="utility\WinFile.cpp" />
@@ -159,6 +162,7 @@
     <ClInclude Include="entity\LyricSearcherFactory.h" />
     <ClInclude Include="entity\MusicPlayer.h" />
     <ClInclude Include="entity\SearcherGecimi.h" />
+    <ClInclude Include="entity\SearcherNetEaseCloud.h" />
     <ClInclude Include="entity\SearchLyricThread.h" />
     <ClInclude Include="lib\json\allocator.h" />
     <ClInclude Include="lib\json\assertions.h" />
@@ -180,7 +184,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="utility\Downloader.h" />
+    <ClInclude Include="utility\HttpRequest.h" />
     <ClInclude Include="utility\StringHelper.h" />
+    <ClInclude Include="utility\UrlEncoding.h" />
     <ClInclude Include="utility\WinDialog.h" />
     <ClInclude Include="utility\SplitFile.h" />
     <ClInclude Include="utility\SSingleton.h" />
