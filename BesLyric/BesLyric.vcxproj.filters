@@ -136,6 +136,9 @@
     <ClCompile Include="entity\SearchLyricThread.cpp">
       <Filter>Source Files\entity</Filter>
     </ClCompile>
+    <ClCompile Include="utility\UrlEncoding.cpp">
+      <Filter>Source Files\utility</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -262,6 +265,15 @@
     </ClInclude>
     <ClInclude Include="entity\SearchLyricThread.h">
       <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\SearcherNetEaseCloud.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\HttpRequest.h">
+      <Filter>Header Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="utility\UrlEncoding.h">
+      <Filter>Header Files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,11 +4,10 @@
 #include "../utility/Downloader.h"
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
-#define MAXBLOCKSIZE 1024  
 
 using namespace SOUI;
 
-AutoUpdateThread* AutoUpdateThread::ms_Singleton = NULL;
+//AutoUpdateThread* AutoUpdateThread::ms_Singleton = NULL;
 
 
 //开始线程

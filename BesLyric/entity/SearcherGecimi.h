@@ -21,7 +21,7 @@
 /**
 * @file       SearcherGecimi.h
 * 
-* @Describe   定义搜索歌词需要的抽象接口； 
+* @Describe   定义歌词迷搜索歌词类，实现搜索歌词接口； 
 */
 
 #pragma once

@@ -92,7 +92,7 @@ bool SearcherGecimi::GetLyricLinkFromJson(wstring strLyricJson, vector<string>& 
 	Json::Value root;
 
 	Json::Reader reader(features);
-	bool parsingSuccessful = reader.parse(input.data(), input.data() + input.size(), root);
+	bool parsingSuccessful = reader.parse(input.data(), input.data() + input.size(), root); //½âÎöÊı¾İ
 	if (!parsingSuccessful) {
 		return false;
 	}

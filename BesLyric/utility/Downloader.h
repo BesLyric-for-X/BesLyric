@@ -22,11 +22,14 @@
 #include "stdafx.h"
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
-#define MAXBLOCKSIZE 1024
+
+
 
 //用于分割文件，组成文件
 class CDownloader
 {
+	#define NET_DATA_BLOCK_SIZE 1024 * 10
+
 public:
 	/*
 	*	@brief	下载到文件 
@@ -36,7 +39,7 @@ public:
 	*/
 	static bool DownloadFile(const wstring strUrl, const wstring strSaveAs)
 	{
-		byte Temp[MAXBLOCKSIZE];
+		byte Temp[NET_DATA_BLOCK_SIZE];
 		ULONG Number = 1;
 
 		FILE *stream;
@@ -50,7 +53,7 @@ public:
 				{
 					while (Number > 0)
 					{
-						InternetReadFile(handle2, Temp, MAXBLOCKSIZE - 1, &Number);
+						InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number);
 
 						fwrite(Temp, sizeof (char), Number, stream);
 					}
@@ -79,7 +82,7 @@ public:
 	*/
 	static bool DownloadString(const wstring strUrl, wstring& strSaveBuffer)
 	{
-		byte Temp[MAXBLOCKSIZE]={0};
+		byte Temp[NET_DATA_BLOCK_SIZE]={0};
 		ULONG Number = 0;
 		ULONG nTotalRecieved = 0;
 		std::size_t nOriginCount = 0;
@@ -94,7 +97,7 @@ public:
 			if (handle2 != NULL)
 			{
 				do{
-					InternetReadFile(handle2, Temp, MAXBLOCKSIZE - 1, &Number);
+					InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number);
 					if(Number != 0)
 					{
 						nTotalRecieved += Number;
@@ -139,6 +142,9 @@ public:
 
 		delete pwstrBuffer;
 
+		if(pBuffer)
+			delete pBuffer;
+
 		return true;
 	}
 
@@ -147,13 +153,13 @@ private:
 	*	@brief	创建或重新分配新的内存
 	*	@param	pPByte				内存指针的指针
 	*	@param	nOldSize			之前的内存大小， 为0时，表示新创建内存
-	*	@param	nNewSize			新分配的内存大小
-	*	@return	true -- 下载成功
+	*	@param	nNewSize			新分配的内存大小(为0将返回false)
+	*	@return	true -- 成功分配指定要的内存
 	*/
 	static bool Realloc(PBYTE* pPByte, std::size_t nOldSize,  std::size_t nNewSize)
 	{
 		if(nNewSize == 0)
-			return true;
+			return false;
 		
 		PBYTE pNewBuffer = new BYTE[nNewSize];
 		memset(pNewBuffer, 0, nNewSize);
