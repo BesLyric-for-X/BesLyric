@@ -29,7 +29,7 @@
 		</window>
 		
 		<window  pos="0,[0,-0,-0">
-			<tabctrl pos="0,0,-0,-0" name="tab_lyric_list" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="33" tabWidth="85"  icon-x="5" icon-y="8" font="adding:-3" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffff">
+			<tabctrl pos="0,0,-0,-0" tabPos="18" name="tab_lyric_list" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="33" tabWidth="85"  icon-x="5" icon-y="8" font="adding:-3" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffff">
 				<page title="歌词列表">
 					
 					 <lyriclistview name="mclv_lyric" pos="0,1,-0,-10" headerHeight="27"   sbSkin="cmn.scrollbar">

@@ -86,6 +86,7 @@ public:
 		PBYTE pBuffer = nullptr;
 		strSaveBuffer = L"";
 
+
 		HINTERNET hSession = InternetOpen(L"RookIE/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 		if (hSession != NULL)
 		{
