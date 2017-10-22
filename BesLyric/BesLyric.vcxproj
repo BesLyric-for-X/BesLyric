@@ -125,6 +125,7 @@
     <ClCompile Include="entity\LyricPlayer.cpp" />
     <ClCompile Include="entity\MusicPlayer.cpp" />
     <ClCompile Include="entity\SearcherGecimi.cpp" />
+    <ClCompile Include="entity\SearcherNetEaseCloud.cpp" />
     <ClCompile Include="entity\SearchLyricThread.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
@@ -136,6 +137,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utility\HttpRequest.cpp" />
     <ClCompile Include="utility\StringHelper.cpp" />
     <ClCompile Include="utility\UrlEncoding.cpp" />
     <ClCompile Include="utility\WinDialog.cpp" />

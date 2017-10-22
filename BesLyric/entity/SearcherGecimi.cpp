@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SearcherGecimi.h"
 
+//ËÑË÷¸è´Ê
 bool SearcherGecimi::SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo)
 {
 	wstring strSearchUrl = L"http://gecimi.com/api/lyric";

@@ -44,143 +44,18 @@ class SearcherNetEaseCloud: public TObjRefImpl<ISearcher>
 
 public:
 	//搜索歌词
-    virtual bool SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo)
-	{
-		CHttpRequest httpRequest;
-		string astrSong = S_CW2A(strSong).GetBuffer(1);
-		string astrArtist = S_CW2A(strArtist).GetBuffer(1);
-
-
-		string strSongUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strSong).GetBuffer(1));
-		string strArtistUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strArtist).GetBuffer(1));
-
-		wstring strRes;
-		if(!httpRequest.Post( "music.163.com/api/search/get/web", 
-									"csrf_token=&s="+ strSongUrl +"&type=1&offset=0&total=True&limit=8",
-									strRes))
-		{
-			m_strLastResult = L"网络连接失败，无法获取歌词索引数据";
-			return false;
-		}
-		
-		strRes = strRes.substr( strRes.find_first_of('{'), strRes.find_last_of('}') - strRes.find_first_of('{')+1);
-
-		//获取id列表
-		vector< SONGINFO > vecSongList;
-		if(!GetSongListFromJson(strRes, vecSongList))
-		{
-			m_strLastResult = L"网易云歌词数据格式异常，无法解析数据";
-			return false;
-		}
-
-		for(auto iter = vecSongList.begin(); iter != vecSongList.end(); iter++)
-		{
-			if( string::npos == iter->strSong.find(astrSong))//歌名不包含于结果歌词名则跳过
-				continue;
-
-			wstring strLyricJson;
-			char szID[MAX_BUFFER_SIZE];
-
-			//获取id对应的歌词
-			if(!httpRequest.Get("music.163.com/api/song/lyric",string("os=osx&id=") + itoa( iter->nID,szID, 10) + string("&lv=-1&kv=-1&tv=-1"), strLyricJson))
-			{
-				m_strLastResult = L"网络连接失败，无法获取歌词内容数据";
-				return false;
-			}
-
-			//从json 数据获取一个歌词添加到
-			LyricInfo oneLyricInfo;
-			strLyricJson = strLyricJson.substr( strLyricJson.find_first_of('{'), strLyricJson.find_last_of('}') - strLyricJson.find_first_of('{')+1);
-			
-			if(!GetOneLyricFromJson(strLyricJson, oneLyricInfo))
-				break;
-			
-			oneLyricInfo.strSong = S_CA2W( SStringA(iter->strSong.c_str())).GetBuffer(1);
-			oneLyricInfo.strArtist = S_CA2W( SStringA(iter->strArtists.c_str())).GetBuffer(1);
-			vecLyricInfo.push_back(oneLyricInfo);
-		}
-
-		return true;
-	}
+    virtual bool SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo);
     
 private:
 
-	//获得结果中的歌曲id列表
-	bool GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList)
-	{
-		vecSongList.clear();
-
-		string strJson = S_CW2A(SStringW(strJsonRes.c_str())).GetBuffer(1);
-
-		JSONCPP_STRING input = strJson;
-		Json::Features features;
-		bool parseOnly = true;
-		Json::Value root;
-
-		Json::Reader reader(features);
-		bool parsingSuccessful = reader.parse(input.data(), input.data() + input.size(), root); //解析数据
-		if (!parsingSuccessful) {
-			return false;
-		}
-
-		//从 获取的json数据获取歌词链接置于 m_vecLyricLink中
-		if(!AnalyseIDJson(root, vecSongList)) 
-			return false;
-
-		return true;
-	}
-
-
-	bool GetOneLyricFromJson(wstring strLyricJson,  LyricInfo& oneLyricInfo)
-	{
-		string strJson = S_CW2A(SStringW(strLyricJson.c_str())).GetBuffer(1);
-
-		JSONCPP_STRING input = strJson;
-		Json::Features features;
-		bool parseOnly = true;
-		Json::Value root;
-
-		Json::Reader reader(features);
-		bool parsingSuccessful = reader.parse(input.data(), input.data() + input.size(), root); //解析数据
-		if (!parsingSuccessful) {
-			return false;
-		}
-
-		string strLyric;
-		//从 获取的json数据获取歌词链接置于 m_vecLyricLink中
-		if(!AnalyseLyricJson(root, strLyric)) 
-			return false;
-
-		GetOneLyricInfoFromLyricBuffer(S_CA2W(SStringA(strLyric.c_str())).GetBuffer(1), oneLyricInfo);
-		return true;
-	}
+	//获得结果中的歌曲信息列表
+	bool GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList);
+	
+	//从单个歌词json数据获得歌词
+	bool GetOneLyricFromJson(wstring strLyricJson,  LyricInfo& oneLyricInfo);
 
 	//从歌词文本缓存获取 歌词 信息
-	void GetOneLyricInfoFromLyricBuffer(wstring strLyricBuffer,LyricInfo& lyricInfo)
-	{
-		LrcProcessor processor( SStringW(strLyricBuffer.c_str()));
-		vector<TimeLineInfo> vecTimeLineInfo = processor.GetNeteaseLrc();
-
-		lyricInfo.strSong = processor.m_strTitle.GetBuffer(1);
-		lyricInfo.strArtist = processor.m_strArtist.GetBuffer(1);
-		lyricInfo.strLyricFrom = L"网易云音乐";
-	
-		wstring strPlaneText = L"";
-		wstring strLabelText = L"";;
-
-		WCHAR szTimeBuf[MAX_BUFFER_SIZE/2];
-		for(auto iter = vecTimeLineInfo.begin(); iter != vecTimeLineInfo.end(); iter++)
-		{
-			strPlaneText += iter->m_strLine;
-			strLabelText += iter->m_strTimeLine;
-		}
-	
-		lyricInfo.strPlaneText = strPlaneText;
-		lyricInfo.strLabelText = strLabelText;
-	}
-
-
-
+	void GetOneLyricInfoFromLyricBuffer(wstring strLyricBuffer,LyricInfo& lyricInfo);
 	
 	/*
 		@brief	从 网易云获取的json数据获取歌词 置于 m_vecIdList 中
@@ -205,47 +80,7 @@ private:
 			   }
 		}
 	*/
-	bool AnalyseLyricJson(Json::Value & value, string& strLyric)
-	{
-		if(value.type() == Json::objectValue) //{}
-		{
-			Json::Value::Members members(value.getMemberNames());
-
-			for (Json::Value::Members::iterator it = members.begin(); it != members.end();++it) 
-			{
-				//节点里有 code、klyric、lrc 等属性成员
-				//这里获取lrc 
-				const JSONCPP_STRING name = *it;
-				if(name == "lrc")
-				{
-					Json::Value lrc = value[name]; //获得lrc 节点
-					if(value.type() == Json::objectValue) //{}
-					{
-						Json::Value::Members lrcMembers(lrc.getMemberNames());
-						for (Json::Value::Members::iterator itLM = lrcMembers.begin(); itLM != lrcMembers.end();++itLM) 
-						{
-							//"lyric" 和 version" 2个成员，直接获取lyric 内容
-							const JSONCPP_STRING name = *itLM;
-							if(name == "lyric")
-							{
-								if(lrc[name].type() == Json::stringValue)  //这里lyric 字符串数据
-								{
-									strLyric = lrc[name].asString();
-									return true;
-								}
-								else
-									return false;
-							}
-						}
-					}
-					else 
-						return false;
-				}//if(name == "lrc")
-			}
-		}
-
-		return false;
-	}
+	bool AnalyseLyricJson(Json::Value & value, string& strLyric);
 
 	/*
 		@brief	从 网易云获取的json数据获取歌词id 置于 m_vecIdList 中
@@ -272,125 +107,7 @@ private:
 			}
 		}
 	*/
-	bool AnalyseIDJson(Json::Value & value, vector< SONGINFO >& vecSongList)
-	{
-		if(value.type() == Json::objectValue) //{}
-		{
-			Json::Value::Members members(value.getMemberNames());
-
-			for (Json::Value::Members::iterator it = members.begin(); it != members.end();++it) 
-			{
-				//节点里有 code、result 等属性成员
-				//这里获取result数组
-				const JSONCPP_STRING name = *it;
-				if(name == "result")
-				{
-					Json::Value result = value[name]; //获得result 节点
-
-					Json::Value::Members members(result.getMemberNames());
-					for(Json::Value::Members::iterator itRes = members.begin(); itRes != members.end();++itRes)
-					{
-						//result 下有2个成员：songCount、songs
-						//这里获取 songs 数组
-						const JSONCPP_STRING name = *itRes;
-						if(name == "songs")
-						{
-							Json::Value songsArray = result[name];  //获得songs节点
-							if(songsArray.type() == Json::arrayValue) //[]
-							{
-								Json::ArrayIndex size = songsArray.size();
-								for (Json::ArrayIndex index = 0; index < size; ++index) 
-								{
-									Json::Value oneSong = songsArray[index];
-
-									if(oneSong.type() == Json::objectValue)//{}
-									{
-										//每一个歌信息里有 id、name、artist 等属性成员
-										Json::Value::Members members(oneSong.getMemberNames());
-
-										int nID;
-										string strArtists, strSong;
-										for (Json::Value::Members::iterator it = members.begin(); it != members.end();++it) 
-										{
-											const JSONCPP_STRING member = *it;
-											if(member == "id")
-											{
-												if(oneSong[member].type() == Json::intValue)  //这里id是整型数据
-												{
-													nID = oneSong[member].asInt(); //获得歌曲id
-												}
-												else
-													return false;
-											}
-											else if(member == "name")
-											{
-												if(oneSong[member].type() == Json::stringValue)  //这里name是字符串
-												{
-													strSong = oneSong[member].asString(); //获得歌曲id
-												}
-												else
-													return false;
-											}
-											else if(member =="artists")
-											{
-												Json::Value artistArray = oneSong[member];  //获得artists节点
-												if(artistArray.type() == Json::arrayValue) //[]
-												{
-													int count = 0; //记录歌手个数
-													Json::ArrayIndex size = artistArray.size();
-													for (Json::ArrayIndex index = 0; index < size; ++index) //遍历所有artist
-													{
-														Json::Value oneArtist = artistArray[index];
-
-														if(oneArtist.type() == Json::objectValue)//{}
-														{
-															//每一个艺术家里有 img1v1Url、name 等属性成员
-															//这里获取 name, 追加在一起到  strArtists 字符串中
-															Json::Value::Members artistMembers(oneArtist.getMemberNames());
-															for (Json::Value::Members::iterator itA = members.begin(); itA != members.end();++itA) 
-															{
-																const JSONCPP_STRING member = *itA;
-																if(member == "name")
-																{
-																	if(count++ > 0)
-																	{
-																		strArtists += "、";
-																	}
-																	strArtists += oneArtist[member].asString();
-																	break;
-																}
-															}
-														}
-														else
-															return false;
-													}
-												}else 
-													return false;
-											}//oneSong 的其他成员不考虑
-										}
-										SONGINFO songInfo;
-										songInfo.nID = nID;
-										songInfo.strArtists = strArtists;
-										songInfo.strSong = strSong;
-										vecSongList.push_back(songInfo);  //将从一首歌收集的信息储存
-
-									}//if(oneLyric.type() == Json::objectValue)
-									else
-										return false;
-								}
-							}//if(resultArray.type() == Json::arrayValue)
-							else
-								return false;
-						}//if(name == "songs")
-					}
-				}//if(name == "result")
-			}
-		}
-		else
-			return false;
-
-		return true;
-	}
+	bool AnalyseIDJson(Json::Value & value, vector< SONGINFO >& vecSongList);
 
 };
 
