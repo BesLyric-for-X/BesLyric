@@ -219,6 +219,12 @@ void CPageSearchLyric::OnBtnSearchBaidu()
 //通过本软件内获取歌词
 void CPageSearchLyric::OnBtnSearchInProgram()
 {
+	if(CSearchLyricThread::getSingleton().IsSearching())
+	{
+		_MessageBox(NULL,L"搜索模块正被占用，请等待.....",L"等待提示", MB_OK|MB_ICONINFORMATION);
+		return;
+	}
+
 	SStringW strMusicName = L"";
 	SStringW strMusicArtist = L"";
 
@@ -249,24 +255,33 @@ void CPageSearchLyric::OnBtnSearchInProgram()
 void CPageSearchLyric::ShowLyricResult(LyricSearchResult* pResult)
 {
 	//删除列表中所有的已有数据
-	m_lrcListAdapter->DeleteAllItem();
+	static int nLyricCount = 0;
+	if(!pResult->bAppendToList)  
+	{
+		nLyricCount = 0;
+		m_lrcListAdapter->DeleteAllItem();
+	}
 
 	SStringW strResultTip = L"";
 	if(pResult->bShowUnexpectedResultTip)
 		strResultTip = pResult->strUnexpectedResultTip;
 
 	//显示搜索结果
-	m_txtSearchResultTip->SetWindowTextW(SStringW().Format(L"，找到%d个歌词文件。 %s", pResult->vecLyricInfoTotal.size(), strResultTip.GetBuffer(1) ));
-	m_txtIsSearchingLyricTip->SetVisible(FALSE,TRUE);
+	nLyricCount += pResult->vecLyricInfoTotal.size();
+	m_txtSearchResultTip->SetWindowTextW(SStringW().Format(L"，找到%d个歌词文件。 %s",nLyricCount , strResultTip.GetBuffer(1) ));
 	m_txtSearchResultTip->SetVisible(TRUE,TRUE);
 
 	for(auto iter = pResult->vecLyricInfoTotal.begin(); iter != pResult->vecLyricInfoTotal.end(); iter++)
 		m_lrcListAdapter->AddItem( iter->strSong, iter->strArtist, iter->strLyricFrom,iter->strPlaneText, iter->strLabelText);
 	m_lrcListAdapter->notifyDataSetChanged();
 	
-	//恢复按钮，可以下一次继续搜索
-	m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_program)->EnableWindow(TRUE, TRUE);
-
+	if(pResult->bCurrentSearchDone) //搜索结束时才能恢复按钮
+	{
+		//恢复按钮，可以下一次继续搜索
+		m_pMainWnd->FindChildByID2<SButton>(R.id.btn_search_lyric_using_program)->EnableWindow(TRUE, TRUE);
+		
+		m_txtIsSearchingLyricTip->SetVisible(FALSE,TRUE); //隐藏正在搜索提示
+	}
 }
 
 //选择原歌词保存路径
@@ -373,8 +388,28 @@ void CPageSearchLyric::OnBtnSaveLrcLyricPath()
 		else
 			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
 	}
-
 }	
+
+
+//根据猜测结果自动填充搜索关键词并开始搜索
+void CPageSearchLyric::OnSearchWithGuess(SongInfoGuessResult* pGuessRes)
+{
+	SASSERT( pGuessRes->nResultType == 1 || pGuessRes->nResultType == 2);
+
+	//到这里猜测结果一定包含歌词名
+	m_editSearchLyricName->SetWindowTextW(pGuessRes->strSongName);
+
+	if(pGuessRes->nResultType == 1)//还包含
+	{
+		m_editSearchLyricArtist->SetWindowTextW(pGuessRes->strArtist);
+	}
+	else
+	{
+		m_editSearchLyricArtist->SetWindowTextW(SStringW());
+	}
+
+	OnBtnSearchInProgram();
+}
 
 
 //获得界面上填写的歌曲名和歌手名

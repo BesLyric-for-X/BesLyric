@@ -19,9 +19,9 @@
 */
 
 /**
-* @file       SearchLyricThread.h
+* @file       GuessLyricInfoThread.h
 * 
-* Describe    启动一个线程，用于下载歌词
+* Describe    启动一个线程，用于根据歌曲文件以及名称等信息，猜测歌词的歌曲名和歌手信息
 */
 
 #pragma once
@@ -31,28 +31,33 @@
 using namespace SOUI;
 
 
-class  CSearchLyricThread : public Singleton<CSearchLyricThread>
+class  CGuessLyricInfoThread : public Singleton<CGuessLyricInfoThread>
 {
 public:
 	// 检查程序的完整性
-	CSearchLyricThread():m_handleThreadSearch(NULL),m_bIsSearching(false){}
+	CGuessLyricInfoThread():m_handleThreadGuess(NULL),m_bIsGuessing(false){}
 
 	//开始线程
-	bool Start(HWND hMainWnd, SStringW& strMusicName, SStringW& strMusicArtist);
+	bool Start(HWND hMainWnd, SStringW& strMusicPath);
 
-	bool IsSearching(){return m_bIsSearching;}
 private:
+	//从mp3文件中获取猜测结果
+	bool GetGuessResultFromMp3(SongInfoGuessResult* pGuessRes );
+
+	//从网易云接口分析前个字符串是否为歌手
+	bool GuessWhetherFirstArtistFromNetease(SStringW& strFirst, SStringW& strSecond);
 
 	// 线程执行地址
-	static DWORD WINAPI ProcSearch(LPVOID pParam);
+	static DWORD WINAPI ProcGuessLyricInfo(LPVOID pParam);
 
 private:
 
-	HANDLE		m_handleThreadSearch;	/* 当前线程句柄 */	
+	HANDLE		m_handleThreadGuess;	/* 当前线程句柄 */	
 	HWND		m_hMainWnd;				/* 主窗口句柄 */
-	
-	bool m_bIsSearching; //标记是否在搜索当中
 
+	bool m_bIsGuessing;				//正在猜测分析当中
+
+	SStringW	m_strMusicPath;
 	SStringW	m_strMusicName;			
 	SStringW	m_strMusicArtist;
 };

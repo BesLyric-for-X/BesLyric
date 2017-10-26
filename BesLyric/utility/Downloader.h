@@ -93,6 +93,8 @@ public:
 		HINTERNET hSession = InternetOpen(L"RookIE/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 		if (hSession != NULL)
 		{
+			//int nMs = 5000;
+			//BOOL bRet = InternetSetOption(hSession, INTERNET_OPTION_CONNECT_TIMEOUT, &nMs,4);  //该处设置了也不起作用
 			HINTERNET handle2 = InternetOpenUrl(hSession, strUrl.c_str(), NULL, 0, INTERNET_FLAG_DONT_CACHE, 0);
 			if (handle2 != NULL)
 			{

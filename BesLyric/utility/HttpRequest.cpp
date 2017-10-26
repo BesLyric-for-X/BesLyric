@@ -34,7 +34,7 @@ bool CHttpRequest::Get(string strUrl, string strParameter, wstring& resultConten
 	if(!bRet)
 		return false;
 
-	resultContent = ToUtf8(strResult);
+	resultContent = MultiByteToUtf8(strResult);
 
 	return true;
 }
@@ -72,7 +72,7 @@ bool CHttpRequest::Post(string strUrl, string strParameter, wstring& resultConte
 	if(!bRet)
 		return false;
 
-	resultContent = ToUtf8(strResult);
+	resultContent = MultiByteToUtf8(strResult);
 
 	return true;
 }
@@ -199,7 +199,7 @@ bool CHttpRequest::SocketRequest(string strHost, string strRequest, string& resu
 
 
 //用于将获得的数据转换为utf-8宽字节字符串
-wstring CHttpRequest::ToUtf8(string strAscii)
+wstring CHttpRequest::MultiByteToUtf8(string strAscii)
 {
 	wstring wstrResult;
 
@@ -215,6 +215,26 @@ wstring CHttpRequest::ToUtf8(string strAscii)
 
 	return wstrResult;
 }
+
+//用于将获得的数据转换为多字节字符串
+string CHttpRequest::Utf8ToMultiByte(wstring wstrUtf8)
+{
+	string strResult;
+
+	int nRet = WideCharToMultiByte(CP_UTF8,0,wstrUtf8.c_str(),-1,NULL,0,NULL,NULL); 
+    if(nRet>0)
+    {
+        char *pBuf=new char[nRet+1];
+        WideCharToMultiByte(CP_UTF8,0,wstrUtf8.c_str(),wstrUtf8.size(),pBuf,nRet+1,NULL,NULL);
+		pBuf[nRet] = '\0'; //最后总是多了一串字符，截断
+        strResult = string(pBuf);
+        delete []pBuf;
+    }
+
+	return strResult;
+
+}
+
 
 /*
 *	@brief	创建或重新分配新的内存

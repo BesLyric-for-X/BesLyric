@@ -12,8 +12,6 @@
 
 using namespace SOUI;
 
-CCheckIntegrityThread* CCheckIntegrityThread::ms_Singleton = NULL;
-
 
 //开始线程
 bool CCheckIntegrityThread::Start(bool bShowPassTip)

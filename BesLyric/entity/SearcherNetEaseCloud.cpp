@@ -5,8 +5,9 @@
 bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo)
 {
 	CHttpRequest httpRequest;
-	string astrSong = S_CW2A(strSong).GetBuffer(1);
-	string astrArtist = S_CW2A(strArtist).GetBuffer(1);
+
+	wstring wstrSong = S_CW2W(strSong).GetBuffer(1);
+	wstring wstrArtist = S_CW2W(strArtist).GetBuffer(1);
 
 
 	string strSongUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strSong).GetBuffer(1));
@@ -14,7 +15,7 @@ bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vec
 
 	wstring strRes;
 	if(!httpRequest.Post( "music.163.com/api/search/get/web", 
-								"csrf_token=&s="+ strSongUrl +"&type=1&offset=0&total=True&limit=8",
+								"csrf_token=&s="+strArtistUrl+"+"+ strSongUrl +"&type=1&offset=0&total=True&limit=20",
 								strRes))
 	{
 		m_strLastResult = L"网络连接失败，无法获取歌词索引数据";
@@ -33,7 +34,7 @@ bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vec
 
 	for(auto iter = vecSongList.begin(); iter != vecSongList.end(); iter++)
 	{
-		if( string::npos == iter->strSong.find(astrSong))//歌名不包含于结果歌词名则跳过
+		if( wstring::npos == iter->strSong.find(wstrSong))//歌名不包含于结果歌词名则跳过
 			continue;
 
 		wstring strLyricJson;
@@ -51,10 +52,10 @@ bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vec
 		strLyricJson = strLyricJson.substr( strLyricJson.find_first_of('{'), strLyricJson.find_last_of('}') - strLyricJson.find_first_of('{')+1);
 		
 		if(!GetOneLyricFromJson(strLyricJson, oneLyricInfo))
-			break;
+			continue;
 		
-		oneLyricInfo.strSong = S_CA2W( SStringA(iter->strSong.c_str())).GetBuffer(1);
-		oneLyricInfo.strArtist = S_CA2W( SStringA(iter->strArtists.c_str())).GetBuffer(1);
+		oneLyricInfo.strSong =  SStringW(iter->strSong.c_str()).GetBuffer(1);
+		oneLyricInfo.strArtist =  SStringW(iter->strArtists.c_str()).GetBuffer(1);
 		vecLyricInfo.push_back(oneLyricInfo);
 	}
 
@@ -66,8 +67,9 @@ bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vec
 bool SearcherNetEaseCloud::GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList)
 {
 	vecSongList.clear();
-
-	string strJson = S_CW2A(SStringW(strJsonRes.c_str())).GetBuffer(1);
+	
+	//utf8 宽字符改为 多字节ascii字符
+	string strJson = CHttpRequest::Utf8ToMultiByte(strJsonRes);
 
 	JSONCPP_STRING input = strJson;
 	Json::Features features;
@@ -90,7 +92,8 @@ bool SearcherNetEaseCloud::GetSongListFromJson(wstring strJsonRes, vector< SONGI
 //从单个歌词json数据获得歌词
 bool SearcherNetEaseCloud::GetOneLyricFromJson(wstring strLyricJson,  LyricInfo& oneLyricInfo)
 {
-	string strJson = S_CW2A(SStringW(strLyricJson.c_str())).GetBuffer(1);
+	//utf8 宽字符改为 多字节ascii字符
+	string strJson = CHttpRequest::Utf8ToMultiByte(strLyricJson);
 
 	JSONCPP_STRING input = strJson;
 	Json::Features features;
@@ -103,12 +106,12 @@ bool SearcherNetEaseCloud::GetOneLyricFromJson(wstring strLyricJson,  LyricInfo&
 		return false;
 	}
 
-	string strLyric;
+	wstring strLyric;
 	//从 获取的json数据获取歌词链接置于 m_vecLyricLink中
 	if(!AnalyseLyricJson(root, strLyric)) 
 		return false;
 
-	GetOneLyricInfoFromLyricBuffer(S_CA2W(SStringA(strLyric.c_str())).GetBuffer(1), oneLyricInfo);
+	GetOneLyricInfoFromLyricBuffer(SStringW(strLyric.c_str()).GetBuffer(1), oneLyricInfo);
 	return true;
 }
 
@@ -160,7 +163,7 @@ void SearcherNetEaseCloud::GetOneLyricInfoFromLyricBuffer(wstring strLyricBuffer
 		   }
 	}
 */
-bool SearcherNetEaseCloud::AnalyseLyricJson(Json::Value & value, string& strLyric)
+bool SearcherNetEaseCloud::AnalyseLyricJson(Json::Value & value, wstring& strLyric)
 {
 	if(value.type() == Json::objectValue) //{}
 	{
@@ -185,7 +188,8 @@ bool SearcherNetEaseCloud::AnalyseLyricJson(Json::Value & value, string& strLyri
 						{
 							if(lrc[name].type() == Json::stringValue)  //这里lyric 字符串数据
 							{
-								strLyric = lrc[name].asString();
+								string str = lrc[name].asString();
+								strLyric = CHttpRequest::MultiByteToUtf8(lrc[name].asString());
 								return true;
 							}
 							else
@@ -264,7 +268,7 @@ bool SearcherNetEaseCloud::AnalyseIDJson(Json::Value & value, vector< SONGINFO >
 									Json::Value::Members members(oneSong.getMemberNames());
 
 									int nID;
-									string strArtists, strSong;
+									wstring strArtists, strSong;
 									for (Json::Value::Members::iterator it = members.begin(); it != members.end();++it) 
 									{
 										const JSONCPP_STRING member = *it;
@@ -281,7 +285,8 @@ bool SearcherNetEaseCloud::AnalyseIDJson(Json::Value & value, vector< SONGINFO >
 										{
 											if(oneSong[member].type() == Json::stringValue)  //这里name是字符串
 											{
-												strSong = oneSong[member].asString(); //获得歌曲id
+												wstring wstr = CHttpRequest::MultiByteToUtf8(oneSong[member].asString());
+												strSong = wstr; //获得歌曲名称
 											}
 											else
 												return false;
@@ -309,9 +314,10 @@ bool SearcherNetEaseCloud::AnalyseIDJson(Json::Value & value, vector< SONGINFO >
 															{
 																if(count++ > 0)
 																{
-																	strArtists += "、";
+																	strArtists += L"、";
 																}
-																strArtists += oneArtist[member].asString();
+																wstring wstr = CHttpRequest::MultiByteToUtf8(oneArtist[member].asString());
+																strArtists += wstr;
 																break;
 															}
 														}

@@ -53,7 +53,8 @@ public:
 
 	void OnBtnPreview();
 	void OnBtnOpenOutput();			//打开生成的文件
-	void OnEditLyric();				//打开编辑选中的歌词文件
+	void OnBtnTrySearchLyric();		//试图搜索歌词
+	void OnBtnEditLyric();				//打开编辑选中的歌词文件
 
 	void OnBtnSoundOpen1();			//打开声音
 	void OnBtnSoundClose1();		//静音
@@ -87,7 +88,8 @@ protected:
 		EVENT_ID_COMMAND(R.id.btn_restart , OnBtnRestart)
 		EVENT_ID_COMMAND(R.id.btn_preview , OnBtnPreview)
 		EVENT_ID_COMMAND(R.id.btn_open_output , OnBtnOpenOutput)
-		EVENT_ID_COMMAND(R.id.btn_edit_origin_lyric , OnEditLyric)
+		EVENT_ID_COMMAND(R.id.btn_edit_try_search_lyric , OnBtnTrySearchLyric)
+		EVENT_ID_COMMAND(R.id.btn_edit_origin_lyric , OnBtnEditLyric)
 		
 		
 		EVENT_ID_COMMAND(R.id.btn_sound_open_1 , OnBtnSoundOpen1)

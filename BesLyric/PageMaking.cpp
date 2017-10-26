@@ -2,6 +2,7 @@
 #include "PageMaking.h"
 #include "utility/WinDialog.h"
 #include "utility/WinFile.h"
+#include "entity\GuessLyricInfoThread.h"
 
 CPageMaking::CPageMaking()
 {
@@ -310,8 +311,21 @@ void CPageMaking::OnBtnOpenOutput()
 	}
 }
 
+//试图搜索歌词
+void CPageMaking::OnBtnTrySearchLyric()
+{
+	if(_tcslen(M()->maker.m_szMusicPathName)!=0)
+	{	
+		CGuessLyricInfoThread::getSingleton().Start( M()->m_hWnd, SStringW(M()->maker.m_szMusicPathName));
+	}
+	else
+	{
+		_MessageBox(M()->m_hWnd, L"请先选择音乐文件 :)", L"提示", MB_OK|MB_ICONINFORMATION);
+	}
+}
+
 //打开编辑选中的歌词文件
-void CPageMaking::OnEditLyric()
+void CPageMaking::OnBtnEditLyric()
 {
 	if(_tcslen(M()->maker.m_szLyricPathName)!=0)
 	{	

@@ -806,3 +806,26 @@ int CMainDlg::MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	delete pResult;
 	return TRUE;
 }
+
+int CMainDlg::MessageSearchWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	SongInfoGuessResult* pGuessRes  = (SongInfoGuessResult*)wParam;
+
+	if(pGuessRes->nResultType == 3)
+	{
+		_MessageBox(this->m_hWnd,L"无法猜测出该文件的具体信息，请自行搜索歌词",L"提示", MB_OK|MB_ICONINFORMATION);
+	}
+	else
+	{
+		//填充收拾信息，并开始搜索
+		m_pageSearchLyric->OnSearchWithGuess(pGuessRes);
+
+		//自动切换到搜索歌词页面
+		STabCtrl* tab = FindChildByID2<STabCtrl>(R.id.tab_main);
+		if(tab)
+			tab->SetCurSel(2);
+	}
+
+	delete pGuessRes;
+	return TRUE;
+}
