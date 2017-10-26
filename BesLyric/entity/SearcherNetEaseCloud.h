@@ -36,21 +36,14 @@
 
 class SearcherNetEaseCloud: public TObjRefImpl<ISearcher>
 {
-	typedef struct _SONG_INFO{
-		int nID;
-		string strArtists;
-		string strSong;
-	} SONGINFO;
-
 public:
 	//搜索歌词
     virtual bool SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo);
     
+	//获得结果中的歌曲信息列表
+	static bool GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList);
 private:
 
-	//获得结果中的歌曲信息列表
-	bool GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList);
-	
 	//从单个歌词json数据获得歌词
 	bool GetOneLyricFromJson(wstring strLyricJson,  LyricInfo& oneLyricInfo);
 
@@ -80,7 +73,7 @@ private:
 			   }
 		}
 	*/
-	bool AnalyseLyricJson(Json::Value & value, string& strLyric);
+	bool AnalyseLyricJson(Json::Value & value, wstring& strLyric);
 
 	/*
 		@brief	从 网易云获取的json数据获取歌词id 置于 m_vecIdList 中
@@ -107,7 +100,7 @@ private:
 			}
 		}
 	*/
-	bool AnalyseIDJson(Json::Value & value, vector< SONGINFO >& vecSongList);
+	static bool AnalyseIDJson(Json::Value & value, vector< SONGINFO >& vecSongList);
 
 };
 

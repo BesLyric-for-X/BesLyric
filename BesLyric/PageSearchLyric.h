@@ -226,6 +226,9 @@ public:
 	void OnBtnSaveOriginLyricPath();	//保存原歌词
 	void OnBtnSaveLrcLyricPath();		//保存Lrc歌词
 
+	//根据猜测结果自动填充搜索关键词并开始搜索
+	void OnSearchWithGuess(SongInfoGuessResult* pGuessRes);
+
 private:
 	//获得界面上填写的歌曲名和歌手名
 	bool GetMusicAndArtist(SStringW &strMusicName, SStringW &strMusicArtist);

@@ -88,6 +88,8 @@ public:
 
 	//处理消息，显示搜索到的歌词
 	int MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+	//处理消息，使用猜测的结果自动搜索歌词
+	int MessageSearchWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 
 private:
 	//设置程序的背景图片
@@ -149,6 +151,7 @@ protected:
 		MESSAGE_HANDLER(MSG_USER_DROP_FILE, MsgDropFile)//拖放文件消息
 		
 		MESSAGE_HANDLER(MSG_USER_SHOW_LYRIC_RESULT, MessageShowLyricResult)//显示歌词结果消息
+		MESSAGE_HANDLER(MSG_USER_SEARCH_WITH_GUESS_RESULT, MessageSearchWithGuessResult) //使用猜测的结果自动搜索
 
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()

@@ -53,6 +53,7 @@ using namespace std;
 #define MSG_USER_DROP_FILE				WM_USER+5
 
 #define MSG_USER_SHOW_LYRIC_RESULT		WM_USER+6
+#define MSG_USER_SEARCH_WITH_GUESS_RESULT  WM_USER+7
 
 /* 结构定义 */
 
@@ -86,9 +87,26 @@ struct LyricInfo
 
 struct LyricSearchResult
 {
+	bool bCurrentSearchDone;						//标记本次收拾是否结束
+	bool bAppendToList;								//是否为追加到列表，false 则先清空
 	vector<LyricInfo> vecLyricInfoTotal;			//所有获得的歌词
 	bool bShowUnexpectedResultTip;					//是否显示意外结果的提示
 	SStringW strUnexpectedResultTip;				//意外结果的提示
+};
+
+//网易云歌曲信息结构（可用于存储从网易云搜索到的数据）
+typedef struct _SONG_INFO{
+	int nID;
+	wstring strArtists;
+	wstring strSong;
+} SONGINFO;
+
+
+struct SongInfoGuessResult
+{
+	int nResultType;   //1 表示获得到了歌曲名和歌手名  2 表示只获取歌曲名  3表示没有获取到任何猜测结果
+	SStringW strSongName;		//歌曲名
+	SStringW strArtist;			//歌手信息
 };
 
 

@@ -56,6 +56,11 @@ public:
 	bool Post(string strUrl, string strParameter, string& resultContent);
 	bool Post(string strUrl, string strParameter, wstring& resultContent);
 
+	
+	//用于将获得的数据转换为utf-8宽字节字符串
+	static wstring MultiByteToUtf8(string strAscii);
+	//用于将获得的数据转换为多字节字符串
+	static string Utf8ToMultiByte(wstring wstrUtf8);
 private:
 	string GetRequestHeader(string strUrl, string strParameter, bool isPost);
 
@@ -68,8 +73,6 @@ private:
 	*/
 	bool SocketRequest(string strHost, string strRequest, string& resultContent);
 
-	//用于将获得的数据转换为utf-8宽字节字符串
-	wstring ToUtf8(string strAscii);
 
 	/*
 	*	@brief	创建或重新分配新的内存

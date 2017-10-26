@@ -7,8 +7,6 @@
 
 using namespace SOUI;
 
-//AutoUpdateThread* AutoUpdateThread::ms_Singleton = NULL;
-
 
 //开始线程
 bool AutoUpdateThread::Start()

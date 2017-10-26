@@ -120,6 +120,7 @@
     <ClCompile Include="DlgCheckIntegrity.cpp" />
     <ClCompile Include="entity\AutoUpdateThread.cpp" />
     <ClCompile Include="entity\CheckIntegrityThread.cpp" />
+    <ClCompile Include="entity\GuessLyricInfoThread.cpp" />
     <ClCompile Include="entity\LrcHandler.cpp" />
     <ClCompile Include="entity\LyricMaker.cpp" />
     <ClCompile Include="entity\LyricPlayer.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="entity\AutoUpdateThread.h" />
     <ClInclude Include="entity\CheckIntegrityThread.h" />
     <ClInclude Include="entity\FileDroper.h" />
+    <ClInclude Include="entity\GuessLyricInfoThread.h" />
     <ClInclude Include="entity\ISearcher.h" />
     <ClInclude Include="entity\LrcHandler.h" />
     <ClInclude Include="entity\LyricMaker.h" />

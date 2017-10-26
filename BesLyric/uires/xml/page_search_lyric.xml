@@ -9,7 +9,7 @@
 				<edit pos="[10,{0,@150,@25" name="edit_search_lyric_artist" cueText=" 选填"></edit>
 			</window>
 			<window  pos="[0,{0,-0,@65" font="adding:-1" >
-				<imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_lyric_using_program" skin="skin_button_search" class="normalbtn_light" tip="不填歌手一般将搜出更多结果">软件搜索</imgbtn>
+				<imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_lyric_using_program" skin="skin_button_search" class="normalbtn_light" tip="不填歌手一般将搜出更多结果">直接搜索</imgbtn>
 				<imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_lyric_using_baidu" skin="skin_button_search" class="normalbtn_light" >百度搜索</imgbtn>
 			</window>
 			<window name="window_search_lyric_tip" font="adding:-1" pos="18,[10,-0,@30" >
@@ -22,8 +22,8 @@
 					<text pos="[0,{0">、歌手</text>
 					<text pos="[0,{0" name="txt_search_lyric_artist_tip" colorText="#4682B4">“王力宏”</text>
 				</window>
+				<text pos="[0,{0" display="0" name="txt_is_searching_lyric_tip">，正在搜索中 . . . </text> 
 				<text pos="[0,{0" display="0" name="txt_search_lyric_result_tip">，找到10个歌词文件</text>
-				<text pos="[0,{0" display="0" name="txt_is_searching_lyric_tip">，正在搜索中 . . . . . .</text> 
 			</window>
 			
 		</window>

@@ -145,6 +145,9 @@
     <ClCompile Include="utility\HttpRequest.cpp">
       <Filter>Source Files\utility</Filter>
     </ClCompile>
+    <ClCompile Include="entity\GuessLyricInfoThread.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -280,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="utility\UrlEncoding.h">
       <Filter>Header Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\GuessLyricInfoThread.h">
+      <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
