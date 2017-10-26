@@ -4,7 +4,7 @@
 <img src="https://github.com/BensonLaur/image-storage/raw/master/BesLyric%20project/BesLyric%20demo.png" width="60%" height="60%">
 
 
-<img src="https://github.com/BensonLaur/image-storage/raw/master/BesLyric%20project/BesLyric%20demo2.png" width="60%" height="60%">
+<img src="https://github.com/BensonLaur/image-storage/raw/master/BesLyric%20project/BesLyric%20demo3.png" width="60%" height="60%">
 
 
 
