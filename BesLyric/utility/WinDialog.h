@@ -31,7 +31,7 @@
 #include <Shlobj.h>
 
 //定义歌词文件每一行的最多字符数
-#define MAX_CHAR_COUNT_OF_LINE 200
+#define MAX_CHAR_COUNT_OF_LINE 1000
 #define MAX_WCHAR_COUNT_OF_LINE MAX_CHAR_COUNT_OF_LINE/2
 
 //改写GetOpenFileName时用到的系统使用控件的资源ID

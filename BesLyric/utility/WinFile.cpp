@@ -263,7 +263,7 @@ bool FileOperator::ReadAllLinesW(File& encodingFile,  OUT vector<SStringW> *line
 		wchar_t line[MAX_WCHAR_COUNT_OF_LINE+1];
 	
 		// 从文件中读取歌词，并将非空行加入到 maker.m_vLyricOrigin 向量中
-		while(fgets(_line,MAX_WCHAR_COUNT_OF_LINE,encodingFile.m_pf))
+		while(fgets(_line,MAX_CHAR_COUNT_OF_LINE,encodingFile.m_pf))
 		{
 			_line[MAX_CHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
 
@@ -335,19 +335,31 @@ bool FileOperator::WriteToUtf8File(const wstring file, vector<SStringW> lines)
 	fputc(0xbb, outFile.m_pf); 
 	fputc(0xbf, outFile.m_pf); 
 
-	char line[400];
+	string line;
 	for(auto i=lines.begin(); i != lines.end(); i++)
 	{
 		//去掉一行当中可能存在的\r, 因为 fputs 会自动在 \n 前添加\r，如果不去掉，输出结尾为 \r\r\n
 		SStringW _line = CStringHelper::Trim(*i,L" \t\r\n");
 		_line += L"\n";
 
-		int ret = WideCharToMultiByte(CP_UTF8,  0,_line,-1,line,400,NULL,NULL);
-		
-		if(ret == 0)
+		int nRet = WideCharToMultiByte(CP_UTF8,0,_line,-1,NULL,0,NULL,NULL); 
+		if(nRet>0)
+		{
+			char *pBuf=new char[nRet+1];
+			int ret = WideCharToMultiByte(CP_UTF8,  0,_line,-1,pBuf,nRet,NULL,NULL);
+			line = string(pBuf);
+			if(ret == 0)
+			{
+				delete []pBuf;
+				return false;
+			}
+			else
+				delete []pBuf;
+		}
+		else
 			return false;
 
-		fputs(line,outFile.m_pf);
+		fputs(line.c_str(),outFile.m_pf);
 	}
 
 	return true;
