@@ -148,6 +148,9 @@
     <ClCompile Include="entity\GuessLyricInfoThread.cpp">
       <Filter>Source Files\entity</Filter>
     </ClCompile>
+    <ClCompile Include="entity\SendLoginThread.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -285,6 +288,9 @@
       <Filter>Header Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="entity\GuessLyricInfoThread.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\SendLoginThread.h">
       <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,9 +27,17 @@
 		<hr pos="5,[15,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff22"/>
 		
 		<text pos="5,[15,@120,@30" font="adding:4" >升级与检测</text>
-		<window pos="0,[10,-10,@100" tip="升级检测间隔为10分钟1次，另外，每次勾选都会触发一次检测">
-			<check pos="5,0" focusable="0" font="adding:0" skin="skin_check" name="check_auto_update">自动检测升级</check>
-			<imgbtn pos="0,[15,@100,@30"  name="btn_check_integrity" skin="app_button" class="normalbtn">完整性检测</imgbtn>
+		<window pos="0,[0,-10,@35">
+			<check pos="5,10" focusable="0" font="adding:0" skin="skin_check" name="check_auto_update"
+											tip="升级检测间隔为10分钟1次，另外，每次勾选都会触发一次检测" >自动检测升级</check>
+			<imgbtn pos="[35,{-3,@100,@30"  name="btn_check_integrity" skin="app_button" class="normalbtn">完整性检测</imgbtn>
+		</window>
+		
+		<hr pos="5,[15,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff22"/>
+		<text pos="5,[15,@120,@30" font="adding:4" >其他</text>
+		<window pos="0,[10,-10,@100" >
+			<check pos="5,0" focusable="0" font="adding:0" skin="skin_check" name="check_anonymity">匿名登录</check>
+			<link pos="[45,{2" href="http://www.cnblogs.com/BensonLaur/p/6262565.html#title_4_4" class="cls_btn_weblink">什么是匿名登录？</link>
 		</window>
 	</window>
 </include>

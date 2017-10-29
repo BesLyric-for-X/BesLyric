@@ -7,6 +7,7 @@
 #include <sstream>
 #include "entity\AutoUpdateThread.h"
 #include "entity\CheckIntegrityThread.h"
+#include "entity\SendLoginThread.h"
 using namespace std;
 using namespace tinyxml2;
 
@@ -17,6 +18,7 @@ static const wstring XML_DEFAULF_MUSIC_PATH = L"defaultMusicPath";			//ƒ¨»œ“Ù¿÷¬
 static const wstring XML_DEFAULF_LYRIC_PATH = L"defaultLyricPath";			//ƒ¨»œ∏Ë¥ ¬∑æ∂
 static const wstring XML_DEFAULF_OUTPUT_PATH = L"defaultOutputPath";		//ƒ¨»œ ‰≥ˆ¬∑æ∂
 static const wstring XML_AUTO_UPDATE = L"autoUpdate";						// «∑Ò◊‘∂Ø…˝º∂
+static const wstring XML_ANONYMITY = L"anonymity";							// «∑Òƒ‰√˚
 
 
 void CSettingPage::Init(SHostWnd *pMainWnd)
@@ -34,13 +36,15 @@ void CSettingPage::Init(SHostWnd *pMainWnd)
 	text_default_lyric_path = m_pMainWnd->FindChildByID2<SStatic>(R.id.text_default_lyric_path);	
 	text_default_output_path = m_pMainWnd->FindChildByID2<SStatic>(R.id.text_default_output_path);		
 	check_auto_update = m_pMainWnd->FindChildByID2<SCheckBox>(R.id.check_auto_update);	
-	
+	check_anonymity = m_pMainWnd->FindChildByID2<SCheckBox>(R.id.check_anonymity);
+
 	SASSERT( btn_modify_shift_time != NULL);
 	SASSERT( edit_time_shift != NULL);
 	SASSERT( text_default_music_path != NULL);
 	SASSERT( text_default_lyric_path != NULL);
 	SASSERT( text_default_output_path != NULL);
 	SASSERT( check_auto_update != NULL);
+	SASSERT( check_anonymity != NULL);
 
 	
 	//≥ı ºªØΩÁ√Ê ˝æ›
@@ -56,6 +60,9 @@ void CSettingPage::Init(SHostWnd *pMainWnd)
 	//≥ı ºªØΩÁ√Êcheck ∫Õ …˙–ß∆‰◊˜”√
 	check_auto_update->SetCheck(m_check_auto_update);
 	AutoUpdateThread::getSingleton().SetBKeepUpdate(m_check_auto_update);
+
+	check_anonymity->SetCheck(m_check_anonymity);
+	SendLoginThread::getSingleton().Start(m_check_anonymity);
 }
 
 
@@ -73,6 +80,8 @@ void CSettingPage::SaveSetting()
 	xmlStr += L"\t<"+XML_DEFAULF_LYRIC_PATH+L" value=\""+	m_default_lyric_path +L"\"/>\n";
 	xmlStr += L"\t<"+XML_DEFAULF_OUTPUT_PATH+L" value=\""+ m_default_output_path +L"\"/>\n";
 	xmlStr += L"\t<"+XML_AUTO_UPDATE+		L" value=\""+ (m_check_auto_update? XML_TRUE : XML_FALSE) +L"\"/>\n";
+	xmlStr += L"\t<"+XML_ANONYMITY+		L" value=\""+ (m_check_anonymity? XML_TRUE : XML_FALSE) +L"\"/>\n";
+	
 	xmlStr += L"</setting>\n";
 	
 	wstring wstrPath = FileHelper::GetCurrentDirectoryStr()+SETTING_FILE_NAME;
@@ -88,6 +97,7 @@ void CSettingPage::LoadSetting()
 	m_default_lyric_path = L"";
 	m_default_output_path = L"";
 	m_check_auto_update = TRUE;	
+	m_check_anonymity = FALSE;	
 
 	//¥”Œƒº˛º”‘ÿ ˝æ›
 	wstring wstrSettingPath = FileHelper::GetCurrentDirectoryStr() + SETTING_FILE_NAME;
@@ -144,6 +154,11 @@ void CSettingPage::LoadSetting()
 			{
 				// «∑Ò◊‘∂Ø…˝º∂
 				m_check_auto_update = (_wtoi(wszValue)? TRUE: FALSE);
+			}
+			else if(XML_ANONYMITY == wStrName)
+			{
+				// «∑Òƒ‰√˚
+				m_check_anonymity = (_wtoi(wszValue)? TRUE: FALSE);
 			}
 
 			//œ¬“ª–÷µ‹Ω·µ„
@@ -232,6 +247,13 @@ void CSettingPage::OnCheckAutoUpdateChanged()
 	m_check_auto_update = check_auto_update->IsChecked();
 	AutoUpdateThread::getSingleton().SetBKeepUpdate(m_check_auto_update);
 }
+		
+//ƒ‰√˚µ«¬º—°œÓ ∏ƒ±‰◊¥Ã¨ ±
+void CSettingPage::OnCheckAnonymityChanged()
+{
+	m_check_anonymity = check_anonymity->IsChecked();
+}
+
 
 //ºÏ≤‚≥Ã–ÚÕÍ’˚–‘
 void CSettingPage::OnBtnCheckIntegrity()

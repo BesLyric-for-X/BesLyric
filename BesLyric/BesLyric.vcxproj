@@ -128,6 +128,7 @@
     <ClCompile Include="entity\SearcherGecimi.cpp" />
     <ClCompile Include="entity\SearcherNetEaseCloud.cpp" />
     <ClCompile Include="entity\SearchLyricThread.cpp" />
+    <ClCompile Include="entity\SendLoginThread.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="PageMaking.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="entity\SearcherGecimi.h" />
     <ClInclude Include="entity\SearcherNetEaseCloud.h" />
     <ClInclude Include="entity\SearchLyricThread.h" />
+    <ClInclude Include="entity\SendLoginThread.h" />
     <ClInclude Include="lib\json\allocator.h" />
     <ClInclude Include="lib\json\assertions.h" />
     <ClInclude Include="lib\json\autolink.h" />

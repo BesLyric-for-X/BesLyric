@@ -44,6 +44,7 @@ public:
 	void OnBtnSelectDefaultOutputPath();				//选择默认LRC歌词输出路径
 
 	void OnCheckAutoUpdateChanged();				//自动升级check 改变状态时
+	void OnCheckAnonymityChanged();					//匿名登录状态改变时
 	void OnBtnCheckIntegrity();						//检测程序完整性
 
 	//消息
@@ -57,8 +58,10 @@ protected:
 		EVENT_NAME_COMMAND(L"btn_select_default_output_path", OnBtnSelectDefaultOutputPath)
 
 		EVENT_NAME_COMMAND(L"btn_check_integrity", OnBtnCheckIntegrity)
-
+		
 		EVENT_NAME_COMMAND(R.name.check_auto_update, OnCheckAutoUpdateChanged)
+		EVENT_NAME_COMMAND(R.name.check_anonymity, OnCheckAnonymityChanged)
+		
 		
         EVENT_NAME_HANDLER(R.name.edit_time_shift, EVT_RE_NOTIFY, OnTimeShiftEditNotify);
 		//EVENT_NAME_HANDLER(R.name.edit_time_shift, EventRENotify::EventID, OnTimeShiftEditNotify)
@@ -71,6 +74,7 @@ public:
 	wstring m_default_lyric_path;	/* 默认歌词路径 */
 	wstring m_default_output_path;	/* 默认输出路径 */
 	BOOL   m_check_auto_update;		/* 是否自动升级 */
+	BOOL   m_check_anonymity;		/* 是否匿名登录 */
 
 private:
 	SButton* btn_modify_shift_time;		/* 修改时间轴偏移时间按钮 */
@@ -79,8 +83,9 @@ private:
 	SStatic* text_default_music_path;	/* 默认音乐路径 */
 	SStatic* text_default_lyric_path;	/* 默认歌词路径 */
 	SStatic* text_default_output_path;	/* 默认输出路径 */
-
+	
 	SCheckBox* check_auto_update;		/* 是否自动升级 */
+	SCheckBox* check_anonymity;			/* 是否匿名登录 */
 
 	SHostWnd *m_pMainWnd;		/* 主窗口指针 */
 	
