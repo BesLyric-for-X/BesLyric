@@ -6,7 +6,7 @@
 >
   
   <root skin="_skin.sys.wnd.bkgnd" cache="1">
-    <img pos="0,0,-0,-0" name="img_skin_layer"/>
+    <img pos="0,0,-0,-0" name="img_skin_layer" skin="skin_bkimg"/>
     <caption pos="0,0,-0,50" show="1" font="adding:0">
       <!--<icon pos="5,5" src="ICON_LOGO:24"/>-->
       <text pos="38,10">@string/title</text>

@@ -182,10 +182,7 @@ BOOL CFileDialogEx::checkPathName(LPCTSTR format,LPCTSTR toChecked)
 
 	if(isFloder) //检查文件夹类型
 	{
-		if(pos == -1)//这里默认文件夹的路径不包含任何点'.'
-			return TRUE;
-		else
-			return FALSE;
+		return IsFloderExist(toChecked);
 	}
 	else //检查普通后缀名类型
 	{
@@ -196,6 +193,21 @@ BOOL CFileDialogEx::checkPathName(LPCTSTR format,LPCTSTR toChecked)
 			return FALSE;
 	}
 }
+
+//判断文件夹是否存在
+BOOL CFileDialogEx::IsFloderExist(const wstring &strPath)
+{
+	WIN32_FIND_DATAW  wfd;
+	BOOL rValue = FALSE;
+	HANDLE hFind = FindFirstFileW(strPath.c_str(), &wfd);
+	if ((hFind != INVALID_HANDLE_VALUE) && (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		rValue = TRUE;   
+	}
+	FindClose(hFind);
+	return rValue;
+}
+
 
 
 LONG g_lOriWndProc = NULL;

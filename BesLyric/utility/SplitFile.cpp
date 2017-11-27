@@ -61,7 +61,7 @@ bool CSplitFile::SplitFile(wstring strSrcFile, wstring strToPath, wstring strToN
 	while( (nSize = fread(pBlockData, sizeof(char),nBlockSize,  pFile)))
 	{
 		char szBuffer[MAX_BUFFER_SIZE];
-		string strFileNameA = strTargetFileNamePreA+ "." + itoa(nCount++, szBuffer, 10) + SERVER_FILE_EXTENTION_A;
+		string strFileNameA = strTargetFileNamePreA+ "." + _itoa(nCount++, szBuffer, 10) + SERVER_FILE_EXTENTION_A;
 		
 		FILE *pFileTarget;
 		ret = fopen_s(& pFileTarget, strFileNameA.c_str(), "wb");
@@ -205,7 +205,7 @@ bool CSplitFile::MergeToOneFile(wstring strMergedFilePathName,wstring  strTarget
 	{
 		//
 		char szBuffer[MAX_BUFFER_SIZE];
-		string strFileNameA = strTargetFileNamePreA+ "." + itoa(i, szBuffer, 10) + SERVER_FILE_EXTENTION_A;
+		string strFileNameA = strTargetFileNamePreA+ "." + _itoa(i, szBuffer, 10) + SERVER_FILE_EXTENTION_A;
 		
 		FILE *pFileSplited;
 		ret = fopen_s(& pFileSplited, strFileNameA.c_str(), "rb");

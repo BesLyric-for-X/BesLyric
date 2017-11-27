@@ -258,9 +258,9 @@ void CMainDlg::OnSize(UINT nType, CSize size)
 //设置程序窗口的背景图片
 void CMainDlg::setBackSkin()
 {
-    SSkinImgList * pSkin = sobj_cast<SSkinImgList>(GETSKIN(_T("skin_bkimg")));
-    SASSERT(pSkin);
-    FindChildByID(R.id.img_skin_layer)->SetAttribute(L"skin",_T("skin_bkimg"));
+    //SSkinImgList * pSkin = sobj_cast<SSkinImgList>(GETSKIN(_T("skin_bkimg")));
+    //SASSERT(pSkin);
+    //FindChildByID(R.id.img_skin_layer)->SetAttribute(L"skin",_T("skin_bkimg"));
 	
     //COLORREF crAvg = SDIBHelper::CalcAvarageColor(pSkin->GetImage());
     //DoColorize(crAvg);

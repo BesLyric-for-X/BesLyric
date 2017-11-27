@@ -56,7 +56,7 @@ public:
 	LPCTSTR m_lpszMode;			/* 打开文件的模式 */
 
 	FILE *m_pf;					/* 存放当前打开文件的指针*/
-	ENCODING_TYPE m_encodingType;	/* 存放文件编码格式 */
+	ENCODING_TYPE::encoding_type m_encodingType;	/* 存放文件编码格式 */
 };
 
 

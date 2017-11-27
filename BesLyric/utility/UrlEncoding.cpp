@@ -195,7 +195,7 @@ string CUrlEncodinig::UrlGB2312Decode(string str)
 {  
    string output="";  
         char tmp[2];  
-        int i=0,idx=0,ndx,len=str.length();  
+        int i=0,idx=0,len=str.length();  
          
         while(i<len){  
                 if(str[i]=='%'){  

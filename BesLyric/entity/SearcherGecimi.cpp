@@ -68,7 +68,6 @@ void SearcherGecimi::GetOneLyricInfoFromLyricBuffer(wstring strLyricBuffer,Lyric
 	wstring strPlaneText = L"";
 	wstring strLabelText = L"";;
 
-	WCHAR szTimeBuf[MAX_BUFFER_SIZE/2];
 	for(auto iter = vecTimeLineInfo.begin(); iter != vecTimeLineInfo.end(); iter++)
 	{
 		strPlaneText += iter->m_strLine;
