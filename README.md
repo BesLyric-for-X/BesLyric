@@ -28,11 +28,11 @@ BesLyric 最新下载地址：http://beslyric.320.io/BesBlog/beslyric/download.a
 
 本程序完全基于 SOUI 的框架来搭建，所以运行此程序，你需要先准备好SOUI的开发环境,过程很简单，如下：
 
-1) 下载soui组件
+1） 下载soui组件
 
-在2017/11/27日前，使用的SOUI版本为 2.2 [下载(zip)](http://ovfwclhwl.bkt.clouddn.com/soui_2_2.zip)
+在2017/11/27日前，使用的 SOUI 版本为 2.2 [下载zip](http://ovfwclhwl.bkt.clouddn.com/soui_2_2.zip)
 
-之后（到现在），使用的SOUI版本为 2.6.3.1（2017/11/10号获取） [下载(zip)](http://ovfwclhwl.bkt.clouddn.com/soui_2_6_3_1.zip)
+在2017/11/27日之后（到现在），使用的 SOUI 版本为 2.6.3.1（2017/11/10号获取） [下载zip](http://ovfwclhwl.bkt.clouddn.com/soui_2_6_3_1.zip)
 
 2）解压后 直接运行 soui.08.sln (vs2010之后的版本都可以，项目会自动转换)
 
