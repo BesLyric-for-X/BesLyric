@@ -15,18 +15,17 @@ protected:
 	{
 		SHDITEM item;
 		item.mask = 0 | SHDI_TEXT| SHDI_WIDTH| SHDI_LPARAM| SHDI_SORTFLAG| SHDI_ORDER;
-		item.cchTextMax = MAX_BUFFER_SIZE/2;
+		//item.cchTextMax = MAX_BUFFER_SIZE/2;
 		
 		int count = m_pHeader->GetItemCount();
 		vector<SHDITEM> items(count,item);			//存储项信息	
-		vector<WCHAR*> pszText(count, nullptr);		//存储项字符串指针
 		
 		//获取项的信息
 		for(int i=0; i<count; i++)
 		{
-			pszText[i] = new WCHAR[MAX_BUFFER_SIZE/2];  //分配内存存储项名称
-			items[i].pszText = pszText[i];
-			m_pHeader->GetItem(i, &items[i]);			
+			m_pHeader->GetItem(i, &items[i]);	
+			items[i].text.SetCtxProvider(this);
+			items[i].text.TranslateText();		//获得执行翻译得到翻译文本
 		}
 
 		//设置修改后的各个项的宽度
@@ -43,12 +42,7 @@ protected:
 		
 		//添加修改宽度后的项
 		for(int i=0; i<count; i++)
-			m_pHeader->InsertItem(i,items[i].pszText, items[i].cx, items[i].stFlag, items[i].lParam);
-		
-		for(int i=0; i<count; i++)
-		{
-			delete pszText[i];  //释放 分配的存储项名称的内存
-		}
+			m_pHeader->InsertItem(i,items[i].text.GetText(), items[i].cx, items[i].stFlag, items[i].lParam);
 
 		SMCListView::OnSize(nType, size);
 	}

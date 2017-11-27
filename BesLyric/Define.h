@@ -65,15 +65,17 @@ typedef struct _PATH_STATE
 	bool isInited;
 }PATH_STATE; 
 
-enum ENCODING_TYPE			//文件编码类型
-{
-	ASCII,						
-	UNICODE_LITTLE_ENDIAN,
-	UNICODE_BIG_ENDIAN,
-	UTF_8,
-	UTF_8_NO_BOM,
-	OTHER
-};
+namespace ENCODING_TYPE{
+	enum encoding_type			//文件编码类型
+	{
+		ASCII,						
+		UNICODE_LITTLE_ENDIAN,
+		UNICODE_BIG_ENDIAN,
+		UTF_8,
+		UTF_8_NO_BOM,
+		OTHER
+	};
+}//为了避免 warning (nonstandard extension used: enum 'ENCODING_TYPE' used in qualified name) 而定义的命名空间
 
 //储存获取的单个歌词信息
 struct LyricInfo

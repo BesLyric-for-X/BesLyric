@@ -37,7 +37,7 @@ public:
 	SendLoginThread():m_handleThread(NULL){}
 
 	//开始线程
-	bool Start(bool bAnonymity);
+	bool Start(BOOL bAnonymity);
 
 private:
 	
@@ -45,11 +45,11 @@ private:
 	static DWORD WINAPI ThreadProc(LPVOID pParam);
 
 	//发送登录信息（ip地址）
-	void SendLoginInfo(bool bAnonymity);
+	void SendLoginInfo(BOOL bAnonymity);
 
 private:
 
 	HANDLE		m_handleThread;			/* 当前线程句柄 */
-	bool		m_bAnonymity;			/* 线程循环标记 */
+	BOOL		m_bAnonymity;			/* 线程循环标记 */
 };
 

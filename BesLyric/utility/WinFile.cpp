@@ -21,7 +21,7 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 	if(_tcscmp(mode,_T("r")) == 0)
 	{
 		//读取文件的前两个字节，判断编码
-		int len = 0;
+		unsigned int len = 0;
 		char *buf = NULL;
 		byte firstByte = '\0';
 		byte secondByte = '\0';
@@ -29,7 +29,7 @@ File::File(LPCTSTR pathFile,LPCTSTR mode)
 		if(in)
 		{
 			in.seekg(0,ios::end);
-			len = in.tellg();
+			len = (unsigned int) in.tellg();
 			buf = new char[len];
 			in.seekg(0,ios::beg);
 			in.read(buf,len);
@@ -242,7 +242,7 @@ bool FileOperator::ReadAllLinesW(File& encodingFile,  OUT vector<SStringW> *line
 		// 从文件中读取歌词，并将非空行加入到 maker.m_vLyricOrigin 向量中
 		while(fgetws(line,MAX_WCHAR_COUNT_OF_LINE,encodingFile.m_pf))
 		{
-			line[MAX_CHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
+			line[MAX_WCHAR_COUNT_OF_LINE]='\0';//保证在最后一个字符处截断字符串
 
 			//由变长字符转换为 unicode 宽字节字符
 			//MultiByteToWideChar(CP_ACP,MB_COMPOSITE,_line,strlen(_line)+1,line,MAX_WCHAR_COUNT_OF_LINE+1);
@@ -429,7 +429,7 @@ bool FileHelper::IsDirectory(SStringW path)
 {
 	//查找panelFloder是否存在
 	WIN32_FIND_DATA  FindFileData;
-	BOOL bValue = false;
+	bool bValue = false;
 	HANDLE hFind = FindFirstFile(path, &FindFileData);
 	if ((hFind != INVALID_HANDLE_VALUE) && (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 	{

@@ -106,5 +106,7 @@ public:
 	*/
 	static BOOL checkPathName(LPCTSTR format,LPCTSTR toChecked);
 
+	//判断文件夹是否存在
+	static BOOL IsFloderExist(const wstring &strPath);
 };
 

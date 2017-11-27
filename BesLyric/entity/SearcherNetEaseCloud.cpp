@@ -41,7 +41,7 @@ bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vec
 		char szID[MAX_BUFFER_SIZE];
 
 		//获取id对应的歌词
-		if(!httpRequest.Get("music.163.com/api/song/lyric",string("os=osx&id=") + itoa( iter->nID,szID, 10) + string("&lv=-1&kv=-1&tv=-1"), strLyricJson))
+		if(!httpRequest.Get("music.163.com/api/song/lyric",string("os=osx&id=") + _itoa( iter->nID,szID, 10) + string("&lv=-1&kv=-1&tv=-1"), strLyricJson))
 		{
 			m_strLastResult = L"网络连接失败，无法获取歌词内容数据";
 			return false;
@@ -128,7 +128,6 @@ void SearcherNetEaseCloud::GetOneLyricInfoFromLyricBuffer(wstring strLyricBuffer
 	wstring strPlaneText = L"";
 	wstring strLabelText = L"";;
 
-	WCHAR szTimeBuf[MAX_BUFFER_SIZE/2];
 	for(auto iter = vecTimeLineInfo.begin(); iter != vecTimeLineInfo.end(); iter++)
 	{
 		strPlaneText += iter->m_strLine;

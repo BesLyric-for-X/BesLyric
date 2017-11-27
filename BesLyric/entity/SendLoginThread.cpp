@@ -9,7 +9,7 @@ using namespace SOUI;
 
 
 //开始线程
-bool SendLoginThread::Start(bool bAnonymity)
+bool SendLoginThread::Start(BOOL bAnonymity)
 {
 	//启动线程
 	if(m_handleThread != NULL)
@@ -40,7 +40,7 @@ DWORD WINAPI SendLoginThread::ThreadProc(LPVOID pParam)
 }
 
 //发送登录信息（ip地址）
-void SendLoginThread::SendLoginInfo(bool bAnonymity)
+void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 {
 	//获得ip地址
 	//DownloadFile(L"https://whatismyipaddress.com/",L"E://git//BesLyric//Release//ip.txt");

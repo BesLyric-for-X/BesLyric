@@ -46,7 +46,7 @@ DWORD WINAPI CSearchLyricThread::ProcSearch(LPVOID pParam)
 	SStringW strResultTip = L"";
 
 	int nTotalCount = 0;
-	for( int i= 0; i < (int)SEARCH_FROM::UNDEFINED; i++) //遍历每一种定义的歌词获取方式
+	for( int i= 0; i < (int)SF_UNDEFINED; i++) //遍历每一种定义的歌词获取方式
 	{
 		pSearcher = nullptr;//在 CreateSearcher 中对 SOUI智能指针取 地址& 前，先置为空（释放上一次分配的堆对象）
 		CLyricSearcherFactory::CreateSearcher((SEARCH_FROM)i, pSearcher);

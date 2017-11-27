@@ -64,7 +64,7 @@ void MusicPlayer::openStart()
 		else
 		{
 			//重头开始播放
-			play(0);
+			play(0);    
 		}
 	}
 	else
@@ -84,6 +84,12 @@ void MusicPlayer::play(int milliSecondPosition)
 {	
 	//设置音量再播放
 	this->setVolumn(this->m_nVolumn);
+
+	if(milliSecondPosition < 200)
+		milliSecondPosition = 200;		//经过调试发现，有些歌曲在滚动预览时，滚动出现延迟（估计是 MCI获取 歌曲位置时返回了一个偏小的值）
+										//进一步调试发现，当 play(n) 中 n 小于约59毫秒，是出现这种情况的一个必要条件
+										//所以，当这里设置初始播放位置总是大于59毫秒（这里设置为200毫秒），来避免这种情况
+										//设置为从200毫秒播放，基本不影响歌词制作
 
 	m_mciPlay.dwCallback=(DWORD)this->m_hdlHostWnd;
 	m_mciPlay.dwFrom = (DWORD)milliSecondPosition; //播放起始位置ms为单位
