@@ -229,9 +229,54 @@ public:
 	//根据猜测结果自动填充搜索关键词并开始搜索
 	void OnSearchWithGuess(SongInfoGuessResult* pGuessRes);
 
+	
+
 private:
 	//获得界面上填写的歌曲名和歌手名
 	bool GetMusicAndArtist(SStringW &strMusicName, SStringW &strMusicArtist);
+
+	//标签参数设置
+void CPageSearchLyric::OnEditChanged(EventArgs *pEvt)
+{
+	SEdit* edit = sobj_cast<SEdit>(pEvt->sender);
+
+	EventRENotify* Evt = sobj_cast<EventRENotify>(pEvt);
+	if (Evt)
+	{
+		if (Evt->iNotify == EN_CHANGE)
+		{
+			wstring wstrTemp = edit->GetWindowTextW().GetBuffer(1);
+			string strTemp = SStringA(S_CW2A(edit->GetWindowTextW())).GetBuffer(1);
+			double dTemp = atof(strTemp.c_str());
+
+			switch (edit->GetID())
+			{
+			case R.id.edit_search_lyric_name:
+			case R.id.edit_search_lyric_artist:
+				
+				for(auto iter = wstrTemp.begin(); iter != wstrTemp.end(); iter++)
+				{
+					if( *iter >= L'A' && *iter <= L'Z')
+						*iter = *iter + L'a' - L'A';
+				}
+
+				if( wstring::npos != wstrTemp.find(L"刘诗意") ||wstring::npos != wstrTemp.find(L"fabulvi") ||wstring::npos != wstrTemp.find(L"fabulousv") ||
+					wstring::npos != wstrTemp.find(L"vivian") || wstring::npos != wstrTemp.find(L"fabulous"))
+				{
+					
+				_MessageBox(NULL, 
+L"衣薄感冒使人愁，不幸偏逢寒冬秋。\\n体弱气衰喉咙痛，无限躺床来做休。\\n劳逸结合血气畅，辅以温水肠胃流。\\n漫步小区午阳暖，病毒细菌全不留!\\n\\n 2017/12/10", 
+L"早日康复", MB_OK|MB_ICONINFORMATION);
+
+				}
+				
+				break;
+			}
+
+		}
+	}
+
+}
 
 
 	//消息
@@ -246,7 +291,9 @@ protected:
 		EVENT_ID_COMMAND(R.id.btn_select_lrc_lyric_path , OnBtnSelectLrcLyricPath);
 		EVENT_ID_COMMAND(R.id.btn_save_origin_lyric_path , OnBtnSaveOriginLyricPath);
 		EVENT_ID_COMMAND(R.id.btn_save_lrc_lyric_path , OnBtnSaveLrcLyricPath);
-
+		
+		EVENT_ID_HANDLER(R.id.edit_search_lyric_name, EVT_RE_NOTIFY, OnEditChanged);
+		EVENT_ID_HANDLER(R.id.edit_search_lyric_artist, EVT_RE_NOTIFY, OnEditChanged);
 	EVENT_MAP_BREAK()
 
 	
