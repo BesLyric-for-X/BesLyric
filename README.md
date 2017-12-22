@@ -47,6 +47,6 @@ soui基本介绍：https://www.oschina.net/p/soui
 
 soui系列教程：http://www.cnblogs.com/setoutsoft/category/600691.html
 
-
+soui 最新地址：https://github.com/soui2 
 
 
