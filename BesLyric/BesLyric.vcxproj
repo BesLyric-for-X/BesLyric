@@ -110,14 +110,26 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="uires\values\string.xml" />
+    <None Include="uires\xml\dlg_checking_integrity.xml" />
     <None Include="uires\xml\dlg_main.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="uires\xml\dlg_skiatext.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="uires\xml\messagebox.xml" />
+    <None Include="uires\xml\page_about.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="uires\xml\page_making.xml" />
+    <None Include="uires\xml\page_result.xml" />
+    <None Include="uires\xml\page_search_lyric.xml" />
+    <None Include="uires\xml\page_setting.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BesLyric.cpp" />
     <ClCompile Include="BSMessageBox.cpp" />
+    <ClCompile Include="controlEx\MagnetFrame.cpp" />
     <ClCompile Include="DlgCheckIntegrity.cpp" />
     <ClCompile Include="entity\AutoUpdateThread.cpp" />
     <ClCompile Include="entity\CheckIntegrityThread.cpp" />
@@ -153,8 +165,10 @@
   <ItemGroup>
     <ClInclude Include="BSMessageBox.h" />
     <ClInclude Include="controlEx\LyricListView.h" />
+    <ClInclude Include="controlEx\MagnetFrame.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DlgCheckIntegrity.h" />
+    <ClInclude Include="DlgDesktopLyric.h" />
     <ClInclude Include="entity\AutoUpdateThread.h" />
     <ClInclude Include="entity\CheckIntegrityThread.h" />
     <ClInclude Include="entity\FileDroper.h" />

@@ -15,6 +15,7 @@
   </style>
 
   <objattr>
+    <check cursor="hand"></check>
     <edit  margin-x="0" margin-y="0" colorBorder="@color/gray" colorBkgnd="#ffffff11" colorText="@color/white" cueColor="#ffffff28"/>
     <text colorText="@color/white"></text>
   </objattr>

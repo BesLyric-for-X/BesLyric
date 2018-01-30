@@ -30,6 +30,8 @@
 #include <fstream>
 using namespace std;
 
+
+//just for test
 void CMainDlg::test()
 {
 	//just for test
@@ -52,6 +54,7 @@ void CMainDlg::test()
 	//_tfopen(L"C:\\Users\\BensonLaur\\Desktop\\json.test", L"w");
 
 	//CDownloader::DownloadString( L"http://s.gecimi.com/lrc/388/38847/3884774.lrc", strSaveBuffer);
+
 }
 
 CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
@@ -68,7 +71,6 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 	//检测程序的完整性
 	CCheckIntegrityThread::getSingleton().Start(false);
 
-	//test();
 }
 
 CMainDlg::~CMainDlg()
@@ -89,6 +91,9 @@ int CMainDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 {
+    //设置为磁吸主窗口
+    SetMainWnd(m_hWnd);
+
 	//设置背景图片
 	setBackSkin();
 
@@ -106,10 +111,12 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 
 	//初始化记录页面播放足迹，详看变量的说明
 	FootPrintPage = -1;
-
+	
+	test();
 	return 0;
 }
 
+//初始化各个页面内容
 void CMainDlg::initPage()
 {
 	m_pageMaking = new CPageMaking;
@@ -156,6 +163,20 @@ void CMainDlg::initPage()
 	if(txt_version != NULL)
 		txt_version->SetWindowTextW(SStringW(VERSION_NUMBER.c_str()));
 
+}
+
+//初始化桌面歌词
+void CMainDlg::initDesktopLyric()
+{
+	m_wndDesktopLyric = new DlgDesktopLyric(_T("layout:xml_dlg_lyric"));
+	SASSERT(m_wndDesktopLyric && "分配桌面歌词对象内存失败");
+
+	m_wndDesktopLyric->CreateAndInitWindow();
+
+	//以指定 吸附模式 和 对齐方式 添加为 吸附于主窗口的子窗口
+    CMagnetFrame::ATTACHMODE am  = AM_BOTTOM;
+    CMagnetFrame::ATTACHALIGN aa = AA_LEFT;
+    AddSubWnd(m_wndDesktopLyric->m_hWnd, am,aa);
 }
 
 //主页面切换时
@@ -538,6 +559,18 @@ void CMainDlg::OnMusicCommand(UINT lParam, UINT wParam)
 
 			//自己调用 soui 消息处理函数
 			this->_HandleEvent(&Evt);
+
+			//如果单曲循环，则重新播放
+			if(this->m_pageResult->m_bSingleCycle)
+			{
+				//发送 “播放按钮”触发的事件
+				SButton* btn = FindChildByID2<SButton>(R.id.btn_start_playing);//这一句不是必要的，且当结束时刻页面不在第二页则会获取失败
+				SOUI::EventCmd Evt(btn);				//初始化EventCmd需要一个参数
+				Evt.idFrom = R.id.btn_start_playing;	//在这里只要事件对象是EventCmd，idFrom是按钮id，即可模拟调用按钮响应函数
+							
+				//自己调用 soui 消息处理函数
+				this->_HandleEvent(&Evt);
+			}
 		}
 
 		break;
@@ -589,9 +622,9 @@ void CMainDlg::OnTimer(UINT_PTR nIDEvent)
 
 			}
 	case 102:
-		if(tab)
-			if(tab->GetCurSel() == 1) //在歌词预览的页面
-			{
+		//if(tab)
+		//	if(tab->GetCurSel() == 1) //在歌词预览的页面
+		//	{
 				if(this->m_bIsLyricPlaying)
 				{
 					curMSecond = player.m_musicPlayer.getPosition();  //毫秒时间
@@ -608,6 +641,9 @@ void CMainDlg::OnTimer(UINT_PTR nIDEvent)
 					
 						//执行面板滚动到 m_nCurLine
 						m_pageResult->scrollToLyricCurLine();
+
+						//更新桌面歌词里的歌词内容
+						m_wndDesktopLyric->SetCurrentLyric(player.m_vLineInfo[player.m_nCurLine -1 ].m_strLine);
 
 						//滚动完毕，自增一行
 						player.m_nCurLine ++;
@@ -628,7 +664,7 @@ void CMainDlg::OnTimer(UINT_PTR nIDEvent)
 						timeProgress_2->SetValue( int(curMSecond * 1.0 / player.m_musicPlayer.getLength() * 1000) );//设置千分数值
 				}
 
-			}
+			//}
 		break;
 	default:
 		SetMsgHandled(FALSE);

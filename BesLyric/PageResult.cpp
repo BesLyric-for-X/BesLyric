@@ -30,6 +30,8 @@ CPageResult::CPageResult()
 	m_btnAdjust =NULL;
 	m_btnEndPreview = NULL;
 	m_btnLoad = NULL;
+
+	m_bSingleCycle = false;	//单曲循环
 }
 
 //初始化设置页面
@@ -77,6 +79,11 @@ void CPageResult::Init(SHostWnd *pMainWnd)
 	SASSERT(m_btnEndPreview != NULL);
 	m_btnLoad = M()->FindChildByID2<SButton>(R.id.btn_load_2);
 	SASSERT(m_btnLoad != NULL);
+	
+	m_checkDesktopLyric = M()->FindChildByID2<SCheckBox>(R.id.check_desktop_lyric);
+	SASSERT(m_checkDesktopLyric != NULL);
+	m_checkSingleCycle = M()->FindChildByID2<SCheckBox>(R.id.check_single_cycle);
+	SASSERT(m_checkSingleCycle != NULL);
 }
 
 //获得主窗口对象
@@ -396,6 +403,25 @@ void CPageResult::scrollToLyricCurLine()
 	emptyTip2->SetVisible(M()->player.m_vLineInfo[M()->player.m_nCurLine -1].m_bIsEmptyLine,TRUE);
 }
 
+//桌面歌词
+void CPageResult::OnCheckDesktopLyricChanged()
+{
+	BOOL bDesktopChecked = m_checkDesktopLyric->IsChecked();
+	if(bDesktopChecked)
+		M()->m_wndDesktopLyric->ShowDesktopLyric();
+	else
+		M()->m_wndDesktopLyric->HideDesktopLyric();
+}
+
+//单曲循环
+void CPageResult::OnCheckSingleCycleChanged()
+{
+	BOOL bSingleCycleChecked = m_checkSingleCycle->IsChecked();
+	if(bSingleCycleChecked)
+		 m_bSingleCycle = true;
+	else
+		 m_bSingleCycle = false;
+}
 
 void CPageResult::OnBtnSoundOpen2()
 {

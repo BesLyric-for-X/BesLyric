@@ -1,4 +1,4 @@
-﻿<SOUI name="mainWindow" title="@string/title" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="760" height="550" minSize="735,510" margin="20,5,5,5"  
+﻿<SOUI name="mainWindow" title="@string/title" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="780" height="550" minSize="735,510" margin="20,5,5,5"  
 		resizable="1" wndType="appMain"
 		appWnd="1"
 		sendWheel2Hover="1"

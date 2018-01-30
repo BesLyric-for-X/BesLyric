@@ -35,9 +35,12 @@
   <imgframe name="skin_icon_information"	src="imgx:img_information" />
   <imgframe name="skin_icon_question"	src="imgx:img_question" />
   <imgframe name="skin_icon_exclamation"	src="imgx:img_exclamation" />
-  
+
   <imglist focusable="0" name="skin_check" src="imgx:png_check" states="8"/>
+  <imglist focusable="0" name="skin_lyric_check" src="imgx:png_lyric_check" states="8"/>
+  <imglist focusable="0" name="skin_single_cycle_check" src="imgx:png_single_cycle_check" states="8"/>
   
+
   <imglist name="skin_tab_red" src="imgx:png_tab_red" states="3"/>
   <imglist name="skin_tab_red_frame" src="imgx:png_tab_red_frame" states="1"/>
   <imglist name="skin_button_download" src="imgx:png_button_download" states="3"/>

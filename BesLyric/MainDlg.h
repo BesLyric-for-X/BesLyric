@@ -33,12 +33,15 @@
 #include "PageResult.h"
 #include "PageSearchLyric.h"
 
+#include "controlEx\MagnetFrame.h"
+#include "DlgDesktopLyric.h"
+
 class CPageMaking;						//嵌套定义，先声明
 class CPageResult;
 class CPageSearchLyric;
 
 /* 程序的主窗口类 */
-class CMainDlg : public SHostWnd
+class CMainDlg : public SHostWnd, CMagnetFrame
 {
 	friend class CPageMaking;
 	friend class CPageResult;
@@ -54,12 +57,14 @@ public:
 	void OnMinimize();
 	void OnSize(UINT nType, CSize size);
 
-	void OnBtnMsgBox();
 	int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	BOOL OnInitDialog(HWND wndFocus, LPARAM lInitParam);
 
 	//初始化各个页面内容
 	void initPage();
+
+	//初始化桌面歌词
+	void initDesktopLyric();
 
 	void OnPageChanged(EventArgs *pEvt);	//主页面切换时
 
@@ -162,6 +167,8 @@ public:
 	CPageMaking *m_pageMaking;				/* 歌词制作页面 */
 	CPageResult *m_pageResult;				/* 歌词预览页面 */
 	CPageSearchLyric *m_pageSearchLyric;	/* 搜索歌词页面 */
+
+	DlgDesktopLyric *m_wndDesktopLyric;			/* 桌面歌词窗口 */	
 
 public:
 	LyricMaker maker;						/* 歌词制作器 */

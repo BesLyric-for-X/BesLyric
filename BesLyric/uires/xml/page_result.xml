@@ -49,15 +49,30 @@
       
 		<window pos="5,[5,-5,@30">
 			<imgbtn name="btn_manual_adjust" pos="5,0,@120,-0" enable="0" skin="app_button" class="normalbtn" tip="手动修改歌词文件">手动微调时间轴</imgbtn>
-        
+
+      <!--<check pos="[15,0,@23,-0" focusable="0" font="adding:0" skin="skin_lyric_check" name="check_desktop_lyric"
+                    tip="桌面歌词" ></check>
+      <check pos="[15,0,@25,-0" focusable="0" font="adding:0" skin="skin_single_cycle_check" name="check_single_cycle"
+                    tip="单曲循环" ></check>-->
+      
+      <!--<imgbtn name="btn_minus" pos="[5,0,@20,-0"  skin="app_button" class="normalbtn" tip="后退0.5s" text="-">《-</imgbtn>
+			<imgbtn name="btn_plus" pos="[5,0,@20,-0"  skin="app_button" class="normalbtn" tip="前进0.5s" text="+">-》</imgbtn>-->
+
+
+      
 			<imgbtn name="btn_start_playing" pos="-105,0,@100,-0" enable="0" skin="app_button" class="normalbtn">开始播放</imgbtn>
 			<imgbtn name="btn_end_preview" pos="{-105,0,@100,-0" enable="0" skin="app_button" class="normalbtn">结束预览</imgbtn>
 
 			<imgbtn name="btn_sound_open_2" pos="{-150,7" visible="1" skin="skin_btn_sound_open" class="normalbtn"></imgbtn>
 			<imgbtn name="btn_sound_close_2" pos="{0,7" visible="0" skin="skin_btn_sound_close" class="normalbtn"></imgbtn>
+      
 
 			<sliderbar name="slider_sound_2" pos="[3,3,@120,30" thumbInRail="0" value="100" min="0" max="100" thumbSkin="skin_slider_thumb"  bkgndSkin="skin_slider_background" posSkin="skin_slider_frontground"/>
 
+      <check pos="{-65,0,@25,-0" focusable="0" font="adding:0" skin="skin_single_cycle_check" name="check_single_cycle"
+                    tip="单曲循环" ></check>
+      <check pos="{-35,0,@23,-0" focusable="0" font="adding:0" skin="skin_lyric_check" name="check_desktop_lyric"
+                    tip="桌面歌词" ></check>
         </window>
 	</window>
 </include>

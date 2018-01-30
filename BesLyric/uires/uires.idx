@@ -12,6 +12,9 @@
     <file name="xml_page_search_lyric" path="xml\page_search_lyric.xml"  />
     <file name="xml_page_setting" path="xml\page_setting.xml"  />
     <file name="xml_page_about" path="xml\page_about.xml"  />
+
+    <file name="xml_dlg_lyric" path="xml\dlg_skiatext.xml"  />
+    
   </LAYOUT>
   
   <values>
@@ -50,9 +53,12 @@
     <file name="img_question" path="image\question_48px.png"/>
     <file name="img_exclamation" path="image\exclamation_48px.png"/>
 
-	
+
     <file name="png_check" path="image\netease\check.png" />
-	
+    <file name="png_lyric_check" path="image\netease\lyric_check.png" />
+    <file name="png_single_cycle_check" path="image\netease\single_cycle_check.png" />
+    
+
     <file name="png_tab_red" path="image\netease\netease_tab_red.png" />
     <file name="png_button_download" path="image\netease\netease_button_download.png" />
     <file name="png_button_search" path="image\netease\netease_button_search.png" />
