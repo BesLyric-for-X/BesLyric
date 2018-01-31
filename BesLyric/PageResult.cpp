@@ -407,10 +407,14 @@ void CPageResult::scrollToLyricCurLine()
 void CPageResult::OnCheckDesktopLyricChanged()
 {
 	BOOL bDesktopChecked = m_checkDesktopLyric->IsChecked();
+	//if(bDesktopChecked)
+	//	M()->m_wndDesktopLyric->ShowDesktopLyric();
+	//else
+	//	M()->m_wndDesktopLyric->HideDesktopLyric();
 	if(bDesktopChecked)
-		M()->m_wndDesktopLyric->ShowDesktopLyric();
+		M()->m_wndDesktopLyric->ShowWindow(SW_SHOW);
 	else
-		M()->m_wndDesktopLyric->HideDesktopLyric();
+		M()->m_wndDesktopLyric->ShowWindow(SW_HIDE);
 }
 
 //µ¥ÇúÑ­»·

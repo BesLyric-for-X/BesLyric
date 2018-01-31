@@ -28,6 +28,7 @@
 #include "stdafx.h"
 #include <vector>
 #include <string>
+#include "Globle.h"
 using namespace std;
 
 /* 宏定义 */
@@ -40,6 +41,22 @@ using namespace std;
 #define UPDATE_LOOP  1
 
 #endif
+
+
+#define OPEN_DEBUG_LOG 1					//是否打开调试
+
+#define G  (CGloble::GetInstance())
+
+
+#if OPEN_DEBUG_LOG == 1
+#define DLOG(info)			G->AppendLog(info)
+#define DELETE_LOG()		;
+#else 
+#define DLOG(info)			;
+#define DELETE_LOG()		G->DeleteLogFile();
+#endif
+
+
 
 #define RET_SUCCEEDED	0
 #define MAX_BUFFER_SIZE	 (260 * 2)
@@ -138,3 +155,5 @@ static const string SERVER_FILE_EXTENTION_A = ".zip";
 static const wstring LINK_SERVER_PATH = L"http://files.cnblogs.com/files/BensonLaur/";		//链接，服务器地址
 
 static const wstring LINK_DOWNLOAD_SERVER = L"http://ovfwclhwl.bkt.clouddn.com/";			//链接，服务器地址2
+
+

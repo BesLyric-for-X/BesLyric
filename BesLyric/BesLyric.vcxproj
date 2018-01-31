@@ -142,6 +142,7 @@
     <ClCompile Include="entity\SearcherNetEaseCloud.cpp" />
     <ClCompile Include="entity\SearchLyricThread.cpp" />
     <ClCompile Include="entity\SendLoginThread.cpp" />
+    <ClCompile Include="Globle.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="PageMaking.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="entity\SearcherNetEaseCloud.h" />
     <ClInclude Include="entity\SearchLyricThread.h" />
     <ClInclude Include="entity\SendLoginThread.h" />
+    <ClInclude Include="Globle.h" />
     <ClInclude Include="lib\json\allocator.h" />
     <ClInclude Include="lib\json\assertions.h" />
     <ClInclude Include="lib\json\autolink.h" />
@@ -195,6 +197,7 @@
     <ClInclude Include="lib\json\version.h" />
     <ClInclude Include="lib\json\writer.h" />
     <ClInclude Include="lib\xml\tinyxml2.h" />
+    <ClInclude Include="lib\ZSingleton.hpp" />
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="PageMaking.h" />
     <ClInclude Include="PageResult.h" />

@@ -181,6 +181,9 @@
     <ClCompile Include="controlEx\MagnetFrame.cpp">
       <Filter>Header Files\controlEx</Filter>
     </ClCompile>
+    <ClCompile Include="Globle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -327,6 +330,12 @@
       <Filter>Header Files\controlEx</Filter>
     </ClInclude>
     <ClInclude Include="DlgDesktopLyric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ZSingleton.hpp">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Globle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
