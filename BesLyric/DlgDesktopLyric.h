@@ -7,7 +7,7 @@ class DlgDesktopLyric : public SHostWnd
 {
 	//SOUI_CLASS_NAME(DlgDesktopLyric, L"dlgDesktopLyric")
 public:
-	DlgDesktopLyric(LPCTSTR pszResName = NULL):SHostWnd(pszResName){}
+	DlgDesktopLyric(LPCTSTR pszResName = NULL):SHostWnd(pszResName),m_txtLyric(NULL){}
 
 	void CreateAndInitWindow()
 	{
@@ -27,8 +27,9 @@ public:
 		DLOG("==============================");
 		DLOG(string("m_txtLyric:")+ SStringA().Format("%x",m_txtLyric).GetBuffer(1));
 
-		if(m_txtLyric)
-			m_txtLyric = this->FindChildByName(L"txt_current_lyric");
+		
+		if(!m_txtLyric)
+			m_txtLyric = this->FindChildByID(R.id.txt_current_lyric);
 		
 		DLOG(string("m_txtLyric:")+ SStringA().Format("%x",m_txtLyric).GetBuffer(1));
 		DLOG(string("String:")+ S_CW2A(strText).GetBuffer(1));

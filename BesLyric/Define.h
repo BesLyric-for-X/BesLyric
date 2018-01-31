@@ -43,7 +43,7 @@ using namespace std;
 #endif
 
 
-#define OPEN_DEBUG_LOG 1					//是否打开调试
+#define OPEN_DEBUG_LOG 0					//是否打开调试
 
 #define G  (CGloble::GetInstance())
 
@@ -135,7 +135,7 @@ X表示主版本，架构性修改时更新
 Y表示次版本，较大修改时更新
 Z表示修改号，小问题时更新
 */
-static const wstring VERSION_NUMBER = L"2.1.8";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
+static const wstring VERSION_NUMBER = L"2.1.9";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
 
 static const wstring  LINK_VERSION_LOG= L"http://files.cnblogs.com/files/BensonLaur/versionLog.zip";			//链接，指向版本日志文件
 static const wstring  LINK_LAST_VERSION_INFO= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.zip";		//链接，指向最后版本信息的文件

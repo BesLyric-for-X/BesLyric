@@ -94,6 +94,8 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
     //设置为磁吸主窗口
     SetMainWnd(m_hWnd);
 
+	initDesktopLyric();	//初始化桌面歌词
+
 	//设置背景图片
 	setBackSkin();
 
