@@ -48,6 +48,10 @@
 
   <imgframe name="skin_lcex_header" src="imgx:png_lcex_header" states="4" margin-x="2" margin-y="2"/>
   <imgframe name="skin_lcex_header_arrow" src="imgx:png_lcex_header_arrow" states="2"  />
-  
+
   <vscrollbar name="skin_vscrollbar" src="imgx:png_vscroll" states="3" margin="4"/>
+
+  <imgframe name="skin_btn_transparent" src="imgx:png_button_transparent" states="3" margin="4"/>
+  <imgframe name="skin_demo_find_id" src="imgx:jpg_find_id_demo" states="1"  />
+  
 </skin>

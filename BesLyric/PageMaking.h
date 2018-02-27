@@ -54,7 +54,9 @@ public:
 	void OnBtnPreview();
 	void OnBtnOpenOutput();			//打开生成的文件
 	void OnBtnTrySearchLyric();		//试图搜索歌词
-	void OnBtnEditLyric();				//打开编辑选中的歌词文件
+	void OnBtnEditLyric();			//打开编辑选中的歌词文件
+
+	void OnBtnMatchID();			//进入匹配ID页面，自动填充数据搜索ID，如果已匹配过ID，初始化到页面显示
 
 	void OnBtnSoundOpen1();			//打开声音
 	void OnBtnSoundClose1();		//静音
@@ -74,6 +76,12 @@ private:
 	//线程执行地址(格式转换线程)
 	static DWORD WINAPI ThreadConvertProc(LPVOID pParam);
 
+	//在载入时处理Ncm文件
+	// 返回 0 表示不是ncm文件
+	//		1 本次载入的文件为ncm文件,该文件没有匹配ID
+	//		2 本次载入的文件为ncm文件，下载mp3失败
+	//		3 本次载入的文件为ncm文件，下载mp3成功，准备就绪
+	int DealWithNcmFile(OUT bool& isCurrentNcm, OUT wstring& strID, OUT wstring& strName, OUT wstring& strMp3FilePath);
 
 	//消息
 protected:
@@ -90,6 +98,7 @@ protected:
 		EVENT_ID_COMMAND(R.id.btn_open_output , OnBtnOpenOutput)
 		EVENT_ID_COMMAND(R.id.btn_edit_try_search_lyric , OnBtnTrySearchLyric)
 		EVENT_ID_COMMAND(R.id.btn_edit_origin_lyric , OnBtnEditLyric)
+		EVENT_ID_COMMAND(R.id.btn_match_ncm_id , OnBtnMatchID)
 		
 		
 		EVENT_ID_COMMAND(R.id.btn_sound_open_1 , OnBtnSoundOpen1)
@@ -125,6 +134,7 @@ private:
 	SButton *m_btnLoad;
 	SButton *m_btnRestart;
 
+	SButton *m_btnMatchNcmID;	/*  匹配ncm 文件ID按钮 */
 
 	SHostWnd *m_pMainWnd;		/* 主窗口指针 */
 };

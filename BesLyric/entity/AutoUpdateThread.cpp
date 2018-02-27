@@ -66,8 +66,8 @@ DWORD WINAPI AutoUpdateThread::ThreadProc(LPVOID pParam)
 //自动更新执行函数
 bool AutoUpdateThread::AutoUpdate()
 {
-	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_VERSION_INFO;
+	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
 
 	/*有新版本，则直接下载最新的版本 执行文件 */
 	//下载新的版本日志文件 versionLog.txt （服务器的名称为 versionLog.zip）
@@ -135,8 +135,8 @@ bool AutoUpdateThread::AutoUpdate()
 //检测是否有更新
 bool AutoUpdateThread::IfUpdateAvailable()
 {
-	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_VERSION_INFO;
+	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
 
 	/*下载最新版本配置信息 */
 	bool bRet = CDownloader::DownloadFile( LINK_LAST_VERSION_INFO, strVersionFile);

@@ -1,4 +1,4 @@
-﻿<SOUI name="mainWindow" title="@string/title" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="780" height="550" minSize="735,510" margin="20,5,5,5"  
+﻿<SOUI name="mainWindow" title="@string/title" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="850" height="580" minSize="735,510" margin="20,5,5,5"  
 		resizable="1" wndType="appMain"
 		appWnd="1"
 		sendWheel2Hover="1"
@@ -15,30 +15,36 @@
       <imgbtn name="btn_restore" skin="_skin.sys.btn.restore"  pos="-83,0" show="0" animate="1" />
       <imgbtn name="btn_min" skin="_skin.sys.btn.minimize" pos="-121,0" animate="1" />
     </caption>
-    
-      <tabctrl name="tab_main" pos="0,50,-5,-5" tabAlign="left" show="1" curSel="0" focusable="0" animateSteps="10" tabHeight="40" tabWidth="120" tabSkin="skin_tab_main" 
-               text-x="40" text-y="12" iconSkin="skin_page_icons" icon-x="10" icon-y="12" colorText="@color/white" cursor="hand" >
+      <tabctrl name="tab_content_container" pos="0,50,-5,-5" tabAlign="top" show="1" curSel="0" focusable="0"  tabHeight="0" tabWidth="120" tabSkin="skin_tab_main"
+                 text-x="40" text-y="12" iconSkin="skin_page_icons" icon-x="10" icon-y="12" colorText="@color/white" cursor="hand" >
+        <page title="主窗体" tip="主要功能窗体">
+        <tabctrl name="tab_main" pos="0,0,-5,-5" tabAlign="left" show="1" curSel="0" focusable="0" animateSteps="10" tabHeight="40" tabWidth="120" tabSkin="skin_tab_main" 
+                 text-x="40" text-y="12" iconSkin="skin_page_icons" icon-x="10" icon-y="12" colorText="@color/white" cursor="hand" >
         
-		<page title="歌词制作" tip="选择歌词和音乐文件 制作具有时间轴的歌词文件">
-			<include src="layout:xml_page_making"/>
-        </page>
+		          <page title="歌词制作" tip="选择歌词和音乐文件 制作具有时间轴的歌词文件">
+			            <include src="layout:xml_page_making"/>
+              </page>
+          
+              <page title="滚动预览" tip="选择歌词和音乐文件 预览歌词滚动效果">
+			            <include src="layout:xml_page_result"/>
+              </page>
         
-        
-        <page title="滚动预览" tip="选择歌词和音乐文件 预览歌词滚动效果">
-			<include src="layout:xml_page_result"/>
-        </page>
-        
-        <page title="搜索歌词" tip="根据歌曲名称、歌手搜索歌词">
-			<include src="layout:xml_page_search_lyric"/>
-        </page>
+              <page title="搜索歌词" tip="根据歌曲名称、歌手搜索歌词">
+			            <include src="layout:xml_page_search_lyric"/>
+              </page>
 		
-        <page title="设置" >
-			<include src="layout:xml_page_setting"/>
-        </page>
+              <page title="设置" >
+			            <include src="layout:xml_page_setting"/>
+              </page>
 		
-        <page title="本软件" tip="关于本软件" >
-			<include src="layout:xml_page_about"/>
-         </page>
+              <page title="本软件" tip="关于本软件" >
+			            <include src="layout:xml_page_about"/>
+               </page>
+        </tabctrl>
+        </page>
+        <page title="网易云id搜索" tip="为ncm文件搜索其网易云音乐id">
+          <include src="layout:xml_page_search_ncm_id"/>
+        </page>
       </tabctrl>
       </root>
 </SOUI>

@@ -470,6 +470,56 @@ bool  FileHelper::CheckFolderExist(const wstring &strPath)
 	return rValue;
 }
 
+
+BOOL FileHelper::FindAllFiles(const wchar_t * lpszPath, vector<wstring> &vectorFilesPath, bool bRecursive)
+{
+	wchar_t szFind[MAX_PATH];
+	wchar_t szFile[MAX_PATH];
+	wchar_t szDir[MAX_PATH];  //当前目录
+	wcscpy_s(szDir, lpszPath);
+
+	//传进来的路径可能以“\\”结尾，如有则去除
+	size_t length = wcslen(szDir);
+	if (length > 0 && szDir[length - 1] == '\\')
+		szDir[length - 1] = '\0';
+
+	WIN32_FIND_DATAW FindFileData;
+	wcscpy_s(szFind, lpszPath);
+	wcscat_s(szFind, L"\\*");
+	wcscat_s(szFind, L".*");//过虑的名字
+
+	HANDLE hFind = ::FindFirstFileW(szFind, &FindFileData);
+	if (INVALID_HANDLE_VALUE == hFind)
+		return FALSE;
+
+	for (;;)
+	{
+		if (bRecursive && (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			if (FindFileData.cFileName[0] != '.')
+			{
+				wcscpy_s(szFile, lpszPath);
+				wcscat_s(szFile, L"");
+				wcscat_s(szFile, FindFileData.cFileName);
+				FindAllFiles(szFile, vectorFilesPath, bRecursive);
+			}
+		}
+		else
+		{
+			//cout << FindFileData.cFileName<<endl;
+			wstring strFullPathExt = szDir;
+			strFullPathExt += (L"\\");
+			strFullPathExt += FindFileData.cFileName;
+			vectorFilesPath.push_back(strFullPathExt);
+		}
+		if (!FindNextFileW(hFind, &FindFileData))
+			break;
+	}
+	FindClose(hFind);
+	return TRUE;
+}
+
+
 void FileHelper::SplitPath(const wstring& strPathName, OUT wstring *pstrDrive, OUT wstring *pstrDirectory, OUT wstring* pstrName, OUT wstring* pstrExt)
 {
 	wstring _strDrive = L"";

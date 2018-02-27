@@ -1,0 +1,23 @@
+﻿<SOUI name="dlg_processing_tip" title="提示" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="400" height="220"  margin="20,5,5,5"  
+      resizable="0" wndType="appMain"
+appWnd="1"
+translucent="0" 
+>
+  
+  <root skin="_skin.sys.wnd.bkgnd" cache="1">
+    <img pos="0,0,-0,-0" skin="skin_msg_bkimg1"/>
+    <caption pos="0,0,-0,50" show="1" font="adding:0">
+      <!--<icon pos="5,5" src="ICON_LOGO:24"/>-->
+      <text pos="25,10">提示</text>
+    </caption>
+    
+	<window pos="0,50,-5,-5">
+		  <text pos="15,0,@80,@30" align="right">当前状态：</text>
+		  <text pos="[5,{0,-5,@30" font="adding:-1"  name="text_status" >正在下载MP3文件，请稍等......</text>
+      <text pos="15,[15,@80,@30" align="right">文件：</text>
+      <text pos="[5,{0,-5,@30" font="adding:-1"  name="text_file_path" ></text>
+		  <!--<progress name="progressing_tip" pos="15,[15,-10,@15" font="adding:-5" value="0" min="0" max="100" showPercent="0"/>-->
+		  
+	</window>
+     </root>
+</SOUI>

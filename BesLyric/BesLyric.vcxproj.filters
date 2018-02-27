@@ -95,6 +95,12 @@
     <None Include="uires\xml\dlg_skiatext.xml">
       <Filter>SoUI Resouece\xml</Filter>
     </None>
+    <None Include="uires\xml\page_search_ncm_id.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\dlg_processing_tip.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BesLyric.cpp">
@@ -183,6 +189,15 @@
     </ClCompile>
     <ClCompile Include="Globle.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PageSearchNcmID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\NcmIDManager.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\SearchIDThread.cpp">
+      <Filter>Source Files\entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +352,18 @@
     </ClInclude>
     <ClInclude Include="Globle.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PageSearchNcmID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\NcmIDManager.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgDownloadNcmMp3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\SearchIDThread.h">
+      <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

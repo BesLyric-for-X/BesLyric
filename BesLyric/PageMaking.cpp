@@ -3,6 +3,8 @@
 #include "utility/WinDialog.h"
 #include "utility/WinFile.h"
 #include "entity\GuessLyricInfoThread.h"
+#include "entity\NcmIDManager.h"
+#include "DlgDownloadNcmMp3.h"
 
 CPageMaking::CPageMaking()
 {
@@ -35,6 +37,8 @@ CPageMaking::CPageMaking()
 	m_btnOpenOutput = NULL;
 	m_btnLoad = NULL;
 	m_btnRestart= NULL;
+
+	m_btnMatchNcmID = NULL;
 }
 
 //初始化设置页面
@@ -86,6 +90,9 @@ void CPageMaking::Init(SHostWnd *pMainWnd)
 	SASSERT(m_btnLoad != NULL);
 	m_btnRestart = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_restart);
 	SASSERT(m_btnRestart != NULL);
+
+	m_btnMatchNcmID = m_pMainWnd->FindChildByID2<SButton>(R.id.btn_match_ncm_id);
+	SASSERT(m_btnMatchNcmID != NULL);
 }
 
 //获得主窗口对象
@@ -109,7 +116,7 @@ void CPageMaking::OnBtnSelectMusic1(LPCWSTR pFilePath)
 		CBrowseDlg Browser;
 		bRet = Browser.DoFileBrowse(
 			::GetActiveWindow(),
-			L"音频文件(mp3,mp2,wma,wav,wv,ape,flac)\0*.mp3;*.mp2;*.wma;*.wav;*.wv;*.ape;*.flac;\0手机录音(amr)/手机铃声(mmf)\0*amr;*.mmf\0\0",
+			L"音频文件(mp3,mp2,wma,wav,wv,ape,flac),网易云音乐ncm文件\0*.mp3;*.mp2;*.wma;*.wav;*.wv;*.ape;*.flac;*.ncm\0手机录音(amr)/手机铃声(mmf)\0*amr;*.mmf\0\0",
 			FileHelper::CheckFolderExist(M()->m_settingPage.m_default_music_path)? M()->m_settingPage.m_default_music_path.c_str():nullptr
 			);
 
@@ -129,9 +136,15 @@ void CPageMaking::OnBtnSelectMusic1(LPCWSTR pFilePath)
 		 || CFileDialogEx::checkPathName(_T("*.ape"),pPath)
 		 || CFileDialogEx::checkPathName(_T("*.flac"),pPath)
 		 || CFileDialogEx::checkPathName(_T("*.amr"),pPath)
-		 || CFileDialogEx::checkPathName(_T("*.mmf"),pPath))
+		 || CFileDialogEx::checkPathName(_T("*.mmf"),pPath)
+		 || CFileDialogEx::checkPathName(_T("*.ncm"),pPath))
 		{	
 			; //使用“或”条件判断( || )而 不用“且”条件判断（&&），以减少 checkPathName 调用的次数
+
+			if(CFileDialogEx::checkPathName(_T("*.ncm"),pPath))
+				m_btnMatchNcmID->SetVisible(TRUE,TRUE);
+			else
+				m_btnMatchNcmID->SetVisible(FALSE,TRUE);
 		}
 		else 
 		{
@@ -235,6 +248,41 @@ void CPageMaking::OnBtnLoad1()
 			_T("提示"),MB_OK|MB_ICONASTERISK);
 		return;
 	}
+	
+	//显示的音乐路径
+	wstring FilePathToShow = M()->maker.m_szMusicPathName;
+
+	//载入前处理ncm 文件的情况
+	bool bIsCurrentNcm = false;
+	wstring strID = L"";
+	wstring strName =L"";
+	wstring strMp3FullPath = L"";
+	int nRet = DealWithNcmFile(bIsCurrentNcm, strID, strName, strMp3FullPath);
+	if(nRet > 0) //为ncm 文件的情况
+	{
+		if(nRet == 1) //未匹配ncm 的ID
+		{
+			_MessageBox(M()->m_hWnd,SStringT().Format(_T("还没有为文件名【%s】匹配网易云音乐ID\\n请先点击“匹配ID”按钮匹配"),strName.c_str()),
+			_T("提示"),MB_OK|MB_ICONINFORMATION);
+			return;
+		}
+		else if(nRet == 2) //网络连接下载mp3失败
+		{
+			_MessageBox(M()->m_hWnd,SStringT().Format(_T("网络连接失败，无法为您下载ncm文件对应的mp3"),M()->maker.m_szLyricPathName),
+			_T("提示"),MB_OK|MB_ICONINFORMATION);
+			return;
+		}
+		else //==3
+		{
+			FilePathToShow = M()->maker.m_szMusicPathName + wstring(L" ( ID: ")+ strID + L" )";
+			M()->maker.setMusicPath(strMp3FullPath.c_str(), M()->m_hWnd);
+		}
+	}
+	else if(nRet < 0)
+	{
+		//创建文件夹失败
+		return;
+	}
 
 	//确保 歌词文件 和 音乐文件有效
 	File lyricFile(M()->maker.m_szLyricPathName,_T("r"));
@@ -247,7 +295,7 @@ void CPageMaking::OnBtnLoad1()
 	}
 
 	//更新 页面的 当前音乐 和 当前歌词的信息
-	m_txtMusic->SetWindowTextW(M()->maker.m_szMusicPathName);
+	m_txtMusic->SetWindowTextW(FilePathToShow.c_str());
 	m_txtLyric->SetWindowTextW(M()->maker.m_szLyricPathName);
 	
 	//重置 LyricMaker的 歌词数据为空
@@ -337,6 +385,19 @@ void CPageMaking::OnBtnEditLyric()
 		_MessageBox(M()->m_hWnd, L"请先选择歌词文件 :)", L"提示", MB_OK|MB_ICONINFORMATION);
 	}
 }
+
+//进入匹配ID页面，自动填充数据搜索ID，如果已匹配过ID，初始化到页面显示
+void CPageMaking::OnBtnMatchID()
+{
+	M()->FindChildByID2<STabCtrl>(R.id.tab_content_container)->SetCurSel(1); //进入页面
+
+	//使用文件路径的文件名填充歌曲文件名编辑控件
+	M()->m_pageSearchNcmID->SetSongFileNameEditWithPath(M()->maker.m_szMusicPathName);  
+
+	//复用猜测搜索歌词信息线程，来猜测搜索ID需要的信息
+	CGuessLyricInfoThread::getSingleton().Start( M()->m_hWnd, SStringW(M()->maker.m_szMusicPathName), true);
+}
+
 
 //第一个页面(歌词制作)：回到“加载按钮”按下后的状态
 void CPageMaking::backToInit_1()
@@ -598,6 +659,67 @@ DWORD WINAPI CPageMaking::ThreadConvertProc(LPVOID pParam)
 }
 
 
+//在载入时处理Ncm文件
+// 返回 0 表示不是ncm文件
+//		1 本次载入的文件为ncm文件,该文件没有匹配ID
+//		2 本次载入的文件为ncm文件，下载mp3失败
+//		3 本次载入的文件为ncm文件，下载mp3成功，准备就绪
+//		-1; //创建文件夹错误
+int CPageMaking::DealWithNcmFile(OUT bool& isCurrentNcm, OUT wstring& strID, OUT wstring& strName, OUT wstring& strMp3FilePath)
+{
+	if(CFileDialogEx::checkPathName(_T("*.ncm"),M()->maker.m_szMusicPathName))
+	{
+		isCurrentNcm = true;
+
+		//得到文件名，查询当前歌曲的id
+		wstring strMusicPath = M()->maker.m_szMusicPathName;
+		auto indexBeg = strMusicPath.find_last_of(L'\\')+1;
+		auto indexEnd = strMusicPath.find_last_of(L'.');
+		strName = strMusicPath.substr( indexBeg,indexEnd - indexBeg);
+
+		if(!CNcmIDManager::GetInstance()->FindID(strName, strID))
+			return 1;// 1表示ncm 还没匹配ID
+
+		//查询mp3 是否已经下载
+		wstring strMp3FloderPath = FileHelper::GetCurrentDirectoryStr() + TEMP_MP3_FLODER_NAME ;
+		strMp3FilePath = strMp3FloderPath + L"\\" + strName + L".mp3" ;
+		if(FileHelper::CheckFileExist(strMp3FilePath))
+			return 3; //已经存在，准备就绪
+
+		//确保mp3文件夹存在
+		if(!FileHelper::CheckFolderExist(strMp3FloderPath))
+		{
+			if(RET_SUCCEEDED != _wmkdir(strMp3FloderPath.c_str()))
+			{
+				wstring strTip = L"程序无法创建目录：\\n";
+				strTip += strMp3FloderPath +L"\\n";
+				strTip += L"这将导致ncm无法下载mp3,从而无法正常播放\\n";
+				
+				_MessageBox(NULL, strTip.c_str(), L"提示", MB_OK|MB_ICONWARNING);
+				return -1; //创建文件夹错误
+			}
+		}
+
+		//接下来弹框，下载mp3, 过程结束后关闭mp3
+		
+		DlgDownloadNcmMp3 dlg(L"xml_processing_tip");
+
+		dlg.SetNcmNameAndID(strName,strID);
+		
+		int ret = dlg.DoModal(NULL);
+		
+		_MessageBox(NULL,L"",L"",MB_OK); //加上此句抵消窗口关闭整个程序的现象，不知是不是使用SOUI上的错误，弹出的窗口关闭后得加上此句“抵消”程序关闭消息
+
+		if(ret == IDCANCEL)
+			return 2;//这里表示失败
+		else
+			return 3;//这里已经转换完了
+	}
+	else
+		isCurrentNcm = false;
+
+	return 0;
+}
 
 
 

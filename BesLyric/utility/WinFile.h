@@ -115,9 +115,15 @@ public:
 	static bool  CheckFileExist(const wstring &strPath);
 
 	/*
-	*   @brief 查询文件夹是否存在
+	*   @brief 查询文件夹是否存在,注意结尾不要以"\\"结束，否则存在也会返回false
 	*/
 	static bool  CheckFolderExist(const wstring &strPath);
+
+	
+	/*
+	*   @brief 遍历得到文件夹下所有的文件
+	*/
+	static BOOL FindAllFiles(const wchar_t * lpszPath, vector<wstring> &vectorFilesPath, bool bRecursive);
 
 	/**
 	*	@brief 分割路径名

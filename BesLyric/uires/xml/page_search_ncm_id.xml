@@ -1,0 +1,95 @@
+<include>
+    <window pos="0,0,-0,-0">
+		<window pos="0,0,-0,@45" >
+			<button name="btn_return_to_main_page" pos="18,[5,@210,@30" font="adding:2.5" cursor="hand" skin="skin_btn_transparent" focusable="0" 
+              tip="返回主窗口页面"> &lt; 网易云音乐 歌曲ID 匹配 </button>
+
+      <text pos="-380,{10,@90,@25" colorText="#ffffffbb" align="right" >歌曲文件名:</text>
+      <edit pos="-280,{0,-20,@25" readonly="1" name="edit_song_file_name" ></edit>
+      
+      <hr pos="0,[5,-0,@1" lineStyle="solid"   mode="horizontal" colorLine="#ffffff11"/>
+		</window>
+      <text pos="40,[5,@350,@25" colorText="#ffffffbb" align="left" >播放ncm文件，需先匹配其在网易云音乐中的音乐ID</text>
+
+      <text pos="-350,{0,@60,@25" colorText="#ffffffbb" align="right" >匹配ID:</text>
+      <edit pos="-280,{0,@160,@25" notifyChange="1"  name="edit_ncm_id" cueText=" 在此填入匹配的ID" number="1"></edit>
+      <imgbtn pos="-115,{0,@100,@25" padding="0,0,0,0" name="btn_ncm_id_select" skin="app_button" class="normalbtn" tip="确定使用该ID匹配歌曲">确定匹配</imgbtn>
+
+
+      <tabctrl pos="25,[10,-15,-5" tabPos="18" name="tab_ncm_id_search_tab" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="30" tabWidth="85"  icon-x="5" icon-y="8" font="adding:-3" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffff">
+     <page title="ID搜索">
+
+       <window  pos="0,[5,-0,-35">
+
+         <window pos="0,0,-0,@100">
+           <window pos="30,[5,@250,@65" font="adding:-1" >
+             <text pos="5,[5,@80,@25" colorText="#ffffffbb" align="right" >歌曲名:</text>
+             <edit pos="[10,{0,@150,@25" notifyChange="1"  name="edit_search_ncm_id_name" cueText=" 必填"></edit>
+             <text pos="5,[5,@80,@25" colorText="#ffffffbb" align="right" >歌手:</text>
+             <edit pos="[10,{0,@150,@25"  notifyChange="1" name="edit_search_ncm_id_artist" cueText=" 选填"></edit>
+           </window>
+           <window  pos="[0,{0,-0,@65" font="adding:-1" >
+             <imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_ncm_id" skin="skin_button_search" class="normalbtn_light" tip="不填歌手一般将搜出更多结果">搜索 ID</imgbtn>
+           </window>
+           <window name="window_search_ncm_id_tip" font="adding:-1" pos="30,[5,-0,@30" >
+             <text pos="5,[5" >搜索</text>
+             <window pos="[2,{0" >
+               <text pos="[0,{0"> 歌曲名</text>
+               <text pos="[0,{0" name="txt_search_ncm_id_name_tip" colorText="#4682B4">“我们的歌”</text>
+             </window>
+             <window pos="[0,{0" name="window_search_ncm_id_artist_tip" display="0">
+               <text pos="[0,{0">、歌手</text>
+               <text pos="[0,{0" name="txt_search_ncm_id_artist_tip" colorText="#4682B4">“王力宏”</text>
+             </window>
+             <text pos="[0,{0" display="0" name="txt_is_searching_ncm_id_tip">，正在搜索中 . . . </text>
+             <text pos="[0,{0" display="0" name="txt_search_ncm_id_result_tip">，找到10个可能的ID</text>
+           </window>
+         </window>
+
+         <tabctrl pos="25,[2,-5,-5" tabPos="18" name="tab_ncm_id_list" cursor="hand" focusable="0" animateSteps="10" curSel="0" tabAlign="top"  tabHeight="0" tabWidth="85"  icon-x="5" icon-y="8" font="adding:-3" tabSkin="skin_tab_red" frameSkin="skin_tab_red_frame"  colorText="#ffffff">
+           <page title="ID搜索列表">
+
+             <lyriclistview name="mclv_ncm_id" pos="0,0,-0,-0" headerHeight="27"   sbSkin="cmn.scrollbar">
+
+               <header align="center" colorText="#ffffffaa"  sortSkin="skin_lcex_header_arrow" itemSkin="skin_lcex_header" itemSwapEnable="0" fixWidth="0" font="underline:0,adding:-3" sortHeader="1" >
+                 <items>
+                   <item width="30"></item>
+                   <item width="200">音乐标题</item>
+                   <item width="200">歌手</item>
+                   <item width="130">ID</item>
+                   <item width="100">操作</item>
+                 </items>
+               </header>
+               <template itemHeight="28" colorHover="#ffffff10" colorSelected="#ffffff20" >
+                 <window name="col1" clipClient="1">
+                   <text pos="5,5" class="cls_txt_light"  name="txt_mclv_ncm_id_num" font="adding:-3"></text>
+                 </window>
+                 <window name="col2" clipClient="1">
+                   <text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_name" font="adding:-3" ></text>
+                 </window>
+                 <window name="col3" clipClient="1">
+                   <text pos="5,5" class="cls_txt_light"  name="txt_mclv_music_artist"   font="adding:-3"  colorText="#ffffff"></text>
+                 </window>
+                 <window name="col4" clipClient="1">
+                   <text pos="5,5" class="cls_txt_light"  name="txt_mclv_ncm_id"  font="adding:-3" ></text>
+                 </window>
+                 <window name="col5" clipClient="1">
+                   <imgbtn pos="5,3,-5,@24" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_select">选用</imgbtn>
+                 </window>
+               </template>
+
+             </lyriclistview>
+           </page>
+         </tabctrl>
+       </window>
+
+     </page>
+     <page title="自己动手">
+       <text pos="[5,[10" > 到歌曲播放页面，在分享中“复制链接”，在链接中即可自行得到该歌曲的ID </text>
+       <window pos="15,[15,@655,@360" skin="skin_demo_find_id"></window>
+     </page>
+   </tabctrl>
+     
+		<!-- tabInterSkin="skin_tab_left_splitter" iconSkin="skin_small_icons" -->
+	</window>
+</include>

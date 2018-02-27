@@ -32,6 +32,7 @@
 #include "PageMaking.h"
 #include "PageResult.h"
 #include "PageSearchLyric.h"
+#include "PageSearchNcmID.h"
 
 #include "controlEx\MagnetFrame.h"
 #include "DlgDesktopLyric.h"
@@ -39,6 +40,7 @@
 class CPageMaking;						//嵌套定义，先声明
 class CPageResult;
 class CPageSearchLyric;
+class CPageSearchNcmID;
 
 /* 程序的主窗口类 */
 class CMainDlg : public SHostWnd, CMagnetFrame
@@ -46,6 +48,7 @@ class CMainDlg : public SHostWnd, CMagnetFrame
 	friend class CPageMaking;
 	friend class CPageResult;
 	friend class CPageSearchLyric;
+	friend class CPageSearchNcmID;
 
 public:
 	CMainDlg();
@@ -62,6 +65,9 @@ public:
 
 	//初始化各个页面内容
 	void initPage();
+
+	//初始化etc文件并清理相关文件
+	void initFloderAndFile();
 
 	//初始化桌面歌词
 	void initDesktopLyric();
@@ -90,11 +96,17 @@ public:
 
 	 //用于处理格式转换线程结束后，通知主线程播放
 	int MessageButtonCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
-
+	
 	//处理消息，显示搜索到的歌词
 	int MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+	//处理消息，显示搜索到的ID
+	int MessageShowIDResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+	
+
 	//处理消息，使用猜测的结果自动搜索歌词
 	int MessageSearchWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+	//处理消息，使用猜测的结果自动搜索ID
+	int MessageSearchIDWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 
 private:
 	//设置程序的背景图片
@@ -105,6 +117,7 @@ private:
 	BOOL PageMakingChainEvent(CPageMaking* pPageMaking,EventArgs* pEvt);
 	BOOL PageResultChainEvent(CPageResult* pPageResult,EventArgs* pEvt); //同上
 	BOOL PageSearchLyricChainEvent(CPageSearchLyric* pPageSearchLyric,EventArgs* pEvt);
+	BOOL PageSearchNcmIDChainEvent(CPageSearchNcmID* pPageSearchNcmID,EventArgs* pEvt);
 
 	void test();//just for test
 protected:
@@ -124,6 +137,7 @@ protected:
 		 if(PageMakingChainEvent(m_pageMaking,pEvt))return TRUE;           
 		 if(PageResultChainEvent(m_pageResult,pEvt))return TRUE;           
 		 if(PageSearchLyricChainEvent(m_pageSearchLyric,pEvt))return TRUE; 
+		 if(PageSearchNcmIDChainEvent(m_pageSearchNcmID,pEvt))return TRUE; 
 
 	EVENT_MAP_END()
 
@@ -156,7 +170,12 @@ protected:
 		MESSAGE_HANDLER(MSG_USER_DROP_FILE, MsgDropFile)//拖放文件消息
 		
 		MESSAGE_HANDLER(MSG_USER_SHOW_LYRIC_RESULT, MessageShowLyricResult)//显示歌词结果消息
+		MESSAGE_HANDLER(MSG_USER_SHOW_ID_RESULT, MessageShowIDResult)//显示歌词结果消息
+		
+
 		MESSAGE_HANDLER(MSG_USER_SEARCH_WITH_GUESS_RESULT, MessageSearchWithGuessResult) //使用猜测的结果自动搜索
+		MESSAGE_HANDLER(MSG_USER_SEARCH_NCM_WITH_GUESS_RESULT, MessageSearchIDWithGuessResult) //使用猜测的结果自动搜索(搜索ID)
+		
 
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()
@@ -167,6 +186,8 @@ public:
 	CPageMaking *m_pageMaking;				/* 歌词制作页面 */
 	CPageResult *m_pageResult;				/* 歌词预览页面 */
 	CPageSearchLyric *m_pageSearchLyric;	/* 搜索歌词页面 */
+
+	CPageSearchNcmID *m_pageSearchNcmID;	/* 搜索歌曲网易云音乐ID页面 */
 
 	DlgDesktopLyric *m_wndDesktopLyric;			/* 桌面歌词窗口 */	
 
