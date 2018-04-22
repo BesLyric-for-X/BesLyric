@@ -7,6 +7,7 @@
 
 using namespace SOUI;
 
+#include <regex>		//使用正则表达式匹配IP
 
 //开始线程
 bool SendLoginThread::Start(BOOL bAnonymity)
@@ -42,12 +43,15 @@ DWORD WINAPI SendLoginThread::ThreadProc(LPVOID pParam)
 //发送登录信息（ip地址）
 void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 {
-	//获得ip地址
-	//DownloadFile(L"https://whatismyipaddress.com/",L"E://git//BesLyric//Release//ip.txt");
-	//DownloadFile(L"http://ip.qq.com/",L"E://git//BesLyric//Release//ip.txt");
+	//获得ip地址的网页源，2个备用
+	const int SrcCount = 2;
+	wstring ipSrc[SrcCount]={
+		L"http://ip.qq.com/",
+		L"https://whatismyipaddress.com/",
+	};
 
-	//最大检测ip的次数
-	int nMaxCheckCount = 5;
+	//单个源最大检测ip的次数
+	int nMaxSingleCheckCount = 5;
 	
 	wstring strIP= L"unknown";
 	wstring strTempFile;
@@ -61,18 +65,19 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 	}
 	else
 	{
-		while(nMaxCheckCount)
+		int nLeftCheckCount = nMaxSingleCheckCount * SrcCount; // 计算总共检测次数
+		while(nLeftCheckCount-1)
 		{
 			strTempFile =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_TEMP;
 			if(FileHelper::CheckFileExist(strTempFile))
 				_wremove(strTempFile.c_str());
 	
-			bool bRet = CDownloader::DownloadFile(L"http://www.ip138.com/ip2city.asp",strTempFile);
+			bool bRet = CDownloader::DownloadFile(ipSrc[(nLeftCheckCount-1) / nMaxSingleCheckCount],strTempFile);
 			if(bRet == false)
 			{
 				//可能没网络，或网络异常，也可能读取文件失败
 				//等待5秒再检测
-				nMaxCheckCount--;
+				nLeftCheckCount--;
 				Sleep(5000);
 				continue;
 			}
@@ -82,29 +87,72 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 			if(bRet == false)
 			{
 				//文件读取异常，5秒后重新检测过程
-				nMaxCheckCount--;
+				nLeftCheckCount--;
 				Sleep(5000);
 				continue;
 			}
 
+			bool bFound = false;
 			for(auto iter = vecLine.begin(); iter != vecLine.end(); iter++)
 			{
-				if(iter->Find(L'[') != -1)
+				// https://whatismyipaddress.com/ 和 http://ip.qq.com/ 的网页中IP都是 >ddd.ddd.ddd.ddd< 特征，查找该特征的字符串
+				wstring ipStr = L"Invalid IP query source";
+				
+				if(CatchIPStr(iter->GetBuffer(1), ipStr))
 				{
-					auto beg = iter->Find(L'[')+1;
-					auto end = iter->Find(L']');
-					strIP = iter->Left(end);
-					strIP = strIP.substr(beg);
+					strIP = ipStr;
+					bFound = true;
 					break;
 				}
 			}
 
-			//已经获得ip，退出循环
-			break;
+			if(bFound)
+				break;//已经获得ip，退出循环
+			
+			nLeftCheckCount--;
 		}
 	}
 
 	//访问链接，服务端负责记录登录信息
 	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP;
 	CDownloader::DownloadFile(strSendLink, strTempFile);
+}
+
+
+//俘获满足需求的IP字符串
+bool SendLoginThread::CatchIPStr(const wstring &line, OUT wstring& ip)
+{
+	// > . . . <
+
+	// 参考 https://blog.csdn.net/effective_coder/article/details/9010337
+	std::locale loc("");    
+    std::wcout.imbue(loc);    
+        
+    std::wstring regString(_T(">(\\d+\\.\\d+\\.\\d+\\.\\d+)<"));    
+    
+    // 表达式选项 - 忽略大小写     
+    std::regex_constants::syntax_option_type fl = std::regex_constants::icase;    
+        
+    // 编译一个正则表达式语句     
+    std::wregex regExpress(regString, fl);    
+
+	// 保存查找的结果     
+    std::wsmatch ms;    
+    
+    // 查找     
+    if(std::regex_search(line, ms, regExpress))    
+    {    
+		if(ms.size() == 2)
+		{
+            ip = ms.str(1); 
+			return true;
+		}
+		else
+			return false;
+    }    
+    else    
+    {    
+        return false;
+    }    
+
 }

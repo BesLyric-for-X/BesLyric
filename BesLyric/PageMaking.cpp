@@ -344,6 +344,9 @@ void CPageMaking::OnBtnPreview()
 
 
 	M()->m_pageResult->OnBtnLoad2();
+
+	//顺便自动播放
+	M()->m_pageResult->OnBtnStartPlaying();
 }
 
 //打开生成的文件

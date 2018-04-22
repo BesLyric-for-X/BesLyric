@@ -224,7 +224,10 @@ void CSettingPage::OnBtnSelectDefaultLyricPath()
 	if(bRet == TRUE)
 	{
 		m_default_lyric_path = SStringW(Browser.GetDirPath()).GetBuffer(1);
-		m_pMainWnd->FindChildByID(R.id.text_default_lyric_path)->SetWindowTextW(SStringW(m_default_lyric_path.c_str()));
+		m_pMainWnd->FindChildByID(R.id.text_default_lyric_path)->SetWindowTextW(SStringW(m_default_lyric_path.c_str()));//填到对应的显示text
+		
+		m_pMainWnd->FindChildByID(R.id.edit_origin_lyric_path)->SetWindowTextW(SStringW(m_default_lyric_path.c_str()));//填到歌词选择页面的源歌词保存路径
+		
 	}
 	
 }
@@ -237,7 +240,9 @@ void CSettingPage::OnBtnSelectDefaultOutputPath()
 	if(bRet == TRUE)
 	{
 		m_default_output_path = SStringW(Browser.GetDirPath()).GetBuffer(1);
-		m_pMainWnd->FindChildByID(R.id.text_default_output_path)->SetWindowTextW(SStringW(m_default_output_path.c_str()));
+		m_pMainWnd->FindChildByID(R.id.text_default_output_path)->SetWindowTextW(SStringW(m_default_output_path.c_str()));//填到对应的显示text
+		
+		m_pMainWnd->FindChildByID(R.id.edit_lrc_lyric_path)->SetWindowTextW(SStringW(m_default_lyric_path.c_str()));//填到歌词选择页面的源歌词保存路径
 	}
 }
 			

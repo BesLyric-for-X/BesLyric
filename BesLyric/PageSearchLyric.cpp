@@ -355,7 +355,19 @@ void CPageSearchLyric::OnBtnSaveOriginLyricPath()
 		//将文本内容保存到文件中
 		SStringW savePath = saveDlg.m_szFileName;
 		if(FileOperator::WriteToUtf8File(wstring(savePath.GetBuffer(1)), wstring(strContent.GetBuffer(1))))
-			_MessageBox(M()->m_hWnd, (L"原歌词已保存！\\n\\n保存路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONINFORMATION);
+		{
+			int nRet = _MessageBox(M()->m_hWnd, (L"原歌词已保存！\\n\\n保存路径：\\n"+savePath + L"\\n\\n是否直接选择该歌词到【歌词制作】页面？").GetBuffer(1), 
+				L"提示", MB_YESNO|MB_ICONINFORMATION);
+			if(nRet == IDYES)
+			{
+				//切换到[歌词制作]页面
+				STabCtrl* tab = M()->FindChildByID2<STabCtrl>(R.id.tab_main);
+				if(tab)
+					tab->SetCurSel(0);
+
+				M()->m_pageMaking->OnBtnSelectLyric1(savePath);//选择到[歌词制作]页面
+			}
+		}
 		else
 			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
 	}
@@ -384,7 +396,19 @@ void CPageSearchLyric::OnBtnSaveLrcLyricPath()
 		//将文本内容保存到文件中
 		SStringW savePath = saveDlg.m_szFileName;
 		if(FileOperator::WriteToUtf8File(wstring(savePath.GetBuffer(1)), wstring(strContent.GetBuffer(1))))
-			_MessageBox(M()->m_hWnd, (L"LRC歌词已保存！\\n\\n保存路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONINFORMATION);
+		{
+			int nRet = _MessageBox(M()->m_hWnd, (L"LRC歌词已保存！\\n\\n保存路径：\\n"+savePath+ L"\\n\\n是否直接选择该歌词到【滚动预览】页面？").GetBuffer(1), 
+			L"提示", MB_YESNO|MB_ICONINFORMATION);
+			if(nRet == IDYES)
+			{
+				//切换到[滚动预览]页面
+				STabCtrl* tab = M()->FindChildByID2<STabCtrl>(R.id.tab_main);
+				if(tab)
+					tab->SetCurSel(1);
+
+				M()->m_pageResult->OnBtnSelectLyric2(savePath);//选择到[歌词制作]页面
+			}
+		}
 		else
 			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
 	}

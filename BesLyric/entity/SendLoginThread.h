@@ -47,6 +47,10 @@ private:
 	//发送登录信息（ip地址）
 	void SendLoginInfo(BOOL bAnonymity);
 
+	//俘获满足需求的IP字符串
+	inline bool CatchIPStr(const wstring &line, OUT wstring& ip);
+	
+
 private:
 
 	HANDLE		m_handleThread;			/* 当前线程句柄 */
