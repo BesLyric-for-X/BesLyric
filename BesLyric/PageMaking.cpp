@@ -708,7 +708,9 @@ int CPageMaking::DealWithNcmFile(OUT bool& isCurrentNcm, OUT wstring& strID, OUT
 		
 		int ret = dlg.DoModal(NULL);
 		
-		_MessageBox(NULL,L"",L"",MB_OK); //加上此句抵消窗口关闭整个程序的现象，不知是不是使用SOUI上的错误，弹出的窗口关闭后得加上此句“抵消”程序关闭消息
+		//_MessageBox(NULL,L"",L"",MB_OK); //加上此句抵消窗口关闭整个程序的现象，不知是不是使用SOUI上的错误，弹出的窗口关闭后得加上此句“抵消”程序关闭消息
+		//  后来找到了关闭弹框导致整个程序退出的原因：
+		//  在xml 定义窗口属性中，【wndType="appMain" appWnd="1"】会在发送退出程序消息， 改为【wndType="normal" appWnd="0"】后即可
 
 		if(ret == IDCANCEL)
 			return 2;//这里表示失败

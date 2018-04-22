@@ -1,6 +1,6 @@
 ﻿<SOUI name="dlg_processing_tip" title="提示" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="400" height="220"  margin="20,5,5,5"  
-      resizable="0" wndType="appMain"
-appWnd="1"
+      resizable="0" wndType="normal"
+appWnd="0"
 translucent="0" 
 >
   
