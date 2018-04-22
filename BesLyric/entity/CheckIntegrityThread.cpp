@@ -134,6 +134,26 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 		//写入 lastUpdateDone 文件， 0 表示未完成最后一次的更新
 		FileOperator::WriteAllText(m_wstrEtcFloder + L"lastUpdateDone",L"0");  
 
+		//【版本 v2.1.11 做特殊的更新处理】
+		wstring strLastExe = L"";
+		if(AutoUpdateThread::VersionCompare( VERSION_NUMBER.c_str(), L"2.1.11") == 0)
+		{
+			UpdateProgressUI(2, wstring( L"正在为 版本 v2.1.11 做特殊的更新处理...").c_str());
+			
+			//版本 2.1.11 将是 基于 soui 2.2 版本的分支的最后一个版本，详见该分支 【Sun Apr 22 14:20:12 2018 +0800】的提交信息
+			
+			//这里在实施下载其他组件之前，需要先更新 当前的 exe 文件为 soui 2.6 编译出来的 exe
+			strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
+	
+			//下载最新的soui 2.6 编译出来的 exe,  BesLyric.exe（服务器的名称为 BesLyricExe.rar） 到 strLastExe （BesLyric）中
+			bool bRet = CDownloader::DownloadFile( LINK_LAST_EXE_2 , strLastExe);
+			if(bRet == false)
+			{
+				UpdateProgressUI(100, wstring( L"下载文件失败，网络连接异常...").c_str());
+				return false;
+			}
+		}
+
 
 		UpdateProgressUI(5, wstring( L"读取更新项目内容，请耐心等待 ...").c_str());
 		//读取更新文件得到所有待校验的文件信息
@@ -215,6 +235,22 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 			strContent += *iterOld + L"\n";
 		}
 		FileOperator::WriteAllText(m_wstrEtcFloder + L"fileToDelete",strContent);  
+
+
+		//【版本 v2.1.11 做特殊的更新处理】//上面对应的部分为下载，为了更大概率地实现全部替换，先所有内容下载完后，再在此替换exe文件
+		if(AutoUpdateThread::VersionCompare( VERSION_NUMBER.c_str(), L"2.1.11") == 0)
+		{
+			/*修改文件名称，达到替换旧版本目的 */
+			wstring strCurrentExe = FileHelper::GetCurrentDirectoryStr() + FILE_NAME_LAST_EXE_TEMP + L".exe";
+			wstring strBackupExe =  FileHelper::GetCurrentDirectoryStr() + FILE_NAME_LAST_EXE_TEMP + L"."+ VERSION_NUMBER ;//+ ".exe";
+
+			if(FileHelper::CheckFileExist(strBackupExe))//删除可能存在的备份文件
+				_wremove(strBackupExe.c_str());
+			_wrename(strCurrentExe.c_str(),strBackupExe.c_str());
+
+			//复制新的exe到原来目录
+			CopyFileW(strLastExe.c_str(), strCurrentExe.c_str(), FALSE);
+		}
 
 		//写入 lastUpdateDone 文件， 1 表示已完成最后一次的更新
 		FileOperator::WriteAllText(m_wstrEtcFloder + L"lastUpdateDone",L"1"); 

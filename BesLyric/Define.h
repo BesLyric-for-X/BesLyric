@@ -45,15 +45,15 @@ using namespace std;
 
 #define OPEN_DEBUG_LOG 0					//是否打开调试
 
-#define G  (CGloble::GetInstance())
+#define SG  (CGloble::GetInstance())
 
 
 #if OPEN_DEBUG_LOG == 1
-#define DLOG(info)			G->AppendLog(info)
+#define DLOG(info)			SG->AppendLog(info)
 #define DELETE_LOG()		;
 #else 
 #define DLOG(info)			;
-#define DELETE_LOG()		G->DeleteLogFile();
+#define DELETE_LOG()		SG->DeleteLogFile();
 #endif
 
 
@@ -167,11 +167,17 @@ X表示主版本，架构性修改时更新
 Y表示次版本，较大修改时更新
 Z表示修改号，小问题时更新
 */
-static const wstring VERSION_NUMBER = L"2.1.10";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
+static const wstring VERSION_NUMBER = L"2.1.11";		//版本号（注意每次更改版本号时需要更改2处，1处是这里，1处是 BesLyric.rc 中的Version）
 
+// v 2.1.10 以及以前的版本使用的链接
 static const wstring  LINK_VERSION_LOG= L"http://files.cnblogs.com/files/BensonLaur/versionLog.zip";			//链接，指向版本日志文件
 static const wstring  LINK_LAST_VERSION_INFO= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.zip";		//链接，指向最后版本信息的文件
 static const wstring  LINK_LAST_EXE= L"http://files.cnblogs.com/files/BensonLaur/BesLyricExe.zip";				//链接，指向最新的 EXE文件
+
+// v 2.1.11 以及以后的版本使用的链接
+static const wstring  LINK_VERSION_LOG_2= L"http://files.cnblogs.com/files/BensonLaur/versionLog.rar";			//链接，指向版本日志文件
+static const wstring  LINK_LAST_VERSION_INFO_2= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.rar";	//链接，指向最后版本信息的文件
+static const wstring  LINK_LAST_EXE_2= L"http://files.cnblogs.com/files/BensonLaur/BesLyricExe.rar";			//链接，指向最新的 EXE文件
 
 static const wstring LINK_SEND_LOGIN = L"http://beslyric.320.io/BesBlog/beslyric/login.action";
 
