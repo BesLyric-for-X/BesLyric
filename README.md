@@ -8,7 +8,7 @@
 
 
 
-BesLyric 最新下载地址：http://beslyric.320.io/BesBlog/beslyric/download.action  (备用下载 [地址1](http://files.cnblogs.com/files/BensonLaur/Beslyric.zip) [地址2](http://beslyric.320.io/BesBlog/Beslyric.zip) [地址3](http://bensonlaur.vicp.io/BesBlog/Beslyric.zip) )
+BesLyric 最新下载地址：http://beslyric.320.io/BesBlog/beslyric/download.action  (备用下载 [地址1](http://files.cnblogs.com/files/BensonLaur/Beslyric.zip) [地址2](http://beslyric.320.io/BesBlog/Res/Beslyric.zip) [地址3](http://bensonlaur.vicp.io/BesBlog/Beslyric.zip) )
 
 
 1、开发环境:
