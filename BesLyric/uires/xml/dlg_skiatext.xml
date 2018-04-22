@@ -1,4 +1,4 @@
-<SOUI title="Belyric 桌面歌词" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="780" height="50" appWnd="1" resizable="1" translucent="1">
+<SOUI title="Belyric 桌面歌词" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="780" height="50" appWnd="0" resizable="1" translucent="1">
   <root>
     <caption pos="0,0,-0,-0" colorBkgnd="#999999bf" colorText="#000000" tip="按住拖动\双击全屏">
       <text pos="|,|" offset="-0.5,-0.5" name="txt_current_lyric" font="style:StrokeAndFill,blurStyle:solid,blurRadius:3,adding:20"
