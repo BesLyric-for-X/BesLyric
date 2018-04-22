@@ -220,6 +220,92 @@ bool FileOperator::ReadAllLines(const string file, OUT vector<string> *lines)
 		return false;
 }
 
+
+
+bool FileOperator::ReadAllText(const wstring file, wstring& fileContent)
+{	
+	wifstream in(file, ios_base::in);
+	wstring temp = L"";
+	if (in)
+	{
+		while (!in.eof())
+		{
+			getline(in, temp);
+			temp += L"\n";
+			fileContent += temp;
+		}
+		return true;
+	}
+	else
+		return false;
+	
+}
+
+bool FileOperator::WriteAllText(const wstring file,const wstring& fileContent)
+{
+	wofstream out(file, ios_base::out);
+	if (out)
+	{
+		out << fileContent;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+//将文件全部读取到缓冲区
+bool FileOperator::ReadAllBuffer(const std::string strPath, char *pszBuffer, std::streamsize size)
+{
+	ifstream ifs(strPath);
+
+	//是否打开成功
+	if (!ifs.is_open())
+		return false;
+
+	//读取指定的缓冲区大小
+	ifs.read(pszBuffer, size);
+	ifs.close();
+
+	return true;
+}
+
+
+//将文件全部读取到缓冲区
+bool FileOperator::ReadAllBufferW(const std::wstring strPath, wchar_t *pszwBuffer, std::streamsize size)
+{
+	wifstream ifs(strPath);
+
+	//是否打开成功
+	if (!ifs.is_open())
+		return false;
+
+	//读取指定的缓冲区大小
+	ifs.read(pszwBuffer, size);
+	ifs.close();
+
+	return true;
+}
+
+
+//将缓冲区的数据全部写到文件
+bool FileOperator::WriteAllBuffer(const std::string strPath, char *pszData, std::streamsize size)
+{
+	ofstream ofs(strPath);
+
+	//是否打开成功
+	if (!ofs.is_open())
+		return false;
+
+	//写入缓冲区数据到文件
+	ofs.write(pszData, size);
+	ofs.flush();  //同步写入
+	ofs.close();
+
+	return true;
+}
+
+
 bool FileOperator::ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines)
 {
 	File encodingFile( file.c_str(), L"r");
@@ -469,6 +555,56 @@ bool  FileHelper::CheckFolderExist(const wstring &strPath)
 
 	return rValue;
 }
+
+
+BOOL FileHelper::FindAllFiles(const wchar_t * lpszPath, vector<wstring> &vectorFilesPath, bool bRecursive)
+{
+	wchar_t szFind[MAX_PATH];
+	wchar_t szFile[MAX_PATH];
+	wchar_t szDir[MAX_PATH];  //当前目录
+	wcscpy_s(szDir, lpszPath);
+
+	//传进来的路径可能以“\\”结尾，如有则去除
+	size_t length = wcslen(szDir);
+	if (length > 0 && szDir[length - 1] == '\\')
+		szDir[length - 1] = '\0';
+
+	WIN32_FIND_DATAW FindFileData;
+	wcscpy_s(szFind, lpszPath);
+	wcscat_s(szFind, L"\\*");
+	wcscat_s(szFind, L".*");//过虑的名字
+
+	HANDLE hFind = ::FindFirstFileW(szFind, &FindFileData);
+	if (INVALID_HANDLE_VALUE == hFind)
+		return FALSE;
+
+	for (;;)
+	{
+		if (bRecursive && (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			if (FindFileData.cFileName[0] != '.')
+			{
+				wcscpy_s(szFile, lpszPath);
+				wcscat_s(szFile, L"");
+				wcscat_s(szFile, FindFileData.cFileName);
+				FindAllFiles(szFile, vectorFilesPath, bRecursive);
+			}
+		}
+		else
+		{
+			//cout << FindFileData.cFileName<<endl;
+			wstring strFullPathExt = szDir;
+			strFullPathExt += (L"\\");
+			strFullPathExt += FindFileData.cFileName;
+			vectorFilesPath.push_back(strFullPathExt);
+		}
+		if (!FindNextFileW(hFind, &FindFileData))
+			break;
+	}
+	FindClose(hFind);
+	return TRUE;
+}
+
 
 void FileHelper::SplitPath(const wstring& strPathName, OUT wstring *pstrDrive, OUT wstring *pstrDirectory, OUT wstring* pstrName, OUT wstring* pstrExt)
 {

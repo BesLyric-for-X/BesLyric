@@ -39,6 +39,9 @@ class SearcherNetEaseCloud: public TObjRefImpl<ISearcher>
 public:
 	//搜索歌词
     virtual bool SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo);
+
+	//通过使用歌名 和 艺术家名获得 歌曲信息列表
+	static bool GetSongListWithNameAndArtist(SStringW strSong, SStringW strArtist, vector< SONGINFO >& vecSongList, SStringW& strLastResult);
     
 	//获得结果中的歌曲信息列表
 	static bool GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList);

@@ -1,8 +1,10 @@
 <include>
      <window pos="10,5,-5,-5">
         <text pos="5,5,@80,@30">选择音乐：</text>
-        <edit pos="[5,{0,-115,@30" font="adding:-1" readonly="1" name="edit_music_1" cueText="  拖放文件到这里 或 点击“选择”" ></edit>
-        <imgbtn name="btn_edit_try_search_lyric" pos="[5,{0,@50,@30" tip="试试搜索这首歌的歌词" skin="app_button" class="normalbtn_light">搜词</imgbtn>
+        <edit pos="[5,{0,]-5,@30" font="adding:-1" readonly="1" name="edit_music_1" cueText="  拖放文件到这里 或 点击“选择”" ></edit>
+        <imgbtn name="btn_match_ncm_id"  pos="-175,{0,@60,@30" visible="0" display="0" 
+                tip="要播放网易云音乐ncm文件，需要先匹配ncm文件在网易云音乐中的音乐ID" skin="app_button" class="normalbtn_light">匹配ID</imgbtn>
+        <imgbtn name="btn_edit_try_search_lyric" pos="-110,{0,@50,@30" tip="试试搜索这首歌的歌词" skin="app_button" class="normalbtn_light">搜词</imgbtn>
         <imgbtn name="btn_select_music_1" pos="[5,{0,-5,@30" skin="app_button" class="normalbtn">选择</imgbtn>
 
         <text pos="5,[5,@80,@30">选择歌词：</text>

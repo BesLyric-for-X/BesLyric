@@ -19,40 +19,38 @@
 */
 
 /**
-* @file       SearchLyricThread.h
+* @file       NcmIDManager.h
 * 
-* Describe    启动一个线程，用于下载歌词
+* @Describe   管理 ncm 文件名与 其网易云id 的匹配逻辑 
 */
 
 #pragma once
 #include "stdafx.h"
-#include "../utility/WinFile.h"
-#include "../utility/SSingleton.h"
-using namespace SOUI;
+#include <string>
+#include "..\lib\ZSingleton.hpp"
+#include <map>
+using namespace std;
 
-
-class  CSearchLyricThread : public Singleton<CSearchLyricThread>
+class CNcmIDManager
 {
+	SINGLETON_0(CNcmIDManager)
+
+
 public:
-	CSearchLyricThread():m_handleThreadSearch(NULL),m_bIsSearching(false){}
+	bool SaveDataPairs();					//保存数据对
+	bool LoadDataPairs();					//加载数据对
 
-	//开始线程
-	bool Start(HWND hMainWnd, SStringW& strMusicName, SStringW& strMusicArtist);
+	bool FindID( wstring fileName,OUT wstring& id);			//查找ID
+	void InsertNcmIDPair( wstring fileName, wstring id);	//插入ID对
 
-	bool IsSearching(){return m_bIsSearching;}
+	//检测ID是否有效
+	//返回 false 为查询失败（网络问题等）
+	bool CheckIDValidity(wstring id, OUT bool& bValid);				
+
 private:
-
-	// 线程执行地址
-	static DWORD WINAPI ProcSearch(LPVOID pParam);
+	//更新ID
+	bool UpdateID( wstring fileName, wstring id);
 
 private:
-
-	HANDLE		m_handleThreadSearch;	/* 当前线程句柄 */	
-	HWND		m_hMainWnd;				/* 主窗口句柄 */
-	
-	bool m_bIsSearching; //标记是否在搜索当中
-
-	SStringW	m_strMusicName;			
-	SStringW	m_strMusicArtist;
+	map< wstring, wstring>	m_mapNcmID;	/* 储存ncm文件名和其对应ID的匹配关系 */
 };
-

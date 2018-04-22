@@ -6,12 +6,17 @@
     <file name="XML_MAINWND" path="xml\dlg_main.xml"  />
     <file name="xml_messagebox" path="xml\messagebox.xml"/>
     <file name="xml_check_integrity" path="xml\dlg_checking_integrity.xml"/>
-	
+    <file name="xml_processing_tip" path="xml\dlg_processing_tip.xml"/>
+    
     <file name="xml_page_making" path="xml\page_making.xml"  />
     <file name="xml_page_result" path="xml\page_result.xml"  />
     <file name="xml_page_search_lyric" path="xml\page_search_lyric.xml"  />
     <file name="xml_page_setting" path="xml\page_setting.xml"  />
     <file name="xml_page_about" path="xml\page_about.xml"  />
+
+    <file name="xml_dlg_lyric" path="xml\dlg_skiatext.xml"  />
+    <file name="xml_page_search_ncm_id" path="xml\page_search_ncm_id.xml"  />
+    
   </LAYOUT>
   
   <values>
@@ -50,9 +55,12 @@
     <file name="img_question" path="image\question_48px.png"/>
     <file name="img_exclamation" path="image\exclamation_48px.png"/>
 
-	
+
     <file name="png_check" path="image\netease\check.png" />
-	
+    <file name="png_lyric_check" path="image\netease\lyric_check.png" />
+    <file name="png_single_cycle_check" path="image\netease\single_cycle_check.png" />
+    
+
     <file name="png_tab_red" path="image\netease\netease_tab_red.png" />
     <file name="png_button_download" path="image\netease\netease_button_download.png" />
     <file name="png_button_search" path="image\netease\netease_button_search.png" />
@@ -60,8 +68,13 @@
 	
 	<file name="png_lcex_header" path="image\lcex_header.png"/>
 	<file name="png_lcex_header_arrow" path="image\lcex_header_arrow.png"/>
-	
+
     <file name="png_vscroll"  path="image\vscrollbar.png" />
+
+    <file name="png_button_transparent"  path="image\button_transparent.png" />
+    <file name="jpg_find_id_demo"  path="image\find_ncm_id_demo.png" />
+    
+
   </IMGX>
   
   <BackGround>
@@ -70,6 +83,7 @@
     <file name="msg_background_2" path="image\netease\msg_background_2.png"/>
     
   </BackGround>
+
   <ICON>
     <file name="ICON_LOGO"  path="image\netease\netease_cloudmusic_48px.ico"    />
   </ICON>

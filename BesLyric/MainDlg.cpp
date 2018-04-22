@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include <Windows.h>
 #include "MainDlg.h"
 #include "utility/WinDialog.h"
 #include <helper/SDibHelper.h>
@@ -30,6 +31,8 @@
 #include <fstream>
 using namespace std;
 
+
+//just for test
 void CMainDlg::test()
 {
 	//just for test
@@ -40,7 +43,7 @@ void CMainDlg::test()
 
 	//AutoUpdateThread::DownloadFile(L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe", L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
 
-	//wstring strSaveBuffer;
+	wstring strSaveBuffer;
 	//CDownloader::DownloadString( L"http://gecimi.com/api/lyric/我们的歌", strSaveBuffer);
 	//
 	//locale &loc=locale::global(locale(locale(),"",LC_CTYPE)); 
@@ -52,6 +55,19 @@ void CMainDlg::test()
 	//_tfopen(L"C:\\Users\\BensonLaur\\Desktop\\json.test", L"w");
 
 	//CDownloader::DownloadString( L"http://s.gecimi.com/lrc/388/38847/3884774.lrc", strSaveBuffer);
+	
+	//CDownloader::DownloadFile( L"http://music.163.com/song/media/outer/url?id=531051690.mp3", 
+	//	L"C:\\Users\\BensonLaur\\Desktop\\NetEase\\The Middle(自动下载).mp3");
+	//CDownloader::DownloadFile( L"http://music.163.com/song/media/outer/url?id=1111.mp3", 
+	//	L"C:\\Users\\BensonLaur\\Desktop\\NetEase\\test.mp3");
+	
+	string md5;
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\imgdecoder-gdip.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\render-gdi.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui-sys-resource.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\utilities.dll", md5);
+
 }
 
 CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
@@ -61,6 +77,11 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 	m_pageMaking = NULL;
 	m_pageResult = NULL;
 	m_pageSearchLyric = NULL;
+	m_pageSearchNcmID = NULL;
+
+	//初始化etc文件并清理相关文件
+	initFloderAndFile();
+
 
 	//启动自动更新线程
 	AutoUpdateThread::getSingleton().Start();
@@ -68,7 +89,8 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 	//检测程序的完整性
 	CCheckIntegrityThread::getSingleton().Start(false);
 
-	//test();
+	//test
+	test();
 }
 
 CMainDlg::~CMainDlg()
@@ -89,6 +111,11 @@ int CMainDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 {
+    //设置为磁吸主窗口
+    SetMainWnd(m_hWnd);
+
+	initDesktopLyric();	//初始化桌面歌词
+
 	//设置背景图片
 	setBackSkin();
 
@@ -106,15 +133,18 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 
 	//初始化记录页面播放足迹，详看变量的说明
 	FootPrintPage = -1;
-
+	
+	test();
 	return 0;
 }
 
+//初始化各个页面内容
 void CMainDlg::initPage()
 {
 	m_pageMaking = new CPageMaking;
 	m_pageResult = new CPageResult;
 	m_pageSearchLyric = new CPageSearchLyric;
+	m_pageSearchNcmID = new CPageSearchNcmID;
 
 	//初始化“歌词制作页面”
 	//默认输出路径有效时设置输出路径
@@ -134,7 +164,8 @@ void CMainDlg::initPage()
 	m_pageMaking->Init(this);
 	m_pageResult->Init(this);
 	m_pageSearchLyric->Init(this);
-
+	m_pageSearchNcmID->Init(this);
+		
 	maker.Init( &m_settingPage );//歌词制作需要用到设置页面的数据
 
 	//注册文件拖放
@@ -156,6 +187,108 @@ void CMainDlg::initPage()
 	if(txt_version != NULL)
 		txt_version->SetWindowTextW(SStringW(VERSION_NUMBER.c_str()));
 
+}
+
+
+//初始化etc文件并清理相关文件
+void CMainDlg::initFloderAndFile()
+{
+	//在后来新的版本中，由于创建文件的地方越来越多，因此决定将在运行目录下创建 etc文件夹，用于储存各种配置文件 或 临时文件
+
+	wstring wstrEtcFloder = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC;
+	wstring wstrOldSettingPath = FileHelper::GetCurrentDirectoryStr() +SETTING_FILE_NAME;
+
+	if(!FileHelper::CheckFolderExist(wstrEtcFloder)) //etc 文件不存在， 认为是较旧版本 或 第一次运行等，需要创建转移配置文件
+	{
+		if(RET_SUCCEEDED != _wmkdir(wstrEtcFloder.c_str()))
+		{
+			wstring strTip = L"程序无法创建目录：\\n";
+			strTip += wstrEtcFloder +L"\\n";
+			strTip += L"这将导致设置、自动升级、ncm 歌曲ID匹配等功能异常，请尝试更换软件存放目录试图解决本问题\\n";
+			
+			_MessageBox(NULL, strTip.c_str(), L"提示", MB_OK|MB_ICONWARNING);
+			return;
+		}
+
+		//将设置文件复制 到 etc 文件夹下面
+		wstring wstrNewSettingPath = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" +SETTING_FILE_NAME;
+		if(FileHelper::CheckFileExist(wstrOldSettingPath))
+		{
+			CopyFile(wstrOldSettingPath.c_str(), wstrNewSettingPath.c_str(), TRUE);//复制旧的配置到新的配置位置
+			m_settingPage.LoadSetting(); //再次载入一次配置
+		}
+	}
+
+	//清除之前升级残留的文件
+	vector<wstring> vecFiles;
+	FileHelper::FindAllFiles( FileHelper::GetCurrentDirectoryStr().c_str(), vecFiles, false);
+	for(auto iter = vecFiles.begin(); iter != vecFiles.end(); iter++)
+	{
+		auto index = iter->find_last_of(L'.');
+		if(index == wstring::npos)
+			continue;
+
+		wstring subStr = iter->substr(index+1);
+
+		if(subStr.size()==0)
+			continue;
+
+		//如果. 后面的子串都是数字，则认为是升级残留的文件，删除之
+		bool bDelete = true;
+		for(auto iterc = subStr.begin(); iterc != subStr.end(); iterc++)
+		{
+			if(!(*iterc >= L'0' && *iterc <= L'9'))
+			{
+				bDelete = false;
+				break;
+			}
+		}
+
+		if(bDelete)
+			DeleteFile(iter->c_str()); 
+	}
+
+	//删除旧的配置
+	if(FileHelper::CheckFileExist(wstrOldSettingPath))
+		DeleteFile(wstrOldSettingPath.c_str()); 
+
+	//删除旧的 temp ,version 文件
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
+	wstring strTempFile =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_TEMP;
+	
+	if(FileHelper::CheckFileExist(strVersionFile))
+		DeleteFile(strVersionFile.c_str()); 
+	if(FileHelper::CheckFileExist(strTempFile))
+		DeleteFile(strTempFile.c_str()); 
+
+	//在新的更新系统中，第N次启动更新的文件被替换的旧版本文件，需要在N+1启动时清除
+	wstring strFileToDelete = wstrEtcFloder+L"\\fileToDelete";
+	if(FileHelper::CheckFileExist(strFileToDelete))
+	{
+		vector<SStringW> vecLines;
+		FileOperator::ReadAllLinesW(strFileToDelete, &vecLines);
+		wstring tempPath;
+		for(auto iter = vecLines.begin(); iter != vecLines.end(); iter++){
+			tempPath = FileHelper::GetCurrentDirectoryStr() + iter->GetBuffer(1);
+			DeleteFile(tempPath.c_str()); 
+		}
+
+		DeleteFile(strFileToDelete.c_str()); 
+	}
+}
+
+//初始化桌面歌词
+void CMainDlg::initDesktopLyric()
+{
+	m_wndDesktopLyric = new DlgDesktopLyric(_T("layout:xml_dlg_lyric"));
+	SASSERT(m_wndDesktopLyric && "分配桌面歌词对象内存失败");
+
+	m_wndDesktopLyric->CreateAndInitWindow();
+
+	//以指定 吸附模式 和 对齐方式 添加为 吸附于主窗口的子窗口
+    CMagnetFrame::ATTACHMODE am  = AM_BOTTOM;
+    CMagnetFrame::ATTACHALIGN aa = AA_LEFT;
+    AddSubWnd(m_wndDesktopLyric->m_hWnd, am,aa);
 }
 
 //主页面切换时
@@ -274,7 +407,6 @@ BOOL CMainDlg::PageMakingChainEvent(CPageMaking* pPageMaking, EventArgs* pEvt)
 
 	return pPageMaking->_HandleEvent(pEvt);
 }
-
 BOOL CMainDlg::PageResultChainEvent(CPageResult* pPageResult,EventArgs* pEvt)
 {
 	if(pPageResult == NULL)
@@ -282,7 +414,6 @@ BOOL CMainDlg::PageResultChainEvent(CPageResult* pPageResult,EventArgs* pEvt)
 
 	return pPageResult->_HandleEvent(pEvt);
 }
-
 BOOL CMainDlg::PageSearchLyricChainEvent(CPageSearchLyric* pPageSearchLyric,EventArgs* pEvt)
 {
 	if(pPageSearchLyric == NULL)
@@ -290,10 +421,26 @@ BOOL CMainDlg::PageSearchLyricChainEvent(CPageSearchLyric* pPageSearchLyric,Even
 
 	return pPageSearchLyric->_HandleEvent(pEvt);
 }
+BOOL CMainDlg::PageSearchNcmIDChainEvent(CPageSearchNcmID* pPageSearchNcmID,EventArgs* pEvt)
+{
+	if(pPageSearchNcmID == NULL)
+		return FALSE;
+
+	return pPageSearchNcmID->_HandleEvent(pEvt);
+}
 
 //键盘消息
 void CMainDlg::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	//后来除了主要的页面，又拓展了一些额外附加功能页面，所以如果是在附加页面，不处理拦截按键
+	STabCtrl *ContainerTab  = FindChildByID2<STabCtrl>(R.id.tab_content_container); 
+	if(ContainerTab->GetCurSel() != 0)
+	{
+		SetMsgHandled(FALSE);
+		return;
+	}
+
+	//接下来为主要页面的按键处理逻辑
 	int curPage;
 
 	//获取当前所处页面
@@ -538,6 +685,18 @@ void CMainDlg::OnMusicCommand(UINT lParam, UINT wParam)
 
 			//自己调用 soui 消息处理函数
 			this->_HandleEvent(&Evt);
+
+			//如果单曲循环，则重新播放
+			if(this->m_pageResult->m_bSingleCycle)
+			{
+				//发送 “播放按钮”触发的事件
+				SButton* btn = FindChildByID2<SButton>(R.id.btn_start_playing);//这一句不是必要的，且当结束时刻页面不在第二页则会获取失败
+				SOUI::EventCmd Evt(btn);				//初始化EventCmd需要一个参数
+				Evt.idFrom = R.id.btn_start_playing;	//在这里只要事件对象是EventCmd，idFrom是按钮id，即可模拟调用按钮响应函数
+							
+				//自己调用 soui 消息处理函数
+				this->_HandleEvent(&Evt);
+			}
 		}
 
 		break;
@@ -589,9 +748,9 @@ void CMainDlg::OnTimer(UINT_PTR nIDEvent)
 
 			}
 	case 102:
-		if(tab)
-			if(tab->GetCurSel() == 1) //在歌词预览的页面
-			{
+		//if(tab)
+		//	if(tab->GetCurSel() == 1) //在歌词预览的页面
+		//	{
 				if(this->m_bIsLyricPlaying)
 				{
 					curMSecond = player.m_musicPlayer.getPosition();  //毫秒时间
@@ -608,6 +767,9 @@ void CMainDlg::OnTimer(UINT_PTR nIDEvent)
 					
 						//执行面板滚动到 m_nCurLine
 						m_pageResult->scrollToLyricCurLine();
+
+						//更新桌面歌词里的歌词内容
+						m_wndDesktopLyric->SetCurrentLyric(player.m_vLineInfo[player.m_nCurLine -1 ].m_strLine);
 
 						//滚动完毕，自增一行
 						player.m_nCurLine ++;
@@ -628,7 +790,7 @@ void CMainDlg::OnTimer(UINT_PTR nIDEvent)
 						timeProgress_2->SetValue( int(curMSecond * 1.0 / player.m_musicPlayer.getLength() * 1000) );//设置千分数值
 				}
 
-			}
+			//}
 		break;
 	default:
 		SetMsgHandled(FALSE);
@@ -807,6 +969,19 @@ int CMainDlg::MessageShowLyricResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	return TRUE;
 }
 
+
+//处理消息，显示搜索到的ID
+int CMainDlg::MessageShowIDResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	IDSearchResult* pResult = (IDSearchResult*)wParam;
+
+	m_pageSearchNcmID->ShowIDResult(pResult);
+
+	delete pResult;
+	return TRUE;
+}
+
+
 int CMainDlg::MessageSearchWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
 {
 	SongInfoGuessResult* pGuessRes  = (SongInfoGuessResult*)wParam;
@@ -824,6 +999,29 @@ int CMainDlg::MessageSearchWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lPar
 		STabCtrl* tab = FindChildByID2<STabCtrl>(R.id.tab_main);
 		if(tab)
 			tab->SetCurSel(2);
+	}
+
+	delete pGuessRes;
+	return TRUE;
+}
+
+int CMainDlg::MessageSearchIDWithGuessResult(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled)
+{
+	SongInfoGuessResult* pGuessRes  = (SongInfoGuessResult*)wParam;
+
+	if(pGuessRes->nResultType == 3)
+	{
+		_MessageBox(this->m_hWnd,L"无法猜测出该文件的具体信息，请自行搜索ID",L"提示", MB_OK|MB_ICONINFORMATION);
+	}
+	else
+	{
+		//填充收拾信息，并开始搜索
+		m_pageSearchNcmID->OnSearchWithGuess(pGuessRes);
+
+		//自动切换到搜索ID页面
+		STabCtrl* tab = FindChildByID2<STabCtrl>(R.id.tab_content_container);
+		if(tab)
+			tab->SetCurSel(1);
 	}
 
 	delete pGuessRes;

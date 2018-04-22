@@ -51,7 +51,9 @@ public:
 			//设置 m_EventStopWaiting 为有信号，以结束 ThreadProc 中的循环的等待
 			SetEvent(m_EventStopWaiting);
 	}
-
+	
+	//比较2个字符串版本号的大小，
+	static int VersionCompare(const SStringW v1, const SStringW v2);
 private:
 	
 	//线程执行地址
@@ -63,8 +65,6 @@ private:
 	//检测是否有更新
 	bool IfUpdateAvailable();
 
-	//比较2个字符串版本号的大小，
-	int VersionCompare(const SStringW v1, const SStringW v2);
 
 private:
 

@@ -110,14 +110,30 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="uires\values\string.xml" />
+    <None Include="uires\xml\dlg_checking_integrity.xml" />
     <None Include="uires\xml\dlg_main.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="uires\xml\dlg_processing_tip.xml" />
+    <None Include="uires\xml\dlg_skiatext.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="uires\xml\messagebox.xml" />
+    <None Include="uires\xml\page_about.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="uires\xml\page_making.xml" />
+    <None Include="uires\xml\page_result.xml" />
+    <None Include="uires\xml\page_search_lyric.xml" />
+    <None Include="uires\xml\page_search_ncm_id.xml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="uires\xml\page_setting.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BesLyric.cpp" />
     <ClCompile Include="BSMessageBox.cpp" />
+    <ClCompile Include="controlEx\MagnetFrame.cpp" />
     <ClCompile Include="DlgCheckIntegrity.cpp" />
     <ClCompile Include="entity\AutoUpdateThread.cpp" />
     <ClCompile Include="entity\CheckIntegrityThread.cpp" />
@@ -126,15 +142,20 @@
     <ClCompile Include="entity\LyricMaker.cpp" />
     <ClCompile Include="entity\LyricPlayer.cpp" />
     <ClCompile Include="entity\MusicPlayer.cpp" />
+    <ClCompile Include="entity\NcmIDManager.cpp" />
     <ClCompile Include="entity\SearcherGecimi.cpp" />
     <ClCompile Include="entity\SearcherNetEaseCloud.cpp" />
+    <ClCompile Include="entity\SearchIDThread.cpp" />
     <ClCompile Include="entity\SearchLyricThread.cpp" />
     <ClCompile Include="entity\SendLoginThread.cpp" />
+    <ClCompile Include="Globle.cpp" />
+    <ClCompile Include="lib\md5\md5.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="PageMaking.cpp" />
     <ClCompile Include="PageResult.cpp" />
     <ClCompile Include="PageSearchLyric.cpp" />
+    <ClCompile Include="PageSearchNcmID.cpp" />
     <ClCompile Include="PageSetting.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -153,8 +174,11 @@
   <ItemGroup>
     <ClInclude Include="BSMessageBox.h" />
     <ClInclude Include="controlEx\LyricListView.h" />
+    <ClInclude Include="controlEx\MagnetFrame.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DlgCheckIntegrity.h" />
+    <ClInclude Include="DlgDesktopLyric.h" />
+    <ClInclude Include="DlgDownloadNcmMp3.h" />
     <ClInclude Include="entity\AutoUpdateThread.h" />
     <ClInclude Include="entity\CheckIntegrityThread.h" />
     <ClInclude Include="entity\FileDroper.h" />
@@ -165,10 +189,13 @@
     <ClInclude Include="entity\LyricPlayer.h" />
     <ClInclude Include="entity\LyricSearcherFactory.h" />
     <ClInclude Include="entity\MusicPlayer.h" />
+    <ClInclude Include="entity\NcmIDManager.h" />
     <ClInclude Include="entity\SearcherGecimi.h" />
     <ClInclude Include="entity\SearcherNetEaseCloud.h" />
+    <ClInclude Include="entity\SearchIDThread.h" />
     <ClInclude Include="entity\SearchLyricThread.h" />
     <ClInclude Include="entity\SendLoginThread.h" />
+    <ClInclude Include="Globle.h" />
     <ClInclude Include="lib\json\allocator.h" />
     <ClInclude Include="lib\json\assertions.h" />
     <ClInclude Include="lib\json\autolink.h" />
@@ -180,11 +207,14 @@
     <ClInclude Include="lib\json\value.h" />
     <ClInclude Include="lib\json\version.h" />
     <ClInclude Include="lib\json\writer.h" />
+    <ClInclude Include="lib\md5\md5.h" />
     <ClInclude Include="lib\xml\tinyxml2.h" />
+    <ClInclude Include="lib\ZSingleton.hpp" />
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="PageMaking.h" />
     <ClInclude Include="PageResult.h" />
     <ClInclude Include="PageSearchLyric.h" />
+    <ClInclude Include="PageSearchNcmID.h" />
     <ClInclude Include="PageSetting.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

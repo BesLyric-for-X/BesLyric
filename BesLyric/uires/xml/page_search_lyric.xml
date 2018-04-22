@@ -3,10 +3,10 @@
 		<window pos="0,0,-0,@160">
 			<text pos="18,[5,@80,@30" font="adding:5" >歌词搜索</text>
 			<window pos="{0,[10,@250,@65" font="adding:-1" >
-				<text pos="5,[5,@60,@25" colorText="#ffffffbb" align="right" >歌曲名:</text>
-				<edit pos="[10,{0,@150,@25"  name="edit_search_lyric_name" cueText=" 必填"></edit>
-				<text pos="5,[5,@60,@25" colorText="#ffffffbb" align="right" >歌手:</text>
-				<edit pos="[10,{0,@150,@25" name="edit_search_lyric_artist" cueText=" 选填"></edit>
+				<text pos="5,[5,@78,@25" colorText="#ffffffbb" align="right" >歌曲名:</text>
+				<edit pos="[10,{0,@150,@25" notifyChange="1"  name="edit_search_lyric_name" cueText=" 必填"></edit>
+				<text pos="5,[5,@78,@25" colorText="#ffffffbb" align="right" >歌手:</text>
+				<edit pos="[10,{0,@150,@25"  notifyChange="1" name="edit_search_lyric_artist" cueText=" 选填"></edit>
 			</window>
 			<window  pos="[0,{0,-0,@65" font="adding:-1" >
 				<imgbtn pos="5,[5,@100,@25" padding="15,0,0,0" name="btn_search_lyric_using_program" skin="skin_button_search" class="normalbtn_light" tip="不填歌手一般将搜出更多结果">直接搜索</imgbtn>

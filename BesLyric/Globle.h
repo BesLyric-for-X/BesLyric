@@ -19,40 +19,37 @@
 */
 
 /**
-* @file       SearchLyricThread.h
+* @file       Globle.h
 * 
-* Describe    启动一个线程，用于下载歌词
+* Describe    定义了 单例使用的全局变量和方法
 */
+
 
 #pragma once
 #include "stdafx.h"
-#include "../utility/WinFile.h"
-#include "../utility/SSingleton.h"
-using namespace SOUI;
+#include <iostream>
+#include <string>
+#include "lib\ZSingleton.hpp"
+using namespace std;
 
 
-class  CSearchLyricThread : public Singleton<CSearchLyricThread>
-{
+class CGloble{
+
+	SINGLETON_0(CGloble)
+
 public:
-	CSearchLyricThread():m_handleThreadSearch(NULL),m_bIsSearching(false){}
+	//获得程序的路径
+	string GetPragramDir();
 
-	//开始线程
-	bool Start(HWND hMainWnd, SStringW& strMusicName, SStringW& strMusicArtist);
+	//获得相对路径对应的真实路径
+	string GetRelativePath(string strRelativePath);
 
-	bool IsSearching(){return m_bIsSearching;}
-private:
+	//追加记录
+	void AppendLog(string info);
 
-	// 线程执行地址
-	static DWORD WINAPI ProcSearch(LPVOID pParam);
+	//删除调试LOG
+	void DeleteLogFile();
 
-private:
+	static bool bDeleted;//已经删除
 
-	HANDLE		m_handleThreadSearch;	/* 当前线程句柄 */	
-	HWND		m_hMainWnd;				/* 主窗口句柄 */
-	
-	bool m_bIsSearching; //标记是否在搜索当中
-
-	SStringW	m_strMusicName;			
-	SStringW	m_strMusicArtist;
 };
-

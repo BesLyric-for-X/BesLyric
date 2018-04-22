@@ -1,4 +1,4 @@
-﻿<SOUI name="dlg_check_integrity" title="检测完整性程序" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="400" height="220"  margin="20,5,5,5"  
+﻿<SOUI name="dlg_check_integrity" title="检测完整性程序" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="450" height="220"  margin="20,5,5,5"  
       resizable="0" wndType="appMain"
 appWnd="1"
 translucent="0" 

@@ -55,7 +55,7 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 	if(bAnonymity)
 	{
 		strIP = L"Anonymity";
-		strTempFile =  FileHelper::GetCurrentDirectoryStr()+ L"temp";
+		strTempFile =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_TEMP;
 		if(FileHelper::CheckFileExist(strTempFile))
 			_wremove(strTempFile.c_str());
 	}
@@ -63,7 +63,7 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 	{
 		while(nMaxCheckCount)
 		{
-			strTempFile =  FileHelper::GetCurrentDirectoryStr()+ L"temp";
+			strTempFile =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_TEMP;
 			if(FileHelper::CheckFileExist(strTempFile))
 				_wremove(strTempFile.c_str());
 	

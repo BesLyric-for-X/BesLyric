@@ -19,7 +19,7 @@
 using namespace SOUI;
 
 //开始线程
-bool CGuessLyricInfoThread::Start(HWND hMainWnd, SStringW& strMusicPath)
+bool CGuessLyricInfoThread::Start(HWND hMainWnd, SStringW& strMusicPath, bool isForNcmID)
 {
 	if(m_bIsGuessing)
 	{
@@ -29,7 +29,7 @@ bool CGuessLyricInfoThread::Start(HWND hMainWnd, SStringW& strMusicPath)
 
 	m_hMainWnd = hMainWnd;
 	m_strMusicPath = strMusicPath;
-
+	m_isForNcmID = isForNcmID;
 
 	//启动线程
 	m_handleThreadGuess = ::CreateThread(NULL, 0, ProcGuessLyricInfo, this, 0 ,NULL);
@@ -280,8 +280,11 @@ DWORD WINAPI CGuessLyricInfoThread::ProcGuessLyricInfo(LPVOID pParam)
 		}
 	}
 
+	if(!pThread->m_isForNcmID) //原先，发送给搜索歌词用
+		::SendMessage( pThread->m_hMainWnd, MSG_USER_SEARCH_WITH_GUESS_RESULT, (WPARAM)pGuessRes,0); 
+	else //拓展，发送给搜索ID用
+		::SendMessage( pThread->m_hMainWnd, MSG_USER_SEARCH_NCM_WITH_GUESS_RESULT, (WPARAM)pGuessRes,0); 
 	//MSG_USER_SEARCH_WITH_GUESS_RESULT
-	::SendMessage( pThread->m_hMainWnd, MSG_USER_SEARCH_WITH_GUESS_RESULT, (WPARAM)pGuessRes,0);
 
 	pThread->m_bIsGuessing = false;
 

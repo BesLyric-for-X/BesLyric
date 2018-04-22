@@ -51,6 +51,9 @@ public:
 	void OnBtnStartPlaying();		//开始播放歌词
 	void OnBtnManualAdjust();		//手动打开文件调整时间
 	
+	void OnCheckDesktopLyricChanged(); //桌面歌词
+	void OnCheckSingleCycleChanged(); //单曲循环
+
 	void OnBtnSoundOpen2();			//打开声音
 	void OnBtnSoundClose2();		//静音
 
@@ -85,6 +88,11 @@ protected:
 		EVENT_ID_COMMAND(R.id.btn_end_preview , OnBtnEndPreview)
 		EVENT_ID_COMMAND(R.id.btn_start_playing , OnBtnStartPlaying)
 		EVENT_ID_COMMAND(R.id.btn_manual_adjust , OnBtnManualAdjust)
+
+		
+		EVENT_NAME_COMMAND(R.name.check_desktop_lyric, OnCheckDesktopLyricChanged)
+		EVENT_NAME_COMMAND(R.name.check_single_cycle, OnCheckSingleCycleChanged)
+		
 		
 		EVENT_ID_COMMAND(R.id.btn_sound_open_2 , OnBtnSoundOpen2)
 		EVENT_ID_COMMAND(R.id.btn_sound_close_2 , OnBtnSoundClose2)
@@ -118,7 +126,12 @@ private:
 	SButton *m_btnAdjust;
 	SButton *m_btnEndPreview;
 	SButton *m_btnLoad;
+	
+	SCheckBox *m_checkDesktopLyric;	/* 桌面歌词 */
+	SCheckBox *m_checkSingleCycle;	/* 单曲循环 */
+	
 
 	SHostWnd *m_pMainWnd;		/* 主窗口指针 */
 	
+	bool	 m_bSingleCycle;	/* 单曲循环 */
 };

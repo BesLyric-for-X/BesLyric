@@ -41,6 +41,15 @@
     <Filter Include="Header Files\lib\xml">
       <UniqueIdentifier>{3031c9a7-6496-42cc-ac04-b5ff5b1286e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoUI Resouece\xml">
+      <UniqueIdentifier>{b1597bd8-aad7-408f-8d48-fdf2f9488eb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SoUI Resouece\values">
+      <UniqueIdentifier>{bfdaffb7-fd28-4b0c-b353-c4dd406278c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lib\md5">
+      <UniqueIdentifier>{5012847d-2dfb-4ba0-b8fd-5471667c5817}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\soui_res.rc2">
@@ -49,25 +58,52 @@
     <None Include="uires\uidef\init.xml">
       <Filter>SoUI Resouece</Filter>
     </None>
-    <None Include="uires\values\color.xml">
-      <Filter>SoUI Resouece</Filter>
-    </None>
-    <None Include="uires\values\skin.xml">
-      <Filter>SoUI Resouece</Filter>
-    </None>
-    <None Include="uires\values\string.xml">
-      <Filter>SoUI Resouece</Filter>
-    </None>
-    <None Include="uires\xml\dlg_main.xml">
-      <Filter>SoUI Resouece</Filter>
-    </None>
     <None Include="uires\image\soui.ico">
       <Filter>SoUI Resouece</Filter>
     </None>
-    <None Include="uires\xml\messagebox.xml">
-      <Filter>SoUI Resouece</Filter>
-    </None>
     <None Include="LICENSE.txt" />
+    <None Include="uires\xml\dlg_main.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\messagebox.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\dlg_checking_integrity.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\page_about.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\page_making.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\page_result.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\page_search_lyric.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\page_setting.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\values\color.xml">
+      <Filter>SoUI Resouece\values</Filter>
+    </None>
+    <None Include="uires\values\skin.xml">
+      <Filter>SoUI Resouece\values</Filter>
+    </None>
+    <None Include="uires\values\string.xml">
+      <Filter>SoUI Resouece\values</Filter>
+    </None>
+    <None Include="uires\xml\dlg_skiatext.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\page_search_ncm_id.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
+    <None Include="uires\xml\dlg_processing_tip.xml">
+      <Filter>SoUI Resouece\xml</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BesLyric.cpp">
@@ -150,6 +186,24 @@
     </ClCompile>
     <ClCompile Include="entity\SendLoginThread.cpp">
       <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="controlEx\MagnetFrame.cpp">
+      <Filter>Header Files\controlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="Globle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PageSearchNcmID.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\NcmIDManager.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\SearchIDThread.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\md5\md5.cpp">
+      <Filter>Header Files\lib\md5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +346,33 @@
     </ClInclude>
     <ClInclude Include="entity\SendLoginThread.h">
       <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="controlEx\MagnetFrame.h">
+      <Filter>Header Files\controlEx</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgDesktopLyric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\ZSingleton.hpp">
+      <Filter>Header Files\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Globle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PageSearchNcmID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\NcmIDManager.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgDownloadNcmMp3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\SearchIDThread.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\md5\md5.h">
+      <Filter>Header Files\lib\md5</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

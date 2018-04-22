@@ -84,7 +84,7 @@ void CSettingPage::SaveSetting()
 	
 	xmlStr += L"</setting>\n";
 	
-	wstring wstrPath = FileHelper::GetCurrentDirectoryStr()+SETTING_FILE_NAME;
+	wstring wstrPath = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" +SETTING_FILE_NAME;
 	FileOperator::WriteToUtf8File( wstrPath,xmlStr);
 }
 
@@ -100,7 +100,7 @@ void CSettingPage::LoadSetting()
 	m_check_anonymity = FALSE;	
 
 	//从文件加载数据
-	wstring wstrSettingPath = FileHelper::GetCurrentDirectoryStr() + SETTING_FILE_NAME;
+	wstring wstrSettingPath = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + SETTING_FILE_NAME;
 	string strSettingPath = S_CW2A(SStringW(wstrSettingPath.c_str()));
 	if(FileHelper::CheckFileExist(wstrSettingPath))
 	{

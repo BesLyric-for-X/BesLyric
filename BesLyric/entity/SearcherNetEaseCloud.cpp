@@ -5,32 +5,12 @@
 bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vector<LyricInfo>& vecLyricInfo)
 {
 	CHttpRequest httpRequest;
-
 	wstring wstrSong = S_CW2W(strSong).GetBuffer(1);
-	wstring wstrArtist = S_CW2W(strArtist).GetBuffer(1);
-
-
-	string strSongUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strSong).GetBuffer(1));
-	string strArtistUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strArtist).GetBuffer(1));
-
-	wstring strRes;
-	if(!httpRequest.Post( "music.163.com/api/search/get/web", 
-								"csrf_token=&s="+strArtistUrl+"+"+ strSongUrl +"&type=1&offset=0&total=True&limit=20",
-								strRes))
-	{
-		m_strLastResult = L"网络连接失败，无法获取歌词索引数据";
-		return false;
-	}
 	
-	strRes = strRes.substr( strRes.find_first_of('{'), strRes.find_last_of('}') - strRes.find_first_of('{')+1);
-
 	//获取id列表
 	vector< SONGINFO > vecSongList;
-	if(!GetSongListFromJson(strRes, vecSongList))
-	{
-		m_strLastResult = L"网易云歌词数据格式异常，无法解析数据";
+	if(!GetSongListWithNameAndArtist(strSong, strArtist,vecSongList, m_strLastResult))
 		return false;
-	}
 
 	for(auto iter = vecSongList.begin(); iter != vecSongList.end(); iter++)
 	{
@@ -62,6 +42,38 @@ bool SearcherNetEaseCloud::SearchLyric(SStringW strSong, SStringW strArtist, vec
 	return true;
 }
 
+//通过使用歌名 和 艺术家名获得 歌曲信息列表
+bool SearcherNetEaseCloud::GetSongListWithNameAndArtist(SStringW strSong, SStringW strArtist, vector< SONGINFO >& vecSongList,SStringW& strLastResult)
+{
+	CHttpRequest httpRequest;
+
+	wstring wstrSong = S_CW2W(strSong).GetBuffer(1);
+	wstring wstrArtist = S_CW2W(strArtist).GetBuffer(1);
+
+
+	string strSongUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strSong).GetBuffer(1));
+	string strArtistUrl = CUrlEncodinig().UrlUTF8(S_CW2A(strArtist).GetBuffer(1));
+
+	wstring strRes;
+	if(!httpRequest.Post( "music.163.com/api/search/get/web", 
+								"csrf_token=&s="+strArtistUrl+"+"+ strSongUrl +"&type=1&offset=0&total=True&limit=20",
+								strRes))
+	{
+		strLastResult = L"网络连接失败，无法获取歌词索引数据";
+		return false;
+	}
+	
+	strRes = strRes.substr( strRes.find_first_of('{'), strRes.find_last_of('}') - strRes.find_first_of('{')+1);
+
+	//获取id列表
+	if(!GetSongListFromJson(strRes, vecSongList))
+	{
+		strLastResult = L"网易云歌词数据格式异常，无法解析数据";
+		return false;
+	}
+
+	return true;
+}
 
 //获得结果中的歌曲信息列表
 bool SearcherNetEaseCloud::GetSongListFromJson(wstring strJsonRes, vector< SONGINFO >& vecSongList)

@@ -66,32 +66,47 @@ DWORD WINAPI AutoUpdateThread::ThreadProc(LPVOID pParam)
 //自动更新执行函数
 bool AutoUpdateThread::AutoUpdate()
 {
-	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_VERSION_INFO;
+	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
+	
+	wstring linkToVersionLog;
+	wstring linkToLastExe;
+	if(VersionCompare( VERSION_NUMBER.c_str(), L"2.1.10") <= 0)
+	{
+		linkToVersionLog = LINK_VERSION_LOG;
+		linkToLastExe = LINK_LAST_EXE;
+	}
+	else
+	{
+		linkToVersionLog = LINK_VERSION_LOG_2;
+		linkToLastExe = LINK_LAST_EXE_2;
+	}
+
 
 	/*有新版本，则直接下载最新的版本 执行文件 */
 	//下载新的版本日志文件 versionLog.txt （服务器的名称为 versionLog.zip）
 	wstring strVersionLog =  FileHelper::GetCurrentDirectoryStr()+ L"versionLog.txt";
 	if(FileHelper::CheckFileExist(strVersionLog))
 		_wremove(strVersionLog.c_str());
-	bool bRet = CDownloader::DownloadFile( LINK_VERSION_LOG, strVersionLog );
+	bool bRet = CDownloader::DownloadFile( linkToVersionLog, strVersionLog );
 	if(bRet == false)
 		return false;
 
 	//下载最新的执行文件  BesLyric.exe（服务器的名称为 BesLyricExe.zip） 到 strLastExe （BesLyric）中
-	bRet = CDownloader::DownloadFile( LINK_LAST_EXE , strLastExe);
+	bRet = CDownloader::DownloadFile( linkToLastExe , strLastExe);
 	if(bRet == false)
 		return false;
 
 	/*修改文件名称，达到替换旧版本目的 */
-	wstring strCurrentExe = strLastExe + L".exe";
-	wstring strBackupExe =  strLastExe+ L"."+ VERSION_NUMBER ;//+ ".exe";
+	wstring strCurrentExe = FileHelper::GetCurrentDirectoryStr() + FILE_NAME_LAST_EXE_TEMP + L".exe";
+	wstring strBackupExe =  FileHelper::GetCurrentDirectoryStr() + FILE_NAME_LAST_EXE_TEMP + L"."+ VERSION_NUMBER ;//+ ".exe";
 
 	if(FileHelper::CheckFileExist(strBackupExe))//删除可能存在的备份文件
 		_wremove(strBackupExe.c_str());
 	_wrename(strCurrentExe.c_str(),strBackupExe.c_str());
-	_wrename(strLastExe.c_str(),strCurrentExe.c_str());
-	
+
+	//复制新的exe到原来目录
+	CopyFileW(strLastExe.c_str(), strCurrentExe.c_str(), FALSE);
 
 	/*发送消息，提示用户重启以使用新版本 */
 	SStringW strVersion = L"";
@@ -135,11 +150,18 @@ bool AutoUpdateThread::AutoUpdate()
 //检测是否有更新
 bool AutoUpdateThread::IfUpdateAvailable()
 {
-	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_EXE_TEMP;
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_VERSION_INFO;
+	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
+
+	wstring linkToLastVersionLog;
+	if(VersionCompare( VERSION_NUMBER.c_str(), L"2.1.10") <= 0)
+		linkToLastVersionLog = LINK_LAST_VERSION_INFO;
+	else
+		linkToLastVersionLog = LINK_LAST_VERSION_INFO_2;
+
 
 	/*下载最新版本配置信息 */
-	bool bRet = CDownloader::DownloadFile( LINK_LAST_VERSION_INFO, strVersionFile);
+	bool bRet = CDownloader::DownloadFile( linkToLastVersionLog, strVersionFile);
 	if(bRet == false)
 		return false;//访问出错
 

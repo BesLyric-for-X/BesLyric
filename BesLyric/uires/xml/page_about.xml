@@ -19,13 +19,16 @@
         本软件 试图提供给用户一个 上手简单、功能实用的 滚动歌词制作软件，为广大网易云音乐爱好者提供一个良好的歌词制作体验。
       </text>
 
-      <text pos="15,[10,@260,@20">查看软件详细说明 以及 解决遇到问题: </text>
+      <text pos="15,[24,@260,@20">查看软件详细说明 以及 解决遇到问题: </text>
       <link href="http://www.cnblogs.com/BensonLaur/p/6262565.html" class="cls_btn_weblink">点击这里</link>
-      
+
+      <text pos="15,[18,@260,@20">如果喜欢本软件，欢迎查看捐款页面: </text>
+      <link href="http://www.cnblogs.com/BensonLaur/p/6262565.html#title7" class="cls_btn_weblink">点击这里</link>
+
 
       <hr pos="10,[20,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff55"/>
       
-      <text pos="15,[35,-5,@30" multilines="1">
+      <text pos="15,[25,-5,@30" multilines="1">
         本软件 自由开源，LICENSE 为GPL，对软件实现感兴趣的童鞋可以访问实现的代码。
       </text>
       
