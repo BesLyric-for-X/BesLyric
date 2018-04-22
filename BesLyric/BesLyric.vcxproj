@@ -149,6 +149,7 @@
     <ClCompile Include="entity\SearchLyricThread.cpp" />
     <ClCompile Include="entity\SendLoginThread.cpp" />
     <ClCompile Include="Globle.cpp" />
+    <ClCompile Include="lib\md5\md5.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="PageMaking.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="lib\json\value.h" />
     <ClInclude Include="lib\json\version.h" />
     <ClInclude Include="lib\json\writer.h" />
+    <ClInclude Include="lib\md5\md5.h" />
     <ClInclude Include="lib\xml\tinyxml2.h" />
     <ClInclude Include="lib\ZSingleton.hpp" />
     <ClInclude Include="MainDlg.h" />

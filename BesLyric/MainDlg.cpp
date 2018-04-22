@@ -61,6 +61,12 @@ void CMainDlg::test()
 	//CDownloader::DownloadFile( L"http://music.163.com/song/media/outer/url?id=1111.mp3", 
 	//	L"C:\\Users\\BensonLaur\\Desktop\\NetEase\\test.mp3");
 	
+	string md5;
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\imgdecoder-gdip.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\render-gdi.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui-sys-resource.dll", md5);
+	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\utilities.dll", md5);
 
 }
 
@@ -83,6 +89,8 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 	//检测程序的完整性
 	CCheckIntegrityThread::getSingleton().Start(false);
 
+	//test
+	test();
 }
 
 CMainDlg::~CMainDlg()
@@ -188,6 +196,7 @@ void CMainDlg::initFloderAndFile()
 	//在后来新的版本中，由于创建文件的地方越来越多，因此决定将在运行目录下创建 etc文件夹，用于储存各种配置文件 或 临时文件
 
 	wstring wstrEtcFloder = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC;
+	wstring wstrOldSettingPath = FileHelper::GetCurrentDirectoryStr() +SETTING_FILE_NAME;
 
 	if(!FileHelper::CheckFolderExist(wstrEtcFloder)) //etc 文件不存在， 认为是较旧版本 或 第一次运行等，需要创建转移配置文件
 	{
@@ -202,24 +211,12 @@ void CMainDlg::initFloderAndFile()
 		}
 
 		//将设置文件复制 到 etc 文件夹下面
-		wstring wstrOldSettingPath = FileHelper::GetCurrentDirectoryStr() +SETTING_FILE_NAME;
 		wstring wstrNewSettingPath = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" +SETTING_FILE_NAME;
 		if(FileHelper::CheckFileExist(wstrOldSettingPath))
 		{
 			CopyFile(wstrOldSettingPath.c_str(), wstrNewSettingPath.c_str(), TRUE);//复制旧的配置到新的配置位置
-			DeleteFile(wstrOldSettingPath.c_str()); //删除旧的配置
-
 			m_settingPage.LoadSetting(); //再次载入一次配置
 		}
-
-		//删除旧的 temp ,version 文件
-		wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
-		wstring strTempFile =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_TEMP;
-		
-		if(FileHelper::CheckFileExist(strVersionFile))
-			DeleteFile(strVersionFile.c_str()); 
-		if(FileHelper::CheckFileExist(strTempFile))
-			DeleteFile(strTempFile.c_str()); 
 	}
 
 	//清除之前升级残留的文件
@@ -249,6 +246,34 @@ void CMainDlg::initFloderAndFile()
 
 		if(bDelete)
 			DeleteFile(iter->c_str()); 
+	}
+
+	//删除旧的配置
+	if(FileHelper::CheckFileExist(wstrOldSettingPath))
+		DeleteFile(wstrOldSettingPath.c_str()); 
+
+	//删除旧的 temp ,version 文件
+	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_LAST_VERSION_INFO;
+	wstring strTempFile =  FileHelper::GetCurrentDirectoryStr()+ FILE_NAME_TEMP;
+	
+	if(FileHelper::CheckFileExist(strVersionFile))
+		DeleteFile(strVersionFile.c_str()); 
+	if(FileHelper::CheckFileExist(strTempFile))
+		DeleteFile(strTempFile.c_str()); 
+
+	//在新的更新系统中，第N次启动更新的文件被替换的旧版本文件，需要在N+1启动时清除
+	wstring strFileToDelete = wstrEtcFloder+L"\\fileToDelete";
+	if(FileHelper::CheckFileExist(strFileToDelete))
+	{
+		vector<SStringW> vecLines;
+		FileOperator::ReadAllLinesW(strFileToDelete, &vecLines);
+		wstring tempPath;
+		for(auto iter = vecLines.begin(); iter != vecLines.end(); iter++){
+			tempPath = FileHelper::GetCurrentDirectoryStr() + iter->GetBuffer(1);
+			DeleteFile(tempPath.c_str()); 
+		}
+
+		DeleteFile(strFileToDelete.c_str()); 
 	}
 }
 

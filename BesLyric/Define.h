@@ -150,6 +150,16 @@ struct SongInfoGuessResult
 	SStringW strArtist;			//歌手信息
 };
 
+//定义更新信息文件结构
+struct UpdateItem
+{
+	wstring fileName;
+	wstring link;
+	wstring local;
+	string md5;
+};
+
+
 
 /* 全局变量定义 */
 /* 版本格式说明：X.Y.Z  
@@ -168,6 +178,7 @@ static const wstring LINK_SEND_LOGIN = L"http://beslyric.320.io/BesBlog/beslyric
 static const wstring FLODER_NAME_ETC = L"etc";									//文件夹名称，存放各种临时或配置杂项
 static const wstring FILE_NAME_LAST_VERSION_INFO = L"version";					//文件名，从 LINK_LAST_VERSION_INFO 下载下来储存的文件
 static const wstring FILE_NAME_TEMP = L"temp";									//文件名，储存临时下载下来的文件
+static const wstring FILE_NAME_NEED_UPDATE = L"needUpdate";						//文件名，标志是否需要更新
 static const wstring FILE_NAME_LAST_EXE_TEMP = L"BesLyric";						//文件名，从 LINK_LAST_EXE 下载下来储存的文件
 static const wstring SETTING_FILE_NAME = L"setting";							//文件名，储存设置
 static const wstring NCM_ID_FILE_NAME = L"ncm_id";							//文件名，储存设置
@@ -183,3 +194,5 @@ static const wstring LINK_SERVER_PATH = L"http://files.cnblogs.com/files/BensonL
 static const wstring LINK_DOWNLOAD_SERVER = L"http://ovfwclhwl.bkt.clouddn.com/";			//链接，服务器地址2
 
 
+//static const wstring LINK_UPDATE_ITEM_FILE = L"http://ovfwclhwl.bkt.clouddn.com/update";				//链接，更新项文件(七牛云有时会缓存过去的文件)
+static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/BensonLaur/update.xml";	//链接，更新项文件

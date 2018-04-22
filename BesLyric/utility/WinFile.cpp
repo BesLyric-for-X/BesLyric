@@ -220,6 +220,92 @@ bool FileOperator::ReadAllLines(const string file, OUT vector<string> *lines)
 		return false;
 }
 
+
+
+bool FileOperator::ReadAllText(const wstring file, wstring& fileContent)
+{	
+	wifstream in(file, ios_base::in);
+	wstring temp = L"";
+	if (in)
+	{
+		while (!in.eof())
+		{
+			getline(in, temp);
+			temp += L"\n";
+			fileContent += temp;
+		}
+		return true;
+	}
+	else
+		return false;
+	
+}
+
+bool FileOperator::WriteAllText(const wstring file,const wstring& fileContent)
+{
+	wofstream out(file, ios_base::out);
+	if (out)
+	{
+		out << fileContent;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+//将文件全部读取到缓冲区
+bool FileOperator::ReadAllBuffer(const std::string strPath, char *pszBuffer, std::streamsize size)
+{
+	ifstream ifs(strPath);
+
+	//是否打开成功
+	if (!ifs.is_open())
+		return false;
+
+	//读取指定的缓冲区大小
+	ifs.read(pszBuffer, size);
+	ifs.close();
+
+	return true;
+}
+
+
+//将文件全部读取到缓冲区
+bool FileOperator::ReadAllBufferW(const std::wstring strPath, wchar_t *pszwBuffer, std::streamsize size)
+{
+	wifstream ifs(strPath);
+
+	//是否打开成功
+	if (!ifs.is_open())
+		return false;
+
+	//读取指定的缓冲区大小
+	ifs.read(pszwBuffer, size);
+	ifs.close();
+
+	return true;
+}
+
+
+//将缓冲区的数据全部写到文件
+bool FileOperator::WriteAllBuffer(const std::string strPath, char *pszData, std::streamsize size)
+{
+	ofstream ofs(strPath);
+
+	//是否打开成功
+	if (!ofs.is_open())
+		return false;
+
+	//写入缓冲区数据到文件
+	ofs.write(pszData, size);
+	ofs.flush();  //同步写入
+	ofs.close();
+
+	return true;
+}
+
+
 bool FileOperator::ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines)
 {
 	File encodingFile( file.c_str(), L"r");

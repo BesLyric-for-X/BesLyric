@@ -35,13 +35,21 @@ class  CCheckIntegrityThread : public Singleton<CCheckIntegrityThread>
 {
 public:
 	// 检查程序的完整性
-	CCheckIntegrityThread():m_handleThreadCheking(NULL),m_handleThreadUI(NULL),m_hCheckWnd(NULL),m_EventWndInitDone(NULL), m_bIsChecking(false),m_nPercentage(0){}
+	CCheckIntegrityThread():m_handleThreadCheking(NULL),m_handleThreadUI(NULL),m_hCheckWnd(NULL),
+		m_EventWndInitDone(NULL),m_EventUpdateDownloadDone(NULL), m_bIsChecking(false),m_nPercentage(0)
+	{
+		//多次用到 etc/ 路径先构建好
+		m_wstrEtcFloder = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\";
+	}
 
 	//开始线程
 	bool Start(bool bShowPassTip);
 
 	//结束线程
 	void Stop();
+	
+	//获取文件的 md5 码
+	static bool GetFileMd5(wstring filePath, string& strMd5);
 
 private:
 
@@ -50,6 +58,15 @@ private:
 
 	//UI 线程执行地址
 	static DWORD WINAPI ProcUI(LPVOID pParam);
+
+
+
+	//检查所有的文件是否为最新
+	bool CheckUpdateFile();
+	bool MakeSureRelativeLocalExist(wstring basePath, wstring relativePath);//确保相对路径目录存在
+	
+	bool GetUpdateItem(vector<UpdateItem>& updateItems);	//获得更新文件内容
+	bool DownloadUpdateFileAndMark();	//下载更新文件然后标记是否需要更新
 
 	
 	//检查ffmpeg.exe 是否存在，不存在则下载
@@ -67,12 +84,17 @@ private:
 	HANDLE		m_handleThreadCheking;	/* 当前线程句柄 */
 	HANDLE		m_handleThreadUI;		/* UI线程句柄 */
 	
-	HANDLE		m_EventWndInitDone;		/* 停止等待时间 */
+	HANDLE		m_EventWndInitDone;				/* 停止等待窗口初始化完成 事件*/
+	HANDLE		m_EventUpdateDownloadDone;		/* 更新文件下载完成 事件*/
 
 	bool		m_bShowPassTip;			/* 表示在检查后，结果为完整时，进行提示 */
 	bool		m_bIsChecking;			/* 表示是否正在检测 */
 
 	int			m_nPercentage;			/* 最后一次记录的进度百分比 */
-	WCHAR		m_szTip[MAX_BUFFER_SIZE];/* 最后一次记录的进度消息 */				
+	WCHAR		m_szTip[MAX_BUFFER_SIZE];/* 最后一次记录的进度消息 */		
+
+
+	
+	wstring		m_wstrEtcFloder ;		/* etc/文件夹路径 */
 };
 

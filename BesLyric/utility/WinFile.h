@@ -67,8 +67,17 @@ class FileOperator
 {
 public:
 	static bool ReadAllText(const string file, string& fileContent);
+	static bool ReadAllText(const wstring file, wstring& fileContent);
+	static bool WriteAllText(const wstring file,const wstring& fileContent);
 
 	static bool ReadAllLines(const string file, OUT vector<string> *lines);
+	
+	static bool ReadAllBuffer(const std::string strPath, char *pszBuffer, std::streamsize size);  //将文件全部读取到缓冲区
+	static bool WriteAllBuffer(const std::string strPath, char *pszData, std::streamsize size);  //将缓冲区的数据全部写到文件
+
+	
+	//将文件全部读取到W缓冲区
+	static bool ReadAllBufferW(const std::wstring strPath, wchar_t *pszwBuffer, std::streamsize size);
 
 	//读取文件所有行，支持4种windows notepad 基本编码文件，自动去除所有空行
 	static bool ReadAllLinesW(const wstring file, OUT vector<SStringW> *lines);

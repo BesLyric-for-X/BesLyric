@@ -47,6 +47,9 @@
     <Filter Include="SoUI Resouece\values">
       <UniqueIdentifier>{bfdaffb7-fd28-4b0c-b353-c4dd406278c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\lib\md5">
+      <UniqueIdentifier>{5012847d-2dfb-4ba0-b8fd-5471667c5817}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\soui_res.rc2">
@@ -198,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="entity\SearchIDThread.cpp">
       <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\md5\md5.cpp">
+      <Filter>Header Files\lib\md5</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -364,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="entity\SearchIDThread.h">
       <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\md5\md5.h">
+      <Filter>Header Files\lib\md5</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
