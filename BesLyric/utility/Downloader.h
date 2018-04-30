@@ -43,6 +43,7 @@ public:
 		ULONG Number = 1;
 
 		FILE *stream;
+
 		HINTERNET hSession = InternetOpen(L"RookIE/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
 		if (hSession != NULL)
 		{
@@ -150,6 +151,88 @@ public:
 		return true;
 	}
 
+	/*
+	*	@brief	下载到字符串
+	*	@param	strUrl					下载链接
+	*	@param	strSaveBuffer			保存字符串的字符串
+	*	@param	unsigned int nMaxSize	最多下载大小
+	*	@return	true -- 下载成功
+	*/
+	static bool DownloadString(const wstring strUrl, wstring& strSaveBuffer, unsigned int nMaxSize)
+	{
+		if(nMaxSize == 0)
+		{
+			strSaveBuffer = L"";
+			return true;
+		}
+
+		byte Temp[NET_DATA_BLOCK_SIZE]={0};
+		ULONG Number = 0;
+		ULONG nTotalRecieved = 0;
+		std::size_t nOriginCount = 0;
+		PBYTE pBuffer = nullptr;
+		strSaveBuffer = L"";
+
+		HINTERNET hSession = InternetOpen(L"RookIE/1.0", INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
+		if (hSession != NULL)
+		{
+			HINTERNET handle2 = InternetOpenUrl(hSession, strUrl.c_str(), NULL, 0, INTERNET_FLAG_DONT_CACHE, 0);
+			if (handle2 != NULL)
+			{
+				do{
+					unsigned int nRemain = nMaxSize - nTotalRecieved;					//计算还剩余多少要接收
+					unsigned int nThisTime = nRemain < NET_DATA_BLOCK_SIZE - 1 ? nRemain : NET_DATA_BLOCK_SIZE - 1;
+																						//计算本次需要接收的大小
+					InternetReadFile(handle2, Temp, nThisTime, &Number);
+					if(Number != 0)
+					{
+						nTotalRecieved += Number;
+						if(!Realloc( &pBuffer, nOriginCount,  nTotalRecieved)) //内存分配失败
+						{
+							if(nOriginCount != 0) //如果之前分配了内存，需要释放
+								delete pBuffer;	
+							return false;
+						}
+
+						//将新得到的内容复制追加到 pBuffer 后面
+						copy(Temp + 0, Temp + Number, pBuffer + nOriginCount);
+
+						//更新 nOriginCount 为下次 Realloc 做准备
+						nOriginCount = nTotalRecieved;
+					}
+				}while (Number > 0);
+
+				InternetCloseHandle(handle2);
+				handle2 = NULL;
+			}
+			else
+				return false;
+			InternetCloseHandle(hSession);
+			hSession = NULL;
+		}
+
+		WCHAR* pwstrBuffer = new WCHAR[nTotalRecieved];
+		
+		memset(pwstrBuffer, 0, 2 * nTotalRecieved);
+
+		if(!pwstrBuffer)
+		{
+			if(nOriginCount != 0) //如果之前分配了内存，需要释放
+				delete pBuffer;	
+
+			return false;
+		}
+
+		int nRet = ::MultiByteToWideChar(CP_UTF8,0,(LPCSTR)pBuffer,nTotalRecieved,pwstrBuffer,nTotalRecieved);
+		strSaveBuffer += pwstrBuffer;
+
+		delete pwstrBuffer;
+
+		if(pBuffer)
+			delete pBuffer;
+
+		return true;
+	}
 private:
 	/*
 	*	@brief	创建或重新分配新的内存

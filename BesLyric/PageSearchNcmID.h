@@ -219,7 +219,6 @@ protected:
 		
 		EVENT_ID_COMMAND(R.id.btn_return_to_main_page , OnBtnReturnMain)
 		EVENT_ID_COMMAND(R.id.btn_ncm_id_select , OnBtnSelectID)
-
 		
 		EVENT_ID_COMMAND(R.id.btn_search_ncm_id , OnBtnSearch)
 

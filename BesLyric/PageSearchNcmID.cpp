@@ -147,6 +147,20 @@ void CPageSearchNcmID::OnBtnSelectID()
 		return;
 	}
 
+	//如果有旧的ID，看看是否和之前相同，不同的话，需要删除mp3目录下的 mp3文件，以后面重新下载，不删除的话，还是会播放原来的mp3
+	wstring strOldID = L"";
+	bool bHasOld = CNcmIDManager::GetInstance()->FindID(strName,strOldID);
+	if(bHasOld)
+	{
+		if(strOldID != strID)
+		{
+			wstring strMp3FloderPath = FileHelper::GetCurrentDirectoryStr() + TEMP_MP3_FLODER_NAME ;
+			wstring strMp3FilePath = strMp3FloderPath + L"\\" + strName + L".mp3" ;
+			if(FileHelper::CheckFileExist(strMp3FilePath))
+				_wremove(strMp3FilePath.c_str());
+		}
+	}
+
 	//添加键值对
 	CNcmIDManager::GetInstance()->InsertNcmIDPair(strName, strID);
 

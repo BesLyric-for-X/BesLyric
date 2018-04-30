@@ -143,16 +143,16 @@ void CNcmIDManager::InsertNcmIDPair( wstring fileName, wstring id)
 bool CNcmIDManager::CheckIDValidity(wstring id, OUT bool& bValid)
 {
 	wstring strContent = L"";
-	
-	if(!CDownloader::DownloadString( L"http://music.163.com/api/song/lyric?os=osx&lv=-1&kv=-1&tv=-1&id="+ id,  
-		strContent))
+	wstring strLink = L"http://music.163.com/song/media/outer/url?id="+ id +L".mp3";
+	if(!CDownloader::DownloadString( strLink, strContent, 500))
 	{
 		return false;
 	}
 	else
 	{
-		auto index = strContent.find(L"\"uncollected\":true");
-		if(index != wstring::npos ) //返回串中包含"uncollected":true，认为ID无效
+		auto index = strContent.find(L"<!DOCTYPE html>");  //任意检测2个网页返回的html标签
+		auto index2 = strContent.find(L"<html>");
+		if(index != wstring::npos || index2 != wstring::npos ) //返回串中包含网页相关标签，认为下载歌曲失败，认为ID无效
 			bValid = false;
 		else
 			bValid = true;

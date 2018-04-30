@@ -249,6 +249,10 @@ void CPageMaking::OnBtnLoad1()
 		return;
 	}
 	
+	//再次将音乐路径传入歌词制作器(添加了ncm文件处理之后，用户有可能多次匹配一个ncm文件的不同ID，由于载入ncm之后 maker.m_szMusicPathName 会被
+	//								改为 mp3 路径(导致无法重新处理新的ncm id对应的mp3下载)，所以这里 maker.m_szMusicPathName 每次都重设为可能的ncm)
+	M()->maker.setMusicPath(m_EditMusic->GetWindowTextW(),M()->m_hWnd);
+
 	//显示的音乐路径
 	wstring FilePathToShow = M()->maker.m_szMusicPathName;
 
