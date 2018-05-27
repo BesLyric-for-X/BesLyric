@@ -8,12 +8,10 @@
 #include "entity\NcmIDManager.h"
 #include "utility\Downloader.h"
 
+#include "entity\LoadAndCheckNcmIDThread.h"
 
 CPageSearchNcmID::CPageSearchNcmID()
 {
-	if(!CNcmIDManager::GetInstance()->LoadDataPairs())
-		_MessageBox(NULL, L"加载ncm与id映射文件失败", L"提示", MB_OK|MB_ICONINFORMATION);
-	
 	m_pMainWnd = NULL;		/* 主窗口指针 */
 
 	m_window_search_ncm_id_tip = NULL;
@@ -72,6 +70,9 @@ void CPageSearchNcmID::Init(SHostWnd *pMainWnd)
         pMcListView->SetAdapter(pAdapter);
         pAdapter->Release();
     }
+
+	//用线程加载和检测NCMID ,之所以使用线程，是因为该操作联网耗时
+	CLoadAndCheckNcmIDThread::getSingleton().Start();
 }
 
 //获得主窗口对象
