@@ -68,10 +68,38 @@ public:
 		pItem->FindChildByName(L"txt_mclv_music_artist")->SetWindowText(SStringW().Format(L"%s",pli->strMusicArtist.c_str()));
 		pItem->FindChildByName(L"txt_mclv_ncm_id")->SetWindowText(SStringW().Format(L"%s",pli->strSongID.c_str()));
 		
+        SButton *pBtnView = pItem->FindChildByName2<SButton>(L"btn_mclv_view");
+        pBtnView->SetUserData(position);
+        SButton *pBtnListen = pItem->FindChildByName2<SButton>(L"btn_mclv_listen");
+        pBtnListen->SetUserData(position);
         SButton *pBtnSelect = pItem->FindChildByName2<SButton>(L"btn_mclv_select");
         pBtnSelect->SetUserData(position);
+		
+        pBtnView->GetEventSet()->subscribeEvent(EVT_CMD,Subscriber(&CSongIDMcAdapterFix::OnButtonViewClick,this));
+        pBtnListen->GetEventSet()->subscribeEvent(EVT_CMD,Subscriber(&CSongIDMcAdapterFix::OnButtonListenClick,this));
         pBtnSelect->GetEventSet()->subscribeEvent(EVT_CMD,Subscriber(&CSongIDMcAdapterFix::OnButtonSelectClick,this));
         
+    }
+	
+    bool OnButtonViewClick(EventArgs *pEvt)
+    {
+        SButton *pBtn = sobj_cast<SButton>(pEvt->sender);
+        int iItem = pBtn->GetUserData();
+        SONG_ID_INFO *pli =m_IDInfo.GetData()+iItem;
+        
+		wstring strLink = L"http://music.163.com/#/song?id=" + pli->strSongID;
+		ShellExecute(NULL,L"open",strLink.c_str() ,NULL, NULL,SW_SHOWNORMAL);
+        return true;
+    }
+
+    bool OnButtonListenClick(EventArgs *pEvt)
+    {
+        SButton *pBtn = sobj_cast<SButton>(pEvt->sender);
+        int iItem = pBtn->GetUserData();
+        SONG_ID_INFO *pli =m_IDInfo.GetData()+iItem;
+        
+		ShellExecute(NULL,L"open",(L"http://music.163.com/song/media/outer/url?id=" + pli->strSongID).c_str() ,NULL, NULL,SW_SHOWNORMAL);
+        return true;
     }
 
     bool OnButtonSelectClick(EventArgs *pEvt)

@@ -74,7 +74,9 @@
                    <text pos="5,5" class="cls_txt_light"  name="txt_mclv_ncm_id"  font="adding:-3" ></text>
                  </window>
                  <window name="col5" clipClient="1">
-                   <imgbtn pos="5,3,-5,@24" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_select">选用</imgbtn>
+                   <imgbtn pos="|,3,@50,@24" offset="-1.6,0" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_view" tip="在网页上查看该歌曲信息">查看</imgbtn>
+                   <imgbtn pos="|,3,@50,@24" offset="-0.5,0" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_listen" tip="试听该 ID 对应的mp3,如果无法试听，可能是没有版权">试听</imgbtn>
+                   <imgbtn pos="|,3,@50,@24" offset="0.6,0" class="normalbtn_light" skin="app_button" font="adding:-3" align="center" name="btn_mclv_select" tip="选用该 ID 来匹配，建议选用前先试听ID是否有效">选用</imgbtn>
                  </window>
                </template>
 
