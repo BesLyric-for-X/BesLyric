@@ -49,11 +49,10 @@ bool CCheckIntegrityThread::Start(bool bShowPassTip)
 	//启动检测线程
 	m_handleThreadCheking = ::CreateThread(NULL, 0, ProcChecking, this, 0 ,NULL);
 
-	::WaitForSingleObject(m_EventUpdateDownloadDone, INFINITE); //等待update 文件下载完毕,才弹出窗口
-	
+	//启动UI线程
 	m_handleThreadUI = ::CreateThread(NULL, 0, ProcUI, this, 0 ,NULL);
 
-	return (m_handleThreadCheking != NULL && m_handleThreadUI!=NULL);
+	return (m_handleThreadCheking != NULL);
 }
 
 
@@ -113,6 +112,10 @@ DWORD WINAPI CCheckIntegrityThread::ProcUI(LPVOID pParam)
 	DlgCheckIntegrity dlg(L"xml_check_integrity");
 
 	dlg.SetEventHandleForWndHandle(pThread->m_EventWndInitDone, &pThread->m_hCheckWnd, pThread);
+
+	
+	::WaitForSingleObject(pThread->m_EventUpdateDownloadDone, INFINITE); //等待update 文件下载完毕,才弹出窗口
+	
 
 	int ret = dlg.DoModal(NULL);
 
@@ -348,7 +351,8 @@ bool CCheckIntegrityThread::DownloadUpdateFileAndMark()
 	wstring strTempUpdate = m_wstrEtcFloder + L"tempDir\\update.xml" ;
 	if(!CDownloader::DownloadFile(LINK_UPDATE_ITEM_FILE, strTempUpdate))
 	{
-		_MessageBox(NULL, L"无法下载update.xml文件，检测更新失败", L"提示", MB_OK|MB_ICONWARNING);
+		//不提示失败，不然每次不联网启动都提示这一句
+		//_MessageBox(NULL, L"无法下载update.xml文件，检测更新失败", L"提示", MB_OK|MB_ICONWARNING);
 		return false;
 	}
 

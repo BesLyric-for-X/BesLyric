@@ -8,12 +8,10 @@
 #include "entity\NcmIDManager.h"
 #include "utility\Downloader.h"
 
+#include "entity\LoadAndCheckNcmIDThread.h"
 
 CPageSearchNcmID::CPageSearchNcmID()
 {
-	if(!CNcmIDManager::GetInstance()->LoadDataPairs())
-		_MessageBox(NULL, L"加载ncm与id映射文件失败", L"提示", MB_OK|MB_ICONINFORMATION);
-	
 	m_pMainWnd = NULL;		/* 主窗口指针 */
 
 	m_window_search_ncm_id_tip = NULL;
@@ -72,6 +70,9 @@ void CPageSearchNcmID::Init(SHostWnd *pMainWnd)
         pMcListView->SetAdapter(pAdapter);
         pAdapter->Release();
     }
+
+	//用线程加载和检测NCMID ,之所以使用线程，是因为该操作联网耗时
+	CLoadAndCheckNcmIDThread::getSingleton().Start();
 }
 
 //获得主窗口对象
@@ -137,7 +138,7 @@ void CPageSearchNcmID::OnBtnSelectID()
 	{
 		if(!bValid)
 		{
-			_MessageBox(M()->m_hWnd, L"当前填写ID为无效ID，匹配ID失败", L"提示", MB_OK|MB_ICONINFORMATION);
+			_MessageBox(M()->m_hWnd, L"当前填写ID为无效ID 或 其对应歌曲网易没有版权，匹配ID失败", L"提示", MB_OK|MB_ICONINFORMATION);
 			return;
 		}
 	}
@@ -232,113 +233,6 @@ void CPageSearchNcmID::ShowIDResult(IDSearchResult* pResult)
 	m_txtIsSearchingIDTip->SetVisible(FALSE,TRUE); //隐藏正在搜索提示
 	
 }
-
-////选择原歌词保存路径
-//void CPageSearchNcmID::OnBtnSelectOriginLyricPath(LPCWSTR pFilePath)
-//{
-//	BOOL bRet = TRUE;
-//	LPCWSTR pPath = NULL;
-//
-//	if(pFilePath == NULL)
-//	{
-//		SStringW pathBefore = m_editOriginLyricPath->GetWindowTextW();
-//		CBrowseDlg Browser;
-//		BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【原歌词】 保存路径"), TRUE, pathBefore);
-//
-//		if(bRet == TRUE)
-//			pPath = Browser.GetDirPath();
-//	}
-//	else
-//		pPath = pFilePath;
-//
-//	if(bRet == TRUE)
-//	{
-//		m_editOriginLyricPath->SetWindowTextW(pPath);
-//	}
-//}
-//
-////选择Lrc歌词保存路径
-//void CPageSearchNcmID::OnBtnSelectLrcLyricPath(LPCWSTR pFilePath)
-//{
-//	BOOL bRet = TRUE;
-//	LPCWSTR pPath = NULL;
-//
-//	if(pFilePath == NULL)
-//	{
-//		SStringW pathBefore = m_editLrcLyricPath->GetWindowTextW();
-//		CBrowseDlg Browser;
-//		BOOL bRet = Browser.DoDirBrowse(::GetActiveWindow(),_T("选择 【LRC歌词】 保存路径"), TRUE, pathBefore);
-//		
-//		if(bRet == TRUE)
-//			pPath = Browser.GetDirPath();
-//	}
-//	else
-//		pPath = pFilePath;
-//
-//	if(bRet == TRUE)
-//	{
-//		m_editLrcLyricPath->SetWindowTextW(pPath);
-//	}
-//}	
-//
-////保存原歌词
-//void CPageSearchNcmID::OnBtnSaveOriginLyricPath()
-//{
-//	SStringW strContent = CStringHelper::Trim(m_editOriginLyricContent->GetWindowTextW(),L" \t\r\n");
-//
-//	if(strContent.GetLength() == 0)
-//	{
-//		_MessageBox(M()->m_hWnd, L"歌词内容为空，无法保存！", L"提示", MB_OK|MB_ICONINFORMATION);
-//		return;
-//	}
-//
-//	SStringW strPath = m_editOriginLyricPath->GetWindowTextW();
-//	SStringW strSong = CStringHelper::Trim(m_editOriginLyricName->GetWindowTextW());
-//	SStringW strArtist = CStringHelper::Trim(m_editOriginLyricArtist->GetWindowTextW());
-//	SStringW strConnector = (strSong.GetLength()!=0 && strArtist.GetLength() != 0)? L"-":L"";
-//
-//	CFileDialogEx saveDlg(FALSE, strArtist+ strConnector+ strSong ,strPath.GetBuffer(1),L"txt",L"原歌词文件(txt)\0*.txt;\0\0",OFN_OVERWRITEPROMPT, M()->m_hWnd);
-//	int ret = saveDlg.DoModal();
-//	if(ret == TRUE)
-//	{
-//		//将文本内容保存到文件中
-//		SStringW savePath = saveDlg.m_szFileName;
-//		if(FileOperator::WriteToUtf8File(wstring(savePath.GetBuffer(1)), wstring(strContent.GetBuffer(1))))
-//			_MessageBox(M()->m_hWnd, (L"原歌词已保存！\\n\\n保存路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONINFORMATION);
-//		else
-//			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
-//	}
-//}
-//
-////保存Lrc歌词
-//void CPageSearchNcmID::OnBtnSaveLrcLyricPath()
-//{
-//	SStringW strContent = CStringHelper::Trim(m_editLrcLyricContent->GetWindowTextW(),L" \t\r\n");
-//
-//	if(strContent.GetLength() == 0)
-//	{
-//		_MessageBox(M()->m_hWnd, L"歌词内容为空，无法保存！", L"提示", MB_OK|MB_ICONINFORMATION);
-//		return;
-//	}
-//
-//	SStringW strPath = m_editLrcLyricPath->GetWindowTextW();
-//	SStringW strSong = CStringHelper::Trim(m_editLrcLyricName->GetWindowTextW());
-//	SStringW strArtist = CStringHelper::Trim(m_editLrcLyricArtist->GetWindowTextW());
-//	SStringW strConnector = (strSong.GetLength()!=0 && strArtist.GetLength() != 0)? L"-":L"";
-//
-//	CFileDialogEx saveDlg(FALSE, strSong+ strConnector+ strArtist ,strPath.GetBuffer(1),L"lrc",L"LRC歌词文件(lrc)\0*.lrc;\0\0",OFN_OVERWRITEPROMPT, M()->m_hWnd);
-//	int ret = saveDlg.DoModal();
-//	if(ret == TRUE)
-//	{
-//		//将文本内容保存到文件中
-//		SStringW savePath = saveDlg.m_szFileName;
-//		if(FileOperator::WriteToUtf8File(wstring(savePath.GetBuffer(1)), wstring(strContent.GetBuffer(1))))
-//			_MessageBox(M()->m_hWnd, (L"LRC歌词已保存！\\n\\n保存路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONINFORMATION);
-//		else
-//			_MessageBox(M()->m_hWnd, (L"保存操作失败！\\n\\n路径：\\n"+savePath).GetBuffer(1), L"提示", MB_OK|MB_ICONWARNING);
-//	}
-//}	
-//
 
 //根据猜测结果自动填充搜索关键词并开始搜索
 void CPageSearchNcmID::OnSearchWithGuess(SongInfoGuessResult* pGuessRes)

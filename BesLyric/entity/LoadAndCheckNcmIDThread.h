@@ -19,38 +19,34 @@
 */
 
 /**
-* @file       NcmIDManager.h
+* @file       LoadAndCheckNcmIDThread.h
 * 
-* @Describe   管理 ncm 文件名与 其网易云id 的匹配逻辑 
+* Describe    启动一个线程，用于载入ncm ID 并联网检测 ID的合法性 (之所以使用线程，是因为联网检测可能比较耗时，在启动时检测会导致界面载入延后)
 */
 
 #pragma once
 #include "stdafx.h"
-#include <string>
-#include "..\lib\ZSingleton.hpp"
-#include <map>
-using namespace std;
+#include "../utility/SSingleton.h"
 
-class CNcmIDManager
+
+class  CLoadAndCheckNcmIDThread : public Singleton<CLoadAndCheckNcmIDThread>
 {
-	SINGLETON_0(CNcmIDManager)
-
-
 public:
-	bool SaveDataPairs();					//保存数据对
-	bool LoadAndCheckDataPairs();			//加载数据对,并联网检测去除无效的
+	// 检查程序的完整性
+	CLoadAndCheckNcmIDThread():m_handleThread(NULL){}
 
-	bool FindID( wstring fileName,OUT wstring& id);			//查找ID
-	void InsertNcmIDPair( wstring fileName, wstring id);	//插入ID对
+	//开始线程
+	bool Start();
 
-	//检测ID是否有效
-	//返回 false 为查询失败（网络问题等）
-	bool CheckIDValidity(wstring id, OUT bool& bValid);				
+	//结束线程
+	void Stop();
+	
+private:
+
+	// 线程执行地址
+	static DWORD WINAPI ProcLoadAndCheckNcmID(LPVOID pParam);
 
 private:
-	//更新ID
-	bool UpdateID( wstring fileName, wstring id);
-
-private:
-	map< wstring, wstring>	m_mapNcmID;	/* 储存ncm文件名和其对应ID的匹配关系 */
+	HANDLE m_handleThread;
 };
+

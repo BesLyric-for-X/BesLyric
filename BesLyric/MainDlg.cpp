@@ -61,12 +61,12 @@ void CMainDlg::test()
 	//CDownloader::DownloadFile( L"http://music.163.com/song/media/outer/url?id=1111.mp3", 
 	//	L"C:\\Users\\BensonLaur\\Desktop\\NetEase\\test.mp3");
 	
-	string md5;
-	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\imgdecoder-gdip.dll", md5);
-	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\render-gdi.dll", md5);
-	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui.dll", md5);
-	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui-sys-resource.dll", md5);
-	CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\utilities.dll", md5);
+	//string md5;
+	//CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\imgdecoder-gdip.dll", md5);
+	//CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\render-gdi.dll", md5);
+	//CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui.dll", md5);
+	//CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\soui-sys-resource.dll", md5);
+	//CCheckIntegrityThread::GetFileMd5(L"E:\\git\\BesLyric\\Debug\\utilities.dll", md5);
 
 }
 
@@ -78,19 +78,6 @@ CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 	m_pageResult = NULL;
 	m_pageSearchLyric = NULL;
 	m_pageSearchNcmID = NULL;
-
-	//初始化etc文件并清理相关文件
-	initFloderAndFile();
-
-
-	//启动自动更新线程
-	AutoUpdateThread::getSingleton().Start();
-
-	//检测程序的完整性
-	CCheckIntegrityThread::getSingleton().Start(false);
-
-	//test
-	test();
 }
 
 CMainDlg::~CMainDlg()
@@ -134,7 +121,17 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 	//初始化记录页面播放足迹，详看变量的说明
 	FootPrintPage = -1;
 	
-	test();
+	//test();
+	//初始化页面之后再执行耗时的操作
+
+	//初始化etc文件并清理相关文件
+	initFloderAndFile();
+
+	//启动自动更新线程
+	AutoUpdateThread::getSingleton().Start();
+
+	//检测程序的完整性
+	CCheckIntegrityThread::getSingleton().Start(false);
 	return 0;
 }
 

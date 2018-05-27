@@ -205,6 +205,9 @@
     <ClCompile Include="lib\md5\md5.cpp">
       <Filter>Header Files\lib\md5</Filter>
     </ClCompile>
+    <ClCompile Include="entity\LoadAndCheckNcmIDThread.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="lib\md5\md5.h">
       <Filter>Header Files\lib\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\LoadAndCheckNcmIDThread.h">
+      <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

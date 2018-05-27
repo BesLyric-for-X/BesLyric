@@ -30,7 +30,7 @@ bool CNcmIDManager::SaveDataPairs()
 }
 
 //加载数据对
-bool CNcmIDManager::LoadDataPairs()
+bool CNcmIDManager::LoadAndCheckDataPairs()
 {
 	//从文件加载数据
 	wstring wstrPath = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + NCM_ID_FILE_NAME;
@@ -80,7 +80,7 @@ bool CNcmIDManager::LoadDataPairs()
 		}
 	}
 	else
-		SaveDataPairs();
+		SaveDataPairs(); //文件不存在，创建空的文件
 
 	//在有网络的可以校验的时候，对数据进行简单的校验，更新储存
 	map< wstring, wstring>	mapNcmIDTemp;
