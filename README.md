@@ -32,11 +32,11 @@ BesLyric 最新下载地址：http://beslyric.320.io/BesBlog/beslyric/download.a
 
 由于不同版本的soui生成的dll和代码无法兼容，需要区别对待
 
-pre_backward 分支使用 SOUI 版本为 2.2 [下载zip](http://ovfwclhwl.bkt.clouddn.com/soui_2_2.zip)
-
 master 分支使用 SOUI 版本为 2.6.3.1（2017/11/10号获取） [下载zip](http://ovfwclhwl.bkt.clouddn.com/soui_2_6_3_1.zip)
 
-2018-4-23 日已将原先 pre_backward 分支独立开发内容迁移到 master 上， pre_backward 分支将停止维护
+pre_backward 分支使用 SOUI 版本为 2.2  (已停止维护)
+
+2018-4-23 日已将原先 pre_backward 分支独立开发内容迁移到 master 上， pre_backward 分支已停止维护
 
 2）解压后 直接运行 soui.08.sln (vs2010之后的版本都可以，项目会自动转换)
 
