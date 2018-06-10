@@ -40,10 +40,11 @@ void CMainDlg::test()
 	//CSplitFile::SplitFile(L"C:\\Users\\BensonLaur\\Desktop\\ff.exe", L"C:\\Users\\BensonLaur\\Desktop",L"ff", 10 * 1024 * 1024);
 
 	//CSplitFile::MergeFile(L"C:\\Users\\BensonLaur\\Desktop",L"ff", L"C:\\Users\\BensonLaur\\Desktop");
-
-	//AutoUpdateThread::DownloadFile(L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe", L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
-
-	wstring strSaveBuffer;
+	
+	//CDownloader::DownloadFile(L"https://github.com/BensonLaur/image-storage/raw/master/General Resource/download/ffmpeg.exe", 
+	//	L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
+	
+	//wstring strSaveBuffer;
 	//CDownloader::DownloadString( L"http://gecimi.com/api/lyric/我们的歌", strSaveBuffer);
 	//
 	//locale &loc=locale::global(locale(locale(),"",LC_CTYPE)); 

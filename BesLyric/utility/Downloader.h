@@ -20,6 +20,7 @@
 
 #pragma once
 #include "stdafx.h"
+#include <time.h>
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
 
@@ -37,10 +38,14 @@ public:
 	*	@param	strSaveAs		保存文件的路径
 	*	@return	true -- 下载成功
 	*/
-	static bool DownloadFile(const wstring strUrl, const wstring strSaveAs)
+	static bool DownloadFile(const wstring strUrl, const wstring strSaveAs, HWND* pHwndReceiveProgress = NULL)
 	{
+		int nLoopCount = 0;			//循环获取数据的次数，这里每次个循环接收 10 K数据，如果每10k计算一次速度，时间太短，计划Loop每100次（1M）计算一次速度
+		DWORD t_start, t_end; 
+		ULONG nStartNumber = 0; 
+
 		byte Temp[NET_DATA_BLOCK_SIZE];
-		ULONG Number = 1;
+		ULONG Number = 0; 
 
 		FILE *stream;
 
@@ -52,12 +57,53 @@ public:
 			{
 				if ((_wfopen_s(&stream, strSaveAs.c_str(), L"wb")) == 0)
 				{
-					while (Number > 0)
-					{
-						InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number);
+					ULONG nTotalRecieved = 0;
+					
+					do{
+						if(pHwndReceiveProgress == NULL)  //没有接收过程数据的窗口句柄
+						{
+							if(!InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number)) //获取
+							{
+								fclose(stream);  //写失败了，需要关闭文件，不然后续会无法写入
+								return false; 
+							}
 
-						fwrite(Temp, sizeof (char), Number, stream);
-					}
+							if(Number != 0)
+								fwrite(Temp, sizeof (char), Number, stream);						//直接写入文件
+						}
+						else
+						{
+							if(nLoopCount % 100 == 0)
+							{
+								t_start = GetTickCount();//从操作系统启动所经过（elapsed）的毫秒数，它的返回值是DWOR
+								nStartNumber = nTotalRecieved;
+							}
+
+							if(!InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number)) //获取
+							{
+								fclose(stream);  //写失败了，需要关闭文件，不然后续会无法写入
+								return false; 
+							}
+
+							nTotalRecieved += Number;	
+							
+							if(nLoopCount % 100 == 99)
+							{
+								t_end = GetTickCount();//从操作系统启动所经过（elapsed）的毫秒数，它的返回值是DWOR
+								ULONG nMs = t_end - t_start ;															//计算毫秒时间
+								double dSpeedBytePerMs = (nTotalRecieved - nStartNumber) * 1.0 / nMs;					//计算速度
+								::SendMessageW(*pHwndReceiveProgress, MSG_USER_UPDATE_DOWNLOAD_PROCESS_SPEED,  (WPARAM)(ULONG)(dSpeedBytePerMs),(LPARAM)NULL);
+							}
+							nLoopCount++;
+									//计算累计接收字节
+							
+							if(Number != 0)
+								fwrite(Temp, sizeof (char), Number, stream);				//写入文件
+
+							::SendMessageW(*pHwndReceiveProgress, MSG_USER_UPDATE_DOWNLOAD_PROCESS_TOTAL,  (WPARAM)nTotalRecieved,(LPARAM)NULL);
+						}
+					}while (Number > 0);
+
 					fclose(stream);
 				}
 				else

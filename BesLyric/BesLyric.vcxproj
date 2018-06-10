@@ -110,7 +110,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="uires\values\string.xml" />
-    <None Include="uires\xml\dlg_checking_integrity.xml" />
+    <None Include="uires\xml\dlg_checking_integrity.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="uires\xml\dlg_main.xml">
       <SubType>Designer</SubType>
     </None>

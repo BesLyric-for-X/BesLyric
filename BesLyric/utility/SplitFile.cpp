@@ -219,14 +219,20 @@ bool CSplitFile::MergeToOneFile(wstring strMergedFilePathName,wstring  strTarget
 		int nFileSize = ftell(pFileSplited);										//获取文件大小
 		rewind(pFileSplited);
 		
+		bool bFailToWrite = false;
 		char* pBlockData = new char[nFileSize];			//分配整个文件的大小，获取文件数据块的指针
 		if (pBlockData == NULL)
-			return false;
+			bFailToWrite =true;
+		else if (fread(pBlockData, 1, nFileSize, pFileSplited) != nFileSize)		//文件拷贝到m_pFileData中
+			bFailToWrite = true;
 
-		if (fread(pBlockData, 1, nFileSize, pFileSplited) != nFileSize)		//文件拷贝到m_pFileData中
-			return false;
+		fclose(pFileSplited);   
 
-		fclose(pFileSplited);
+		if(bFailToWrite)		//失败了，也要等到 关闭 pFileSplited 后再返回
+		{
+			fclose(pFile);		// 关闭前面打开的文件
+			return false;
+		}
 
 		//将分块的数据写入文件
 		fwrite(pBlockData,sizeof(char), nFileSize, pFile);
