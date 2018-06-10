@@ -63,7 +63,11 @@ public:
 						if(pHwndReceiveProgress == NULL)  //没有接收过程数据的窗口句柄
 						{
 							if(!InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number)) //获取
+							{
+								fclose(stream);  //写失败了，需要关闭文件，不然后续会无法写入
 								return false; 
+							}
+
 							if(Number != 0)
 								fwrite(Temp, sizeof (char), Number, stream);						//直接写入文件
 						}
@@ -76,7 +80,11 @@ public:
 							}
 
 							if(!InternetReadFile(handle2, Temp, NET_DATA_BLOCK_SIZE - 1, &Number)) //获取
+							{
+								fclose(stream);  //写失败了，需要关闭文件，不然后续会无法写入
 								return false; 
+							}
+
 							nTotalRecieved += Number;	
 							
 							if(nLoopCount % 100 == 99)

@@ -470,11 +470,30 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			}
 		}
 		
-		UpdateProgressUI(60, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...").c_str());
-		//先从 LINK_DOWNLOAD_SERVER 下载 ffmpeg
-		bool bFirstTrySucceed = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_1, strFfmpeg, &m_hCheckWnd);
-		if(!bFirstTrySucceed)//下载不成功
+		bool bTrySuceed = true;
+		UpdateProgressUI(60, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try github)").c_str());
+		bool bTry1 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_1, strFfmpeg, &m_hCheckWnd);
+		if(!bTry1)
 		{
+			UpdateProgressUI(61, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try gitee)").c_str());
+			bool bTry2 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_2, strFfmpeg, &m_hCheckWnd);
+			if(!bTry2)
+			{
+				UpdateProgressUI(62, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try aliyun)").c_str());
+				bool bTry3 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_3, strFfmpeg, &m_hCheckWnd);
+				if(!bTry3)
+				{
+					UpdateProgressUI(63, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try gitlab)").c_str());
+					bool bTry4 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_4, strFfmpeg, &m_hCheckWnd);
+					if(!bTry4)
+						bTrySuceed = false;
+				}
+			}
+		}
+
+		if(!bTrySuceed)//下载不成功
+		{
+			UpdateProgressUI(65, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try final)").c_str());
 			bool bHaveDownload = true;
 
 			//备用下载方案
@@ -490,43 +509,43 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			{
 				//下载 ffmpeg.1.zip - ffmpeg.4.zip 4个文件
 				WCHAR szBuffer[MAX_BUFFER_SIZE/2];
-				if(false != bRet)
-					for(auto i=1; i<=4 ;i++)
+				for(auto i=1; i<=4 ;i++)
+				{
+					wstring strNameSplited = wstring(L"ffmpeg.") + _itow(i,szBuffer, 10) + SERVER_FILE_EXTENTION_W;
+					UpdateProgressUI(10 + i*(90-10)/4, wstring(L"正在下载 "+strNameSplited +L"...  ("+_itow(i,szBuffer, 10)+L"/4, 共 34.84 MB)").c_str());
+
+					wstring strFileSplited = strDir +L"\\"+ strNameSplited;
+					wstring strLinkSplited = LINK_SERVER_PATH + strNameSplited;
+
+					bRet = CDownloader::DownloadFile(strLinkSplited, strFileSplited, &m_hCheckWnd);
+					if(false == bRet)
 					{
-						wstring strNameSplited = wstring(L"ffmpeg.") + _itow(i,szBuffer, 10) + SERVER_FILE_EXTENTION_W;
-						UpdateProgressUI(10 + i*(90-10)/4, wstring(L"正在下载 "+strNameSplited +L"...  ("+_itow(i,szBuffer, 10)+L"/4, 共 34.84 MB)").c_str());
-
-						wstring strFileSplited = strDir +L"\\"+ strNameSplited;
-						wstring strLinkSplited = LINK_SERVER_PATH + strNameSplited;
-
-						bRet = CDownloader::DownloadFile(strLinkSplited, strFileSplited, &m_hCheckWnd);
-						if(false == bRet)
-						{
-							bHaveDownload = false;
-							break;
-						}
+						bHaveDownload = false;
+						break;
 					}
+				}
 			}
 			else
 				bHaveDownload = false;
-		
+
 			if(!bHaveDownload)
 			{
-				UpdateProgressUI(100, L"结束！(无法成功下载文件，可尝试在“设置”页面，重新点击“完整性检测”）");
+				UpdateProgressUI(100, L"下载失败！可尝试在“设置”页面重新点击“完整性检测”");
 
 				//提示用户确实 转换文件，并提示如何处理
 				wstring strTip = L"无法成功下载文件：\\n";
 				strTip+= strFfmpeg + L"\\n\\n";
-			
-				strTip+= wstring(L"可能原因：\\n ");
+		
+				strTip+= wstring(L"可能原因：\\n");
 				strTip+= wstring(L"1、程序无法连接网络，无法下载\\n");
-				strTip+= wstring(L"2、获取文件的服务端异常\\n");
-				strTip+= wstring(L"3、下载过程中，删除或移动了ffmpeg.exe 相关文件\\n\\n");
+				strTip+= wstring(L"2、获取文件的服务端异常（github服务器不稳定比较正常，建议多尝试几次下面方案1）\\n\\n");
 
 				strTip+= wstring(L"解决方案：\\n");
-				strTip+= wstring(L"1、先尝试：保证程序能正常访问网络,然后重新在设置页面进行“完整性检测”\\n");
+				strTip+= wstring(L"1、先尝试：保证程序能正常访问网络,然后重新在“设置”页面进行“完整性检测”\\n");
 				strTip+= wstring(L"2、如果上述无法解决，尝试自己下载ffmpeg.exe 文件。点击“确定”后，点击“检测程序完整性”下的“手动下载ffmpeg.exe”链接\\n");
-				strTip+= wstring(L"");
+			
+				strTip+= wstring(L"\\n");
+				strTip+= wstring(L"温馨提示:下载ffmpeg不是必须的,只在程序无法播放部分mp3时才需用到，可先忽略");
 
 				_MessageBox(NULL,strTip.c_str(), L"完整性提示", MB_OK|MB_ICONWARNING);
 				return false;
@@ -539,19 +558,23 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 				bool bFail = false;
 				if(!bRet)
 				{
-					UpdateProgressUI(100, L"结束！(生成文件 完整的 ffmpeg.exe 失败）");
+					//到此为止，用户已经等待了5个下载点了，为了结果
+
+
+					UpdateProgressUI(100, L"下载失败！可尝试在“设置”页面重新点击“完整性检测”");
 
 					wstring strTip = L"无法完整生成文件：\\n";
 					strTip += strFfmpeg + L"\\n\n";			
-				
-					strTip+= wstring(L"可能原因：\\n ");
-					strTip+= wstring(L"1、服务端网络不稳定(不是你的问题)，导致文件下载不完整\\n");
-					strTip+= wstring(L"2、本地网络不稳地\\n\\n");
+			
+					strTip+= wstring(L"可能原因：\\n");
+					strTip+= wstring(L"1、程序无法连接网络，无法下载\\n");
+					strTip+= wstring(L"2、获取文件的服务端异常（github服务器不稳定比较正常，建议多尝试几次下面方案1）\\n\\n");
 
 					strTip+= wstring(L"解决方案：\\n");
-					strTip+= wstring(L"1、重新在设置页面进行“完整性检测”\\n");
-					strTip+= wstring(L"2、手动下载ffmpeg.exe 文件。访问程序“本软件”页面的博客链接，查看第4小节“常见问题”手动下载 ffmpeg.exe\\n");
-					strTip+= wstring(L"");
+					strTip+= wstring(L"1、先尝试：保证程序能正常访问网络,然后重新在“设置”页面进行“完整性检测”\\n");
+					strTip+= wstring(L"2、如果上述无法解决，尝试自己下载ffmpeg.exe 文件。点击“确定”后，点击“检测程序完整性”下的“手动下载ffmpeg.exe”链接\\n");
+					strTip+= wstring(L"\\n");
+					strTip+= wstring(L"温馨提示:下载ffmpeg不是必须的,只在程序无法播放部分mp3时才需用到，可先忽略");
 					_MessageBox(NULL,strTip.c_str(), L"提示", MB_OK|MB_ICONWARNING);
 					bFail = true;
 				}

@@ -200,7 +200,10 @@ static const string SERVER_FILE_EXTENTION_A = ".zip";
 static const wstring LINK_SERVER_PATH = L"http://files.cnblogs.com/files/BensonLaur/";		//链接，服务器地址
 
 static const wstring LINK_DOWNLOAD_FFMPEG_1 = L"https://github.com/BensonLaur/image-storage/raw/master/General Resource/download/ffmpeg.exe";	//ffmpeg.exe 下载链接1
-static const wstring LINK_DOWNLOAD_FFMPEG_2 = L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe";	//ffmpeg.exe 下载链接2
+static const wstring LINK_DOWNLOAD_FFMPEG_2 = L"https://gitee.com/BensonLaur/resource-provider-gitee/raw/master/beslyric/ffmpeg.exe";	//ffmpeg.exe 下载链接2
+static const wstring LINK_DOWNLOAD_FFMPEG_3 = L"http://beslyric.320.io/BesBlog/Res/ffmpeg.exe";	//ffmpeg.exe 下载链接3
+static const wstring LINK_DOWNLOAD_FFMPEG_4 = L"https://gitlab.com/BensonLaur/resource-provider-gitlab/raw/master/beslyric/ffmpeg.exe";	//ffmpeg.exe 下载链接4
+//static const wstring LINK_DOWNLOAD_FFMPEG_5 = L"http://ovfwclhwl.bkt.clouddn.com/ffmpeg.exe";	//ffmpeg.exe 下载链接5
 
 
 //static const wstring LINK_UPDATE_ITEM_FILE = L"http://ovfwclhwl.bkt.clouddn.com/update";				//链接，更新项文件(七牛云有时会缓存过去的文件)
