@@ -36,7 +36,7 @@ class  CCheckIntegrityThread : public Singleton<CCheckIntegrityThread>
 public:
 	// 检查程序的完整性
 	CCheckIntegrityThread():m_handleThreadCheking(NULL),m_handleThreadUI(NULL),m_hCheckWnd(NULL),
-		m_EventWndInitDone(NULL),m_EventUpdateDownloadDone(NULL), m_bIsChecking(false),m_nPercentage(0)
+		m_EventWndInitDone(NULL),m_EventUpdateDownloadDone(NULL), m_bIsChecking(false),m_bIsProcUIClose(true),m_nPercentage(0)
 	{
 		//多次用到 etc/ 路径先构建好
 		m_wstrEtcFloder = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\";
@@ -59,7 +59,7 @@ private:
 	//UI 线程执行地址
 	static DWORD WINAPI ProcUI(LPVOID pParam);
 
-
+	bool PreCheckWhetherNeedToShowCheckDialog();  //预先检查是否需要显示检测dialog
 
 	//检查所有的文件是否为最新
 	bool CheckUpdateFile();
@@ -89,6 +89,8 @@ private:
 
 	bool		m_bShowPassTip;			/* 表示在检查后，结果为完整时，进行提示 */
 	bool		m_bIsChecking;			/* 表示是否正在检测 */
+
+	bool		m_bIsProcUIClose;		/* Processing UI 是否已经关闭 */
 
 	int			m_nPercentage;			/* 最后一次记录的进度百分比 */
 	WCHAR		m_szTip[MAX_BUFFER_SIZE];/* 最后一次记录的进度消息 */		

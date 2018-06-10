@@ -2,6 +2,7 @@
 #include "PageResult.h"
 #include "utility/WinDialog.h"
 #include "utility/WinFile.h"
+#include "entity\CheckIntegrityThread.h"
 
 CPageResult::CPageResult()
 {
@@ -473,9 +474,14 @@ DWORD WINAPI CPageResult::ThreadConvertProc(LPVOID pParam)
 		return false;
 	}
 
-	if(!FileHelper::CheckFileExist(strFfmpegPath))
+	bool bFileExist =  FileHelper::CheckFileExist(strFfmpegPath);
+	string strMd5;
+	bool bRet = CCheckIntegrityThread::GetFileMd5(strFfmpegPath,strMd5);
+	if(!bFileExist || !bRet || (bFileExist && strMd5 != "949ed6af96c53ba9e1477ded35281db5")) //检测
 	{
-		_MessageBox(NULL, (L"文件不存在："+strFfmpegPath + L"\\n试图转格式失败，请重新下载完整程序").c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
+		_MessageBox(NULL, (L"文件不存在或不完整：\\n"+strFfmpegPath + L"\\n\\n试图转格式失败\\n请尝试：\
+			\\n1、在【设置】页面的【升级与检测】下，点击按钮【完整性检测】"
+			).c_str(), L"提示", MB_OK| MB_ICONINFORMATION);
 		return false;
 	}
 

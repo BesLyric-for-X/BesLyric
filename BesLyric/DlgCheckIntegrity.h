@@ -23,6 +23,11 @@ public:
 	// wParam 是百分比数，lParam 是提示宽字符串地址
 	BOOL OnUpdateCheckProgress(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 
+	//WPARAM 为下载速度，单位 byte/ms  
+	BOOL OnUpdateProgressSpeed(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+	//WPARAM 接收总数，单位 byte  
+	BOOL OnUpdateProgressTotal(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
+
 	//关闭UI显示线程
 	BOOL OnCloseProgress(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandled);
 	
@@ -40,6 +45,9 @@ protected:
 		MSG_WM_CLOSE(OnCancel)
 		
 		MESSAGE_HANDLER(MSG_USER_UPDATE_CHECK_PROGRESS, OnUpdateCheckProgress)
+		MESSAGE_HANDLER(MSG_USER_UPDATE_DOWNLOAD_PROCESS_SPEED, OnUpdateProgressSpeed)
+		MESSAGE_HANDLER(MSG_USER_UPDATE_DOWNLOAD_PROCESS_TOTAL, OnUpdateProgressTotal)
+
 		MESSAGE_HANDLER(MSG_USER_CLOSE_CHECK_PROGRESS, OnCloseProgress)
 
 		CHAIN_MSG_MAP(SHostDialog)
