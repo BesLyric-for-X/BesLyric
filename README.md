@@ -1,6 +1,9 @@
 # BesLyric
 本项目目的在制作一款 操作简单、功能实用的 专门用于制作网易云音乐滚动歌词的 歌词制作软件。（[更多介绍 ](http://www.cnblogs.com/BensonLaur/p/6262565.html)）
 
+注：本项目为 win32 项目，基于Qt实现的跨平台版本 [BesLyric-for-X](https://github.com/BensonLaur/Beslyric-for-X) 正在构建中......
+
+
 <img src="https://github.com/BensonLaur/image-storage/raw/master/BesLyric%20project/BesLyric%20demo.png" width="60%" height="60%">
 
 
