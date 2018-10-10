@@ -41,5 +41,11 @@
       <text pos="15,[10,@85,@25">SOUI 介绍: </text>
       <link href="https://www.oschina.net/p/soui" class="cls_btn_weblink">点击这里</link>
 
+      <hr pos="10,[20,-10,@1" lineStyle="solid"      mode="horizontal" colorLine="#ffffff55"/>
+      <text pos="15,[20,@500,@25">【BesLyric 全新跨平台版本】 已推出！一样的制作习惯，全新的制作体验: </text>
+      <link href="https://www.cnblogs.com/BensonLaur/p/9695769.html" class="cls_btn_weblink">【点击这里】</link>
+
+      
+
     </window>
 </include>
