@@ -66,6 +66,16 @@ void LyricPlayer::playingEnd(SHostWnd *wnd)
 //播放音乐
 bool LyricPlayer::playMusic()
 {
+	//经过测试，使用 微软MCI接口播放 mp3文件文件，存在十分严重的问题，言辞 1~6秒！，严重影响用户体验，所以在没有更换播放接口之前，mp3都得转换
+	wchar_t musicPath[256];
+	m_musicPlayer.GetMusicPathName(musicPath, 256);
+
+	if(CFileDialogEx::checkPathName(_T("*.mp3"),musicPath))
+	{
+		return false;
+	}
+
+	//如果测试播放失败，说明 MCI 无法直接播放
 	if(m_musicPlayer.openTest() == false)
 	{
 		return false;

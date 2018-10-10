@@ -43,15 +43,16 @@ DWORD WINAPI SendLoginThread::ThreadProc(LPVOID pParam)
 //发送登录信息（ip地址）
 void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 {
-	//获得ip地址的网页源，2个备用
-	const int SrcCount = 2;
+	//获得ip地址的网页源，3个备用
+	const int SrcCount = 3;
 	wstring ipSrc[SrcCount]={
-		L"http://ip.qq.com/",
 		L"https://whatismyipaddress.com/",
+		L"http://2018.ip138.com/ic.asp",
+		L"http://ip.qq.com/"
 	};
 
 	//单个源最大检测ip的次数
-	int nMaxSingleCheckCount = 5;
+	int nMaxSingleCheckCount = 3;
 	
 	wstring strIP= L"unknown";
 	wstring strTempFile;
@@ -114,7 +115,7 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 	}
 
 	//访问链接，服务端负责记录登录信息
-	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP;
+	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP + L"&version=beslyric-soui&vernum="+VERSION_NUMBER;
 	CDownloader::DownloadFile(strSendLink, strTempFile);
 }
 
@@ -124,15 +125,31 @@ bool SendLoginThread::CatchIPStr(const wstring &line, OUT wstring& ip)
 {
 	// > . . . <
 
+	//或    
+	//  您的IP是：[ ... ]
+
 	// 参考 https://blog.csdn.net/effective_coder/article/details/9010337
 	std::locale loc("");    
     std::wcout.imbue(loc);    
         
-    std::wstring regString(_T(">(\\d+\\.\\d+\\.\\d+\\.\\d+)<"));    
+    std::wstring regString(_T(">(\\d+\\.\\d+\\.\\d+\\.\\d+)<")); 
+
+    std::wstring regString2(_T("您的IP是：\\[(\\d+\\.\\d+\\.\\d+\\.\\d+)\\]"));    
     
-    // 表达式选项 - 忽略大小写     
+	//先查找规则1
+    if(GetIpByRegString(line, regString, ip))
+		return true;
+	
+	//查找规则2
+	return GetIpByRegString(line, regString2, ip);
+}
+
+
+bool SendLoginThread::GetIpByRegString(const wstring &line, std::wstring regString, OUT wstring& ip)
+{
+	// 表达式选项 - 忽略大小写     
     std::regex_constants::syntax_option_type fl = std::regex_constants::icase;    
-        
+     
     // 编译一个正则表达式语句     
     std::wregex regExpress(regString, fl);    
 
@@ -154,5 +171,4 @@ bool SendLoginThread::CatchIPStr(const wstring &line, OUT wstring& ip)
     {    
         return false;
     }    
-
 }

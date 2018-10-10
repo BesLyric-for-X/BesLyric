@@ -50,6 +50,7 @@ private:
 	//俘获满足需求的IP字符串
 	inline bool CatchIPStr(const wstring &line, OUT wstring& ip);
 	
+	inline bool GetIpByRegString(const wstring &line, std::wstring regString, OUT wstring& ip);
 
 private:
 
