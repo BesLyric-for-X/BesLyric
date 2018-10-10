@@ -116,7 +116,9 @@
     <None Include="uires\xml\dlg_main.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="uires\xml\dlg_processing_tip.xml" />
+    <None Include="uires\xml\dlg_processing_tip.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="uires\xml\dlg_skiatext.xml">
       <SubType>Designer</SubType>
     </None>

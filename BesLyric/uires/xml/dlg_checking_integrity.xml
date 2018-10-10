@@ -1,4 +1,4 @@
-﻿<SOUI name="dlg_check_integrity" title="检测程序完整性" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="500" height="260"  margin="20,5,5,5"  
+﻿<SOUI name="dlg_check_integrity" title="检测程序完整性" bigIcon="ICON_LOGO:48" smallIcon="ICON_LOGO:32" width="500" height="290"  margin="20,5,5,5"  
       resizable="0" wndType="normal"
 appWnd="0"
 translucent="0" 
@@ -22,7 +22,8 @@ translucent="0"
 		  <progress name="progress_check_integrity" pos="15,[15,-10,@15" font="adding:-5" value="0" min="0" max="100" showPercent="0"/>
 		 <text pos="15,[15,@180,@30">如果下载太慢，可以选择：</text> 
 		  <link pos="[5,{5" href="https://www.cnblogs.com/BensonLaur/p/6262565.html#title_4_6" class="cls_btn_weblink">手动下载 ffmpeg.exe</link>
-		<imgbtn pos="-130,[30,@130,@30"  name="btn_cancel_intigrity_check" skin="app_button" class="normalbtn">后台运行/关闭</imgbtn>
+      <text pos="15,[5,-15,@30">温馨提示：ffmpeg.exe 不是必须的，可以需要时再根据提示下载</text>
+    <imgbtn pos="-130,[30,@130,@30"  name="btn_cancel_intigrity_check" skin="app_button" class="normalbtn">后台运行/关闭</imgbtn>
 		  
 	</window>
      </root>
