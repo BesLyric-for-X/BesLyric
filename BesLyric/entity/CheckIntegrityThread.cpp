@@ -479,16 +479,28 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			bool bTry2 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_2, strFfmpeg, &m_hCheckWnd);
 			if(!bTry2)
 			{
-				UpdateProgressUI(62, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try aliyun)").c_str());
+				UpdateProgressUI(62, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try sourceforge)").c_str());
 				bool bTry3 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_3, strFfmpeg, &m_hCheckWnd);
 				if(!bTry3)
 				{
 					UpdateProgressUI(63, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try gitlab)").c_str());
 					bool bTry4 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_4, strFfmpeg, &m_hCheckWnd);
 					if(!bTry4)
-						bTrySuceed = false;
+					{
+						UpdateProgressUI(64, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ..(try bitbucket)").c_str());
+						bool bTry5 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_5, strFfmpeg, &m_hCheckWnd);
+						if(!bTry5)
+							bTrySuceed = false;
+					}
 				}
 			}
+		}
+
+		if(bTrySuceed)//即使成功，也再坚持一遍
+		{
+			bool bRet = GetFileMd5(strFfmpeg,strMd5);
+			if(!bRet || strMd5 != "949ed6af96c53ba9e1477ded35281db5")
+				bTrySuceed = false;
 		}
 
 		if(!bTrySuceed)//下载不成功
