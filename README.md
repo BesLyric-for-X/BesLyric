@@ -1,3 +1,8 @@
+
+[![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/zh_CN)
+[![Release version](https://img.shields.io/badge/release-2.2.5-blue.svg?style=flat-square)](https://github.com/BensonLaur/Beslyric-for-X/releases)
+
+
 # BesLyric
 本项目目的在制作一款 操作简单、功能实用的 专门用于制作网易云音乐滚动歌词的 歌词制作软件。（[更多介绍 ](http://www.cnblogs.com/BensonLaur/p/6262565.html)）
 
