@@ -36,11 +36,12 @@ BesLyric 最新下载地址：http://beslyric.320.io/BesBlog/beslyric/download.a
 
 本程序完全基于 SOUI 的框架来搭建，所以运行此程序，你需要先准备好SOUI的开发环境,过程很简单，如下：
 
-1） 下载soui源代码
+1）下载soui源代码  
 
 由于不同版本的soui生成的dll和代码无法兼容，需要区别对待
 
-master 分支使用 SOUI 版本为 2.6.3.1（2017/11/10号获取） [下载 SOUI zip](https://pan.baidu.com/s/1YKnP-vjHP7oKiy6Q6iycfw)
+master 分支使用 SOUI 版本为 2.6.3.1（2017/11/10号获取） [下载 SOUI zip](https://pan.baidu.com/s/1qPiXtUmvieocLfPQktjRmg)
+
 
 pre_backward 分支使用 SOUI 版本为 2.2  (已停止维护)
 

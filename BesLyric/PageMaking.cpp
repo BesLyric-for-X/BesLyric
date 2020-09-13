@@ -608,7 +608,7 @@ DWORD WINAPI CPageMaking::ThreadConvertProc(LPVOID pParam)
 
 	bool bFileExist =  FileHelper::CheckFileExist(strFfmpegPath);
 	string strMd5;
-	bool bRet = CCheckIntegrityThread::GetFileMd5(strFfmpegPath,strMd5);
+	bool bRet = UpdateHelper::GetFileMd5(strFfmpegPath,strMd5);
 	if(!bFileExist || !bRet || (bFileExist && strMd5 != "949ed6af96c53ba9e1477ded35281db5")) //检测
 	{
 		_MessageBox(NULL, (L"文件不存在或不完整：\\n"+strFfmpegPath + L"\\n\\n试图转格式失败\\n请尝试：\

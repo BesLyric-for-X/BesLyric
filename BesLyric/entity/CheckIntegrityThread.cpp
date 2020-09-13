@@ -6,11 +6,6 @@
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
 
-#include "..\lib\md5\md5.h"
-
- #include "..\lib\xml\tinyxml2.h"
-using namespace tinyxml2;
-
 #include "..\utility\Downloader.h"
 #include "..\utility\SplitFile.h"
 #include "..\DlgCheckIntegrity.h"
@@ -19,7 +14,6 @@ using namespace tinyxml2;
 using namespace std;
 
 using namespace SOUI;
-
 
 //开始线程
 bool CCheckIntegrityThread::Start(bool bShowPassTip)
@@ -66,22 +60,6 @@ void CCheckIntegrityThread::Stop()
 {
 }
 
-
-//获取文件的 md5 码
-bool CCheckIntegrityThread::GetFileMd5(wstring filePath, string& strMd5)
-{
-	//不存在文件则返回
-	if(!FileHelper::CheckFileExist(filePath))
-		return false;
-
-	MD5_CTX md5 = MD5_CTX();
-    char md5Str[33];
-    md5.GetFileMd5(md5Str, filePath.c_str());
-
-	strMd5 = md5Str;
-
-	return true;
-}
 
 //检测（与下载） 线程执行地址
 DWORD WINAPI CCheckIntegrityThread::ProcChecking(LPVOID pParam)
@@ -135,7 +113,7 @@ bool CCheckIntegrityThread::PreCheckWhetherNeedToShowCheckDialog()
 {
 	bool bNeed = false;
 
-	wstring strTemp = m_wstrEtcFloder + FILE_NAME_NEED_UPDATE ;
+	wstring strTemp = updateHelper.GetEtcDir() + FILE_NAME_NEED_UPDATE ;
 	wstring buffer;
 	if(!FileOperator::ReadAllText(strTemp, buffer))
 		return false;
@@ -151,7 +129,7 @@ bool CCheckIntegrityThread::PreCheckWhetherNeedToShowCheckDialog()
 	
 		bool bFileExist =  FileHelper::CheckFileExist(strFfmpeg);
 		string strMd5;
-		bool bRet = GetFileMd5(strFfmpeg,strMd5);
+		bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
 		if(!bFileExist || !bRet || (bFileExist && strMd5 != "949ed6af96c53ba9e1477ded35281db5")) //检测发现不一致，待会需要弹框
 			bNeed = true;
 	}	
@@ -161,7 +139,7 @@ bool CCheckIntegrityThread::PreCheckWhetherNeedToShowCheckDialog()
 //检查所有文件是否为最新
 bool CCheckIntegrityThread::CheckUpdateFile()
 {
-	wstring strTemp = m_wstrEtcFloder + FILE_NAME_NEED_UPDATE ;
+	wstring strTemp = updateHelper.GetEtcDir() + FILE_NAME_NEED_UPDATE ;
 	wstring buffer;
 	if(!FileOperator::ReadAllText(strTemp, buffer))
 		return false;
@@ -170,7 +148,7 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 	{		
 		//为了防止下载中途异常退出，而导致下次检测更新认为上一次已完成更新，通过 lastUpdateDone 来辨认是否真的更新完毕
 		//写入 lastUpdateDone 文件， 0 表示未完成最后一次的更新
-		FileOperator::WriteAllText(m_wstrEtcFloder + L"lastUpdateDone",L"0");  
+		FileOperator::WriteAllText(updateHelper.GetEtcDir() + L"lastUpdateDone",L"0");  
 
 		//【版本 v2.1.11 做特殊的更新处理】
 		wstring strLastExe = L"";
@@ -192,11 +170,15 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 			}
 		}
 
-
 		UpdateProgressUI(5, wstring( L"读取更新项目内容，请耐心等待 ...").c_str());
+
 		//读取更新文件得到所有待校验的文件信息
 		vector<UpdateItem> updateItems;
-		GetUpdateItem(updateItems);
+		if(!updateHelper.GetUpdateItem(updateHelper.GetEtcDir() + L"update", updateItems))			
+		{
+			UpdateProgressUI(100, wstring( L"获取更新内容失败...").c_str());
+			return false;
+		}
 
 		//逐个对比，不存在则下载创建，存在则重命名，下载替换
 
@@ -208,7 +190,7 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 			
 			//计算本地md5 
 			string md5;
-			GetFileMd5(taget, md5);
+			updateHelper.GetFileMd5(taget, md5);
 
 			if(md5 != iter->md5)
 			{
@@ -220,7 +202,7 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 		UpdateProgressUI(30, wstring( L"正在下载需要更新的项 ...").c_str());
 		//下载项到tempDir中
 
-		wstring strTempDir = m_wstrEtcFloder + L"tempDir\\" ;
+		wstring strTempDir = updateHelper.GetEtcDir() + L"tempDir\\" ;
 
 		int nCount = 0;
 		for(auto iter = updateList.begin(); iter != updateList.end(); iter++)
@@ -229,7 +211,7 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 			UpdateProgressUI(35+nCount, (wstring( L"正在下载") + iter->fileName).c_str());
 
 			//先确保 临时目录 中iter->local 目录存在
-			if(!MakeSureRelativeLocalExist(strTempDir, iter->local))
+			if(!updateHelper.MakeSureRelativeLocalExist(strTempDir, iter->local))
 			{
 				UpdateProgressUI(100, wstring( L"创建临时目录失败，下载组件失败") .c_str());
 				return false;
@@ -238,7 +220,19 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 			//下载到相对位置 iter->local 中
 			wstring strTarget = strTempDir + iter->local + iter->fileName;
 
+			bool fail = false;
 			if(!CDownloader::DownloadFile(iter->link, strTarget))
+				fail = true;
+			else
+			{
+				//计算下载下来的文件的 md5
+				string md5;
+				updateHelper.GetFileMd5(strTarget, md5);
+				if(md5 != iter->md5)
+					fail = true;
+			}
+
+			if(fail)
 			{
 				_MessageBox(NULL, L"无法下载待更新文件，更新失败", L"提示", MB_OK|MB_ICONWARNING);
 				UpdateProgressUI(100, wstring( L"下载组件失败") .c_str());
@@ -261,8 +255,13 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 		//将下载的到tempDir的文件复制到目标位置
 		for(auto iter = updateList.begin(); iter != updateList.end(); iter++)
 		{
+			if(!updateHelper.MakeSureRelativeLocalExist(FileHelper::GetCurrentDirectoryStr(), iter->local))
+			{
+				UpdateProgressUI(100, wstring( L"创建目录失败，下载组件失败") .c_str());
+				return false;
+			}
 			wstring target = FileHelper::GetCurrentDirectoryStr() + iter->local + iter->fileName;
-			wstring targetTemp =  m_wstrEtcFloder + L"tempDir\\" + iter->fileName;
+			wstring targetTemp =  updateHelper.GetEtcDir() + L"tempDir\\" + iter->fileName;
 			CopyFileW(targetTemp.c_str(), target.c_str(), FALSE);
 		}
 
@@ -272,7 +271,7 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 		{
 			strContent += *iterOld + L"\n";
 		}
-		FileOperator::WriteAllText(m_wstrEtcFloder + L"fileToDelete",strContent);  
+		FileOperator::WriteAllText(updateHelper.GetEtcDir() + L"fileToDelete",strContent);  
 
 
 		//【版本 v2.1.11 做特殊的更新处理】//上面对应的部分为下载，为了更大概率地实现全部替换，先所有内容下载完后，再在此替换exe文件
@@ -291,7 +290,7 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 		}
 
 		//写入 lastUpdateDone 文件， 1 表示已完成最后一次的更新
-		FileOperator::WriteAllText(m_wstrEtcFloder + L"lastUpdateDone",L"1"); 
+		FileOperator::WriteAllText(updateHelper.GetEtcDir() + L"lastUpdateDone",L"1"); 
 	}
 	
 	UpdateProgressUI(100, wstring( L"完成组件下载") .c_str());
@@ -299,76 +298,18 @@ bool CCheckIntegrityThread::CheckUpdateFile()
 	return true;
 }
 
-//确保相对路径目录存在
-bool CCheckIntegrityThread::MakeSureRelativeLocalExist(wstring basePath, wstring relativePath)
-{
-
-	return true;
-}
-
-//获得更新文件内容
-bool CCheckIntegrityThread::GetUpdateItem(vector<UpdateItem>& updateItems)
-{
-	updateItems.clear();
-
-	//update 文件路径
-	wstring strUpdate = m_wstrEtcFloder + L"update" ;
-
-	string strUpdatePath = S_CW2A(SStringW(strUpdate.c_str()));
-	if(FileHelper::CheckFileExist(strUpdate))
-	{
-		//读取XML文件
-		tinyxml2::XMLDocument doc;
-		doc.LoadFile(strUpdatePath.c_str());
-		if(doc.Error())
-		{
-			return false;
-		}
-
-		//根
-		XMLElement *pRoot = doc.RootElement();
-		SASSERT(pRoot);
-
-		XMLElement* ele = pRoot->FirstChildElement();
-		while(ele)
-		{
-			UpdateItem item;
-			const char* szName = ele->Attribute("name");
-			const char* szLink = ele->Attribute("link");
-			const char* szLocal = ele->Attribute("local");
-			const char* szMd5 = ele->Attribute("md5");
-			
-			wstring wStrName = S_CA2W(SStringA(szName),CP_UTF8);
-			wstring wStrLink = S_CA2W(SStringA(szLink),CP_UTF8);
-			wstring wStrLocal = S_CA2W(SStringA(szLocal),CP_UTF8);
-			string strMd5 = szMd5;
-
-			item.fileName = wStrName;
-			item.link = wStrLink;
-			item.local = wStrLocal; 
-			item.md5 = strMd5;
-
-			updateItems.push_back(item);
-
-			//下一兄弟结点
-			ele = ele->NextSiblingElement();
-		}
-	}
-
-
-
-	return true;
-}
-
 //下载更新文件然后标记是否需要更新
 bool CCheckIntegrityThread::DownloadUpdateFileAndMark()
 {
+	//更新项文件自检
+	updateHelper.UpdateItemSelfCheck();
+
 	//写入 needUpdate 文件， 1 表示需要，0 表示不需要
-	wstring strTemp = m_wstrEtcFloder + FILE_NAME_NEED_UPDATE ;
+	wstring strTemp = updateHelper.GetEtcDir() + FILE_NAME_NEED_UPDATE ;
 	FileOperator::WriteAllText(strTemp,L"0");  //先写入一个不需要更新updateItem标记
 
 	//保证temp文件夹存在
-	wstring strTempDir = m_wstrEtcFloder + L"tempDir";
+	wstring strTempDir = updateHelper.GetEtcDir() + L"tempDir";
 		
 	// 先保证temp文件目录存在
 	if(!FileHelper::CheckFolderExist(strTempDir))
@@ -383,7 +324,7 @@ bool CCheckIntegrityThread::DownloadUpdateFileAndMark()
 	}
 
 	//临时下载的update文件路径
-	wstring strTempUpdate = m_wstrEtcFloder + L"tempDir\\update.xml" ;
+	wstring strTempUpdate = updateHelper.GetEtcDir() + L"tempDir\\update.xml" ;
 	if(!CDownloader::DownloadFile(LINK_UPDATE_ITEM_FILE, strTempUpdate))
 	{
 		//不提示失败，不然每次不联网启动都提示这一句
@@ -391,9 +332,14 @@ bool CCheckIntegrityThread::DownloadUpdateFileAndMark()
 		return false;
 	}
 
+	if(!updateHelper.IsValidXml(strTempUpdate))
+	{
+		return false;
+	}
+
 	//计算2个update文件的md5,不同则表明需要后续操作需要检测所有update item的文件是否需要更新
 
-	wstring strUpdate = m_wstrEtcFloder + L"update" ;
+	wstring strUpdate = updateHelper.GetEtcDir() + L"update" ;
 	if(!FileHelper::CheckFileExist(strUpdate)) 
 	{
 		//文件不存在
@@ -404,15 +350,15 @@ bool CCheckIntegrityThread::DownloadUpdateFileAndMark()
 		//比较2个文件md5
 		string md5Now;
 		string md5Temp;
-		bool bRet = GetFileMd5(strUpdate, md5Now);
-		bRet = GetFileMd5(strTempUpdate, md5Temp);
+		bool bRet = updateHelper.GetFileMd5(strUpdate, md5Now);
+		bRet = updateHelper.GetFileMd5(strTempUpdate, md5Temp);
 		bool bNeedToUpdate = false;
 
 		if(md5Now == md5Temp)
 		{
 			//和上次文件相同之外，还必须读取 lastUpdateDone 里面的状态，进行确认是否真的完成更新
 			//因为有可能 最后一次更新了 1半 断网导致更新中断
-			wstring strTemp = m_wstrEtcFloder + L"lastUpdateDone" ;
+			wstring strTemp = updateHelper.GetEtcDir() + L"lastUpdateDone" ;
 			wstring buffer;
 			if(!FileOperator::ReadAllText(strTemp, buffer))
 				bNeedToUpdate = true;   //找不到lastUpdateDone 文件，认为需要更新
@@ -449,7 +395,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 
 	bool bFileExist =  FileHelper::CheckFileExist(strFfmpeg);
 	string strMd5;
-	bool bRet = GetFileMd5(strFfmpeg,strMd5);
+	bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
 	if(!bFileExist || !bRet || (bFileExist && strMd5 != "949ed6af96c53ba9e1477ded35281db5")) //检测
 	{
 		UpdateProgressUI(5, wstring(L"检测 "+strDir + L"是否存在...").c_str());
@@ -498,7 +444,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 
 		if(bTrySuceed)//即使成功，也再坚持一遍
 		{
-			bool bRet = GetFileMd5(strFfmpeg,strMd5);
+			bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
 			if(!bRet || strMd5 != "949ed6af96c53ba9e1477ded35281db5")
 				bTrySuceed = false;
 		}
@@ -519,6 +465,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			//下载 ffmpeg.ext.zip
 			if( CDownloader::DownloadFile(strLinkExt, strFileExt, &m_hCheckWnd))
 			{
+				//文件下载限制：{"success":false,"message":"该文件已超过当日下载流量(200MB)的下载限制"}
 				//下载 ffmpeg.1.zip - ffmpeg.4.zip 4个文件
 				WCHAR szBuffer[MAX_BUFFER_SIZE/2];
 				for(auto i=1; i<=4 ;i++)

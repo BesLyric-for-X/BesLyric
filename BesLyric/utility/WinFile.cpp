@@ -659,3 +659,62 @@ void FileHelper::SplitPath(const wstring& strPathName, OUT wstring *pstrDrive, O
 		*pstrExt = _strExt;
 }
 
+//判断文件夹是否存在
+bool FileHelper::IsFloderExistW(const wstring &strPath)
+{
+	wstring strDirPath = strPath;
+	if (strDirPath.find_last_of(L'\\') == strDirPath.size()-1)
+		strDirPath = strDirPath.substr(0, strDirPath.size() - 1);
+
+	WIN32_FIND_DATAW  wfd;
+	bool rValue = false;
+	HANDLE hFind = FindFirstFileW(strDirPath.c_str(), &wfd);
+	if ((hFind != INVALID_HANDLE_VALUE) && (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		rValue = true;
+	}
+	FindClose(hFind);
+
+    if (strPath == L"D:\\" || strPath == L"D://") // D:\\用上述方法无法判断，再此做特殊处理
+    {
+        return PathFileExistsW(strPath.c_str()) ? true : false;
+    }
+
+	return rValue;
+}
+
+//确保目标目录存在
+bool FileHelper::MakeSureTargetDirExist(const wstring& dir)
+{
+	if (IsFloderExistW(dir))
+		return true;
+
+	//去除最后可能存在的 \\ 
+	wstring strDirPath = dir;
+	if (strDirPath.find_last_of(L'\\') == strDirPath.size() - 1)
+		strDirPath = strDirPath.substr(0, strDirPath.size() - 1);
+
+	//收集需要创建的路径
+	vector<wstring> pathsToCreate;
+	pathsToCreate.push_back(strDirPath);
+	do {
+		wstring::size_type pos = strDirPath.find_last_of(L'\\');
+		if (pos == wstring::npos)
+			break;
+
+		strDirPath = strDirPath.substr(0, pos);
+		if (IsFloderExistW(strDirPath))
+			break;
+		else
+			pathsToCreate.push_back(strDirPath);
+	} while (true);
+
+	//逐个创建目录
+	while (!pathsToCreate.empty())
+	{
+		_wmkdir(pathsToCreate.back().c_str());
+		pathsToCreate.pop_back();
+	}
+
+	return true;
+}

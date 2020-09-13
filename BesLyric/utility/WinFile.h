@@ -140,6 +140,12 @@ public:
 	*				也可以不是，  如 ..\..\test\test.pan
 	*/
 	static void SplitPath(const wstring& strPathName, OUT wstring *strDrive = NULL, OUT wstring *strDirectory = NULL, OUT wstring* strName = NULL, OUT wstring* strExt = NULL);
+
+	//判断文件夹是否存在
+	static bool IsFloderExistW(const wstring &strPath);
+
+	//确保目标目录存在
+	static bool MakeSureTargetDirExist(const wstring& dir);
 };
 
   

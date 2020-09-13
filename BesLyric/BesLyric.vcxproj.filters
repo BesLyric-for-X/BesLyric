@@ -104,6 +104,9 @@
     <None Include="uires\xml\dlg_processing_tip.xml">
       <Filter>SoUI Resouece\xml</Filter>
     </None>
+    <None Include="..\versionLog.txt" />
+    <None Include="..\README.md" />
+    <None Include="..\Develop.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BesLyric.cpp">
@@ -206,6 +209,9 @@
       <Filter>Header Files\lib\md5</Filter>
     </ClCompile>
     <ClCompile Include="entity\LoadAndCheckNcmIDThread.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="entity\UpdateHelper.cpp">
       <Filter>Source Files\entity</Filter>
     </ClCompile>
   </ItemGroup>
@@ -378,6 +384,9 @@
       <Filter>Header Files\lib\md5</Filter>
     </ClInclude>
     <ClInclude Include="entity\LoadAndCheckNcmIDThread.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\UpdateHelper.h">
       <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>

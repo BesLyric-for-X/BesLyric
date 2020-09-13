@@ -87,6 +87,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\Develop.md" />
+    <None Include="..\README.md" />
+    <None Include="..\versionLog.txt" />
     <None Include="LICENSE.txt" />
     <None Include="res\soui_res.rc2" />
     <None Include="uires\image\soui.ico" />
@@ -153,6 +156,7 @@
     <ClCompile Include="entity\SearchIDThread.cpp" />
     <ClCompile Include="entity\SearchLyricThread.cpp" />
     <ClCompile Include="entity\SendLoginThread.cpp" />
+    <ClCompile Include="entity\UpdateHelper.cpp" />
     <ClCompile Include="Globle.cpp" />
     <ClCompile Include="lib\md5\md5.cpp" />
     <ClCompile Include="lib\xml\tinyxml2.cpp" />
@@ -201,6 +205,7 @@
     <ClInclude Include="entity\SearchIDThread.h" />
     <ClInclude Include="entity\SearchLyricThread.h" />
     <ClInclude Include="entity\SendLoginThread.h" />
+    <ClInclude Include="entity\UpdateHelper.h" />
     <ClInclude Include="Globle.h" />
     <ClInclude Include="lib\json\allocator.h" />
     <ClInclude Include="lib\json\assertions.h" />
