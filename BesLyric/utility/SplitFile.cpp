@@ -117,7 +117,6 @@ bool CSplitFile::MergeFile(wstring strSplitFilePath, wstring strFileName, wstrin
 	return true;
 }
 
-
 bool CSplitFile::GetMaxSplitedCount(wstring strSplitFilePath,wstring strFileName, int &nMaxCount)
 {
 	//获得目录下所有被分割的文件名 以 strFileName 为前缀
@@ -199,16 +198,14 @@ bool CSplitFile::MergeToOneFile(wstring strMergedFilePathName,wstring  strTarget
 	if(ret!= RET_SUCCEEDED || pFile == NULL)
 		return false;
 	
-	string strTargetFileNamePreA = S_CW2A(SStringW(strTargetFileNamePreW.c_str()));
-
 	for(int i=1; i <= nMaxCount; i++)
 	{
 		//
-		char szBuffer[MAX_BUFFER_SIZE];
-		string strFileNameA = strTargetFileNamePreA+ "." + _itoa(i, szBuffer, 10) + SERVER_FILE_EXTENTION_A;
+		wchar_t szBuffer[MAX_BUFFER_SIZE];
+		wstring strFileNameW = strTargetFileNamePreW+ L"." + _itow(i, szBuffer, 10) + SERVER_FILE_EXTENTION_W;
 		
 		FILE *pFileSplited;
-		ret = fopen_s(& pFileSplited, strFileNameA.c_str(), "rb");
+		ret = _wfopen_s(&pFileSplited, strFileNameW.c_str(), L"rb");
 		
 		if(ret!= RET_SUCCEEDED || pFileSplited == NULL)
 			return false;

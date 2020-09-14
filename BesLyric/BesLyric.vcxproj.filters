@@ -214,6 +214,9 @@
     <ClCompile Include="entity\UpdateHelper.cpp">
       <Filter>Source Files\entity</Filter>
     </ClCompile>
+    <ClCompile Include="entity\LinkHelper.cpp">
+      <Filter>Source Files\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BesLyric.rc">
@@ -387,6 +390,9 @@
       <Filter>Header Files\entity</Filter>
     </ClInclude>
     <ClInclude Include="entity\UpdateHelper.h">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="entity\LinkHelper.h">
       <Filter>Header Files\entity</Filter>
     </ClInclude>
   </ItemGroup>

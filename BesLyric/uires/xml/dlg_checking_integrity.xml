@@ -22,7 +22,7 @@ translucent="0"
 		  <progress name="progress_check_integrity" pos="15,[15,-10,@15" font="adding:-5" value="0" min="0" max="100" showPercent="0"/>
 		 <text pos="15,[15,@180,@30">如果下载太慢，可以选择：</text> 
 		  <link pos="[5,{5" href="https://www.cnblogs.com/BensonLaur/p/6262565.html#title_4_6" class="cls_btn_weblink">手动下载 ffmpeg.exe</link>
-      <text pos="15,[5,-15,@30">温馨提示：ffmpeg.exe 不是必须的，可以需要时再根据提示下载</text>
+      <text pos="15,[5,-15,@30">温馨提示:程序播放 mp3 时需用到 ffmpeg.exe</text>
     <imgbtn pos="-130,[30,@130,@30"  name="btn_cancel_intigrity_check" skin="app_button" class="normalbtn">后台运行/关闭</imgbtn>
 		  
 	</window>

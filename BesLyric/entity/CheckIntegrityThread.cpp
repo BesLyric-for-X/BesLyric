@@ -9,6 +9,7 @@
 #include "..\utility\Downloader.h"
 #include "..\utility\SplitFile.h"
 #include "..\DlgCheckIntegrity.h"
+#include "LinkHelper.h"
 
 #include <fstream> 
 using namespace std;
@@ -76,6 +77,9 @@ DWORD WINAPI CCheckIntegrityThread::ProcChecking(LPVOID pParam)
 	
 	::WaitForSingleObject(pThread->m_EventWndInitDone, INFINITE); //等待窗口准备完毕，才能进行接下来的更新过程
 
+	//从服务器更新链接数据
+	LinkHelper::getSingleton().UpdateLinkFromServer();
+
 	pThread->CheckUpdateFile();	//检查所有的dll是否为最新
 	pThread->CheckFFmpeg();		//检测 FFmpeg.exe 是否已存在
 
@@ -130,7 +134,7 @@ bool CCheckIntegrityThread::PreCheckWhetherNeedToShowCheckDialog()
 		bool bFileExist =  FileHelper::CheckFileExist(strFfmpeg);
 		string strMd5;
 		bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
-		if(!bFileExist || !bRet || (bFileExist && strMd5 != "949ed6af96c53ba9e1477ded35281db5")) //检测发现不一致，待会需要弹框
+		if(!bFileExist || !bRet || (bFileExist && strMd5 != MD5_FFMPEG)) //检测发现不一致，待会需要弹框
 			bNeed = true;
 	}	
 	return bNeed;
@@ -396,7 +400,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 	bool bFileExist =  FileHelper::CheckFileExist(strFfmpeg);
 	string strMd5;
 	bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
-	if(!bFileExist || !bRet || (bFileExist && strMd5 != "949ed6af96c53ba9e1477ded35281db5")) //检测
+	if(!bFileExist || !bRet || (bFileExist && strMd5 != MD5_FFMPEG)) //检测
 	{
 		UpdateProgressUI(5, wstring(L"检测 "+strDir + L"是否存在...").c_str());
 
@@ -416,37 +420,23 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			}
 		}
 		
-		bool bTrySuceed = true;
-		UpdateProgressUI(60, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try github)").c_str());
-		bool bTry1 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_1, strFfmpeg, &m_hCheckWnd);
-		if(!bTry1)
-		{
-			UpdateProgressUI(61, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try gitee)").c_str());
-			bool bTry2 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_2, strFfmpeg, &m_hCheckWnd);
-			if(!bTry2)
-			{
-				UpdateProgressUI(62, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try sourceforge)").c_str());
-				bool bTry3 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_3, strFfmpeg, &m_hCheckWnd);
-				if(!bTry3)
-				{
-					UpdateProgressUI(63, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try gitlab)").c_str());
-					bool bTry4 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_4, strFfmpeg, &m_hCheckWnd);
-					if(!bTry4)
-					{
-						UpdateProgressUI(64, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ..(try bitbucket)").c_str());
-						bool bTry5 = CDownloader::DownloadFile(LINK_DOWNLOAD_FFMPEG_5, strFfmpeg, &m_hCheckWnd);
-						if(!bTry5)
-							bTrySuceed = false;
-					}
-				}
-			}
-		}
+		vector<NamedLink> links = LinkHelper::getSingleton().GetAllLinksFFmpeg();
 
-		if(bTrySuceed)//即使成功，也再坚持一遍
+		bool bTrySuceed = false;
+		for(size_t i = 0; i < links.size(); ++i)
 		{
+			UpdateProgressUI(60 + i, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try "+links[i].name +L")").c_str());
+			if(!CDownloader::DownloadFile( links[i].link, strFfmpeg, &m_hCheckWnd))
+				continue;
+			
 			bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
-			if(!bRet || strMd5 != "949ed6af96c53ba9e1477ded35281db5")
-				bTrySuceed = false;
+			if(!bRet || strMd5 != MD5_FFMPEG)
+				continue;
+			else
+			{
+				bTrySuceed = true;
+				break;
+			}
 		}
 
 		if(!bTrySuceed)//下载不成功
@@ -504,7 +494,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 				strTip+= wstring(L"2、如果上述无法解决，尝试自己下载ffmpeg.exe 文件。点击“确定”后，点击“检测程序完整性”下的“手动下载ffmpeg.exe”链接\\n");
 			
 				strTip+= wstring(L"\\n");
-				strTip+= wstring(L"温馨提示:下载ffmpeg不是必须的,只在程序无法播放部分mp3时才需用到，可先忽略");
+				strTip+= wstring(L"温馨提示:程序播放 mp3 时需用到 ffmpeg.exe");
 
 				_MessageBox(NULL,strTip.c_str(), L"完整性提示", MB_OK|MB_ICONWARNING);
 				return false;
@@ -533,7 +523,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 					strTip+= wstring(L"1、先尝试：保证程序能正常访问网络,然后重新在“设置”页面进行“完整性检测”\\n");
 					strTip+= wstring(L"2、如果上述无法解决，尝试自己下载ffmpeg.exe 文件。点击“确定”后，点击“检测程序完整性”下的“手动下载ffmpeg.exe”链接\\n");
 					strTip+= wstring(L"\\n");
-					strTip+= wstring(L"温馨提示:下载ffmpeg不是必须的,只在程序无法播放部分mp3时才需用到，可先忽略");
+				    strTip+= wstring(L"温馨提示:程序播放 mp3 时需用到 ffmpeg.exe");
 					_MessageBox(NULL,strTip.c_str(), L"提示", MB_OK|MB_ICONWARNING);
 					bFail = true;
 				}
