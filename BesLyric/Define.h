@@ -198,9 +198,8 @@ static const wstring SERVER_FILE_EXTENTION_W = L".zip";							//定义上传到 cnblo
 static const string SERVER_FILE_EXTENTION_A = ".zip";	
 
 static const wstring LINK_SERVER_PATH = L"http://files.cnblogs.com/files/BensonLaur/";		//链接，服务器地址
+static const wstring LINK_SERVER_PATH_2 = L"http://files.cnblogs.com/files/benson2/";		//链接，服务器地址2(新的 42M 的 ffmpeg所在服务器) 
 
-
-//static const wstring LINK_UPDATE_ITEM_FILE = L"http://ovfwclhwl.bkt.clouddn.com/update";				//链接，更新项文件(七牛云有时会缓存过去的文件)
 
 #ifndef _DEBUG
 static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/BensonLaur/update.xml";	//链接，更新项文件
@@ -208,5 +207,4 @@ static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/B
 static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/BensonLaur/update-test.xml";	//链接，更新项文件(测试用)
 #endif
 
-static const string MD5_FFMPEG = "949ed6af96c53ba9e1477ded35281db5";
 

@@ -50,8 +50,6 @@ bool CSplitFile::SplitFile(wstring strSrcFile, wstring strToPath, wstring strToN
 	
 	if(ret!= RET_SUCCEEDED || pFile == NULL)
 		return false;
-	
-	string strTargetFileNamePreA = S_CW2A(SStringW(strTargetFileNamePre.c_str()));
 
 	char* pBlockData;
 	pBlockData = new char[nBlockSize];
@@ -60,11 +58,11 @@ bool CSplitFile::SplitFile(wstring strSrcFile, wstring strToPath, wstring strToN
 	int nSize ;
 	while( (nSize = fread(pBlockData, sizeof(char),nBlockSize,  pFile)))
 	{
-		char szBuffer[MAX_BUFFER_SIZE];
-		string strFileNameA = strTargetFileNamePreA+ "." + _itoa(nCount++, szBuffer, 10) + SERVER_FILE_EXTENTION_A;
+		wchar_t szBuffer[MAX_BUFFER_SIZE];
+		wstring strFileName = strTargetFileNamePre+ L"." + _itow(nCount++, szBuffer, 10) + SERVER_FILE_EXTENTION_W;
 		
 		FILE *pFileTarget;
-		ret = fopen_s(& pFileTarget, strFileNameA.c_str(), "wb");
+		ret = _wfopen_s(& pFileTarget, strFileName.c_str(), L"wb");
 		
 		if(ret!= RET_SUCCEEDED || pFileTarget == NULL)
 			return false;

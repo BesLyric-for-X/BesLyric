@@ -142,7 +142,7 @@ bool UpdateHelper::MakeSureRelativeLocalExist(const wstring& basePath, const wst
 }
 
 //获取文件的 md5 码
-bool UpdateHelper::GetFileMd5(wstring filePath, string& strMd5)
+bool UpdateHelper::GetFileMd5(const wstring& filePath, string& strMd5)
 {
 	//不存在文件则返回
 	if(!FileHelper::CheckFileExist(filePath))
@@ -155,4 +155,20 @@ bool UpdateHelper::GetFileMd5(wstring filePath, string& strMd5)
 	strMd5 = md5Str;
 
 	return true;
+}
+
+
+//判断文件md5是否是有效的 ffmpeg 的 md5
+bool UpdateHelper::IsValidFFmpegMd5(const string& strMd5)
+{
+	// 2.3.0 后的新版本 ffmpeg 为兼容 xp 的 ffmpeg,为了旧用户不受影响（重新下载）
+	//先判断是否是旧的 ffmpeg 的 MD5, 再判断新的 ffmpeg 的 MD5
+
+	const string MD5_FFMPEG_old = "949ed6af96c53ba9e1477ded35281db5";
+	const string MD5_FFMPEG_new = "979fc6e7ff2c74108353c114bf86e2bb";
+
+	if( MD5_FFMPEG_old == strMd5)
+		return true;
+
+	return MD5_FFMPEG_new == strMd5;
 }

@@ -34,5 +34,8 @@ public:
 	bool MakeSureRelativeLocalExist(const wstring& basePath, const wstring& relativePath);
 	
 	//获取文件的 md5 码
-	static bool GetFileMd5(wstring filePath, string& strMd5);
+	static bool GetFileMd5(const wstring& filePath, string& strMd5);
+
+	//判断文件md5是否是有效的 ffmpeg 的 md5
+	bool IsValidFFmpegMd5(const string& strMd5);
 };

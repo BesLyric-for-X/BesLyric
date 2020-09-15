@@ -134,7 +134,8 @@ bool CCheckIntegrityThread::PreCheckWhetherNeedToShowCheckDialog()
 		bool bFileExist =  FileHelper::CheckFileExist(strFfmpeg);
 		string strMd5;
 		bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
-		if(!bFileExist || !bRet || (bFileExist && strMd5 != MD5_FFMPEG)) //检测发现不一致，待会需要弹框
+		if(!bFileExist || !bRet || 
+			(bFileExist && !updateHelper.IsValidFFmpegMd5(strMd5))) //检测发现不一致，待会需要弹框
 			bNeed = true;
 	}	
 	return bNeed;
@@ -400,7 +401,8 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 	bool bFileExist =  FileHelper::CheckFileExist(strFfmpeg);
 	string strMd5;
 	bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
-	if(!bFileExist || !bRet || (bFileExist && strMd5 != MD5_FFMPEG)) //检测
+	if(!bFileExist || !bRet 
+		|| (bFileExist && !updateHelper.IsValidFFmpegMd5(strMd5))) //检测
 	{
 		UpdateProgressUI(5, wstring(L"检测 "+strDir + L"是否存在...").c_str());
 
@@ -425,12 +427,12 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 		bool bTrySuceed = false;
 		for(size_t i = 0; i < links.size(); ++i)
 		{
-			UpdateProgressUI(60 + i, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try "+links[i].name +L")").c_str());
+			UpdateProgressUI(60 + i, wstring( L"下载转换器 ffmpeg(42.41MB),请耐心等待 ... (try "+links[i].name +L")").c_str());
 			if(!CDownloader::DownloadFile( links[i].link, strFfmpeg, &m_hCheckWnd))
 				continue;
 			
 			bool bRet = updateHelper.GetFileMd5(strFfmpeg,strMd5);
-			if(!bRet || strMd5 != MD5_FFMPEG)
+			if(!bRet || !updateHelper.IsValidFFmpegMd5(strMd5))
 				continue;
 			else
 			{
@@ -441,7 +443,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 
 		if(!bTrySuceed)//下载不成功
 		{
-			UpdateProgressUI(65, wstring( L"下载转换器 ffmpeg(34.84 MB)，请耐心等待 ...(try final)").c_str());
+			UpdateProgressUI(65, wstring( L"下载转换器 ffmpeg(42.41 MB)，请耐心等待 ...(try final)").c_str());
 			bool bHaveDownload = true;
 
 			//备用下载方案
@@ -450,21 +452,24 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			UpdateProgressUI(10,wstring( L"正在下载 "+ strNameExt +L" ...").c_str());
 
 			wstring strFileExt = strDir +L"\\"+ strNameExt;
-			wstring strLinkExt = LINK_SERVER_PATH + strNameExt;
+			wstring strLinkExt = LINK_SERVER_PATH_2 + strNameExt;
+			int nCountSplit = 11;
 
 			//下载 ffmpeg.ext.zip
 			if( CDownloader::DownloadFile(strLinkExt, strFileExt, &m_hCheckWnd))
 			{
 				//文件下载限制：{"success":false,"message":"该文件已超过当日下载流量(200MB)的下载限制"}
-				//下载 ffmpeg.1.zip - ffmpeg.4.zip 4个文件
+				//下载 ffmpeg.1.zip - ffmpeg.11.zip 11个文件
 				WCHAR szBuffer[MAX_BUFFER_SIZE/2];
-				for(auto i=1; i<=4 ;i++)
+				WCHAR szBuffer2[MAX_BUFFER_SIZE/2];
+				for(auto i=1; i<= nCountSplit ;i++)
 				{
 					wstring strNameSplited = wstring(L"ffmpeg.") + _itow(i,szBuffer, 10) + SERVER_FILE_EXTENTION_W;
-					UpdateProgressUI(10 + i*(90-10)/4, wstring(L"正在下载 "+strNameSplited +L"...  ("+_itow(i,szBuffer, 10)+L"/4, 共 34.84 MB)").c_str());
+					UpdateProgressUI(10 + i*(90-10)/nCountSplit, wstring(L"正在下载 "+strNameSplited 
+						+ L"... ("+_itow(i,szBuffer, 10)+ L"/" +_itow(nCountSplit,szBuffer2, 10) + L", 共 42.41 MB)").c_str());
 
 					wstring strFileSplited = strDir +L"\\"+ strNameSplited;
-					wstring strLinkSplited = LINK_SERVER_PATH + strNameSplited;
+					wstring strLinkSplited = LINK_SERVER_PATH_2 + strNameSplited;
 
 					bRet = CDownloader::DownloadFile(strLinkSplited, strFileSplited, &m_hCheckWnd);
 					if(false == bRet)
@@ -507,8 +512,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 				bool bFail = false;
 				if(!bRet)
 				{
-					//到此为止，用户已经等待了5个下载点了，为了结果
-
+					//到此为止，用户已经等待了多个下载点了，已经没有结果了
 
 					UpdateProgressUI(100, L"下载失败！可尝试在“设置”页面重新点击“完整性检测”");
 
@@ -534,7 +538,7 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 
 				_wremove(strFileExt.c_str());
 				wchar_t szBuffer[255];
-				for(auto i=1; i<=4 ;i++)
+				for(auto i=1; i<= nCountSplit ;i++)
 				{
 					wstring strNameSplited = wstring(L"ffmpeg.") + _itow(i,szBuffer, 10) + SERVER_FILE_EXTENTION_W;
 					wstring strFileSplited = strDir +L"\\"+ strNameSplited;

@@ -37,9 +37,9 @@ void CMainDlg::test()
 {
 	//just for test
 
-	//CSplitFile::SplitFile(L"C:\\Users\\BensonLaur\\Desktop\\ff.exe", L"C:\\Users\\BensonLaur\\Desktop",L"ff", 10 * 1024 * 1024);
+	//CSplitFile::SplitFile(L"C:\\Users\\Administrator\\Desktop\\3.4.1\\ffmpeg.exe", L"C:\\Users\\Administrator\\Desktop\\3.4.1",L"ff", 4 * 1024 * 1024);
 
-	//CSplitFile::MergeFile(L"C:\\Users\\BensonLaur\\Desktop",L"ff", L"C:\\Users\\BensonLaur\\Desktop");
+	//CSplitFile::MergeFile(L"C:\\Users\\Administrator\\Desktop\\3.4.1",L"ff", L"C:\\Users\\Administrator\\Desktop\\3.4.1");
 	
 	//CDownloader::DownloadFile(L"https://github.com/BensonLaur/image-storage/raw/master/General Resource/download/ffmpeg.exe", 
 	//	L"C:\\Users\\BensonLaur\\Desktop\\ff.exe");
@@ -73,6 +73,7 @@ void CMainDlg::test()
 
 CMainDlg::CMainDlg() : SHostWnd(_T("LAYOUT:XML_MAINWND"))
 {
+	//test();
 	m_bLayoutInited = FALSE;
 	
 	m_pageMaking = NULL;

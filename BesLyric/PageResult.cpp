@@ -477,7 +477,8 @@ DWORD WINAPI CPageResult::ThreadConvertProc(LPVOID pParam)
 	bool bFileExist =  FileHelper::CheckFileExist(strFfmpegPath);
 	string strMd5;
 	bool bRet = UpdateHelper::GetFileMd5(strFfmpegPath,strMd5);
-	if(!bFileExist || !bRet || (bFileExist && strMd5 != MD5_FFMPEG)) //检测
+	if(!bFileExist || !bRet || 
+		(bFileExist && !UpdateHelper().IsValidFFmpegMd5(strMd5))) //检测
 	{
 		_MessageBox(NULL, (L"文件不存在或不完整：\\n"+strFfmpegPath + L"\\n\\n试图转格式失败\\n请尝试：\
 			\\n1、在【设置】页面的【升级与检测】下，点击按钮【完整性检测】"

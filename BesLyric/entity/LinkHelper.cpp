@@ -23,8 +23,7 @@ bool LinkHelper::UpdateLinkFromServer()
 	//从服务器获取更新链接
 	vector<wstring> candidates;
 	candidates.push_back(L"https://files.cnblogs.com/files/BensonLaur/Beslyric-Link.xml");
-	candidates.push_back(L"https://files.cnblogs.com/files/BensonLaur/Beslyric-Link.xml");
-	candidates.push_back(L"https://files.cnblogs.com/files/BensonLaur/Beslyric-Link.xml");
+	candidates.push_back(L"http://bensonlaur.com/files/beslyric/Beslyric-Link.xml");
 	
 	UpdateHelper updateHelper;
 	wstring etcDir = updateHelper.GetEtcDir();
@@ -75,9 +74,8 @@ vector<NamedLink> LinkHelper::GetLinksFFmpegRaw()
 {
 	if(linksFFmpegRaw.empty())
 	{
-		linksFFmpegRaw.push_back(NamedLink(L"gitlab",L"https://gitlab.com/BensonLaur/resource-provider-gitlab/raw/master/beslyric/ffmpeg.exe"));
-		linksFFmpegRaw.push_back(NamedLink(L"sourceforge",L"https://master.dl.sourceforge.net/project/resource-provider-sourceforge/Beslyric/ffmpeg.exe"));
-		linksFFmpegRaw.push_back(NamedLink(L"bitbucket",L"https://bitbucket.org/bensonlaur/resource-provider-bitbucket/raw/1ee69f772fd4819f1b39d953fbf3220c5606b3c8/beslyric/ffmpeg.exe"));//（20202913测试较慢）
+		linksFFmpegRaw.push_back(NamedLink(L"gitlab",L"https://gitlab.com/BensonLaur/resource-provider-gitlab/-/raw/master/beslyric/ffmpeg-3.4.1.exe"));
+		linksFFmpegRaw.push_back(NamedLink(L"bitbucket",L"https://bitbucket.org/bensonlaur/resource-provider-bitbucket/raw/bcd1a44f30893427a5f78243e4548f9afbb82c9c/beslyric/ffmpeg-3.4.1.exe"));
 	}
 
 	return linksFFmpegRaw;
