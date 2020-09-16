@@ -202,6 +202,7 @@
     <ClInclude Include="entity\LyricSearcherFactory.h" />
     <ClInclude Include="entity\MusicPlayer.h" />
     <ClInclude Include="entity\NcmIDManager.h" />
+    <ClInclude Include="entity\OsInfoHelper.hpp" />
     <ClInclude Include="entity\SearcherGecimi.h" />
     <ClInclude Include="entity\SearcherNetEaseCloud.h" />
     <ClInclude Include="entity\SearchIDThread.h" />

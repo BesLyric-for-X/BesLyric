@@ -2,6 +2,7 @@
 #include "SendLoginThread.h"
 #include "Define.h"
 #include "../utility/Downloader.h"
+#include "OsInfoHelper.hpp"
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
 
@@ -114,8 +115,11 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 		}
 	}
 
+	wstring systemArch = S_CA2W(OsInfoHelper().GetOsBits().c_str()).GetBuffer(64);
+
 	//访问链接，服务端负责记录登录信息
-	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP + L"&version=beslyric-soui&vernum="+VERSION_NUMBER;
+	wstring strSendLink = LINK_SEND_LOGIN + L"?ip=" + strIP + L"&version=beslyric-soui&vernum="+VERSION_NUMBER 
+		+ L"&systemArchitecture=" + systemArch;
 	CDownloader::DownloadFile(strSendLink, strTempFile);
 }
 

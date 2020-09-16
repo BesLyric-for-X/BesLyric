@@ -17,6 +17,7 @@
 #include "entity\CheckIntegrityThread.h"
 #include "entity\FileDroper.h"
 #include "utility\Downloader.h"
+#include "entity\OsInfoHelper.hpp"
 
 //经过个人测试，音乐播放设备，在毫秒级访问时，（比如获取歌曲当前位置）会有一定的延迟，导致声音已经被设备播放，
 //但是在获取实时信息来显示时存在延迟，在此定义设备可能的延迟（单位：毫秒）
@@ -36,6 +37,9 @@ using namespace std;
 void CMainDlg::test()
 {
 	//just for test
+	
+	//wstring systemArch = S_CA2W(OsInfoHelper().GetOsBits().c_str()).GetBuffer(64);
+	//systemArch = systemArch;
 
 	//CSplitFile::SplitFile(L"C:\\Users\\Administrator\\Desktop\\3.4.1\\ffmpeg.exe", L"C:\\Users\\Administrator\\Desktop\\3.4.1",L"ff", 4 * 1024 * 1024);
 

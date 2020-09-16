@@ -395,6 +395,9 @@
     <ClInclude Include="entity\LinkHelper.h">
       <Filter>Header Files\entity</Filter>
     </ClInclude>
+    <ClInclude Include="entity\OsInfoHelper.hpp">
+      <Filter>Header Files\entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="uires\uires.idx">
