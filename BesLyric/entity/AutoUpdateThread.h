@@ -60,10 +60,10 @@ private:
 	static DWORD WINAPI ThreadProc(LPVOID pParam);
 
 	//自动更新执行函数
-	bool AutoUpdate();
+	bool AutoUpdate(const SStringW& strVersionNew);
 
 	//检测是否有更新
-	bool IfUpdateAvailable();
+	bool IfUpdateAvailable(SStringW& versionNew);
 
 
 private:

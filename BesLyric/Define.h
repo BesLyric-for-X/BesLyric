@@ -34,7 +34,7 @@ using namespace std;
 /* 宏定义 */
 #ifdef _DEBUG
 
-#define UPDATE_LOOP  0			/* 是否在启动时更新程序 */
+#define UPDATE_LOOP  1			/* 是否在启动时更新程序 */
 
 #else
 
@@ -161,7 +161,9 @@ struct UpdateItem
 	string md5;
 };
 
-
+#ifdef _DEBUG
+#define UPDATE_TEST
+#endif
 
 /* 全局变量定义 */
 /* 版本格式说明：X.Y.Z  
@@ -177,9 +179,15 @@ static const wstring  LINK_LAST_VERSION_INFO= L"http://files.cnblogs.com/files/B
 static const wstring  LINK_LAST_EXE= L"http://files.cnblogs.com/files/BensonLaur/BesLyricExe.zip";				//链接，指向最新的 EXE文件
 
 // v 2.1.11 以及以后的版本使用的链接
+#ifdef UPDATE_TEST
+static const wstring  LINK_VERSION_LOG_2= L"http://files.cnblogs.com/files/benson2/versionLog.rar";			//链接，指向版本日志文件
+static const wstring  LINK_LAST_VERSION_INFO_2= L"http://files.cnblogs.com/files/benson2/lastVersion.rar";	//链接，指向最后版本信息的文件
+static const wstring  LINK_LAST_EXE_2= L"http://files.cnblogs.com/files/benson2/BesLyricExe.rar";			//链接，指向最新的 EXE文件
+#else
 static const wstring  LINK_VERSION_LOG_2= L"http://files.cnblogs.com/files/BensonLaur/versionLog.rar";			//链接，指向版本日志文件
 static const wstring  LINK_LAST_VERSION_INFO_2= L"http://files.cnblogs.com/files/BensonLaur/lastVersion.rar";	//链接，指向最后版本信息的文件
 static const wstring  LINK_LAST_EXE_2= L"http://files.cnblogs.com/files/BensonLaur/BesLyricExe.rar";			//链接，指向最新的 EXE文件
+#endif
 
 static const wstring LINK_SEND_LOGIN = L"http://beslyric.320.io/BesBlog/beslyric/login.action";
 
@@ -201,10 +209,10 @@ static const wstring LINK_SERVER_PATH = L"http://files.cnblogs.com/files/BensonL
 static const wstring LINK_SERVER_PATH_2 = L"http://files.cnblogs.com/files/benson2/";		//链接，服务器地址2(新的 42M 的 ffmpeg所在服务器) 
 
 
-#ifndef _DEBUG
-static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/BensonLaur/update.xml";	//链接，更新项文件
-#else
+#ifdef UPDATE_TEST
 static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/BensonLaur/update-test.xml";	//链接，更新项文件(测试用)
+#else
+static const wstring LINK_UPDATE_ITEM_FILE = L"https://files.cnblogs.com/files/BensonLaur/update.xml";	//链接，更新项文件
 #endif
 
 

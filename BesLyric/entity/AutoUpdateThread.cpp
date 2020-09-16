@@ -53,8 +53,9 @@ DWORD WINAPI AutoUpdateThread::ThreadProc(LPVOID pParam)
 
 	while(pThread->m_bLoop)
 	{
-		if(pThread->m_bKeepUpdate && pThread->IfUpdateAvailable())
-			pThread->AutoUpdate();
+		SStringW strVersionNew; 
+		if(pThread->m_bKeepUpdate && pThread->IfUpdateAvailable(strVersionNew))
+			pThread->AutoUpdate(strVersionNew);
 		
 		WaitForSingleObject(pThread->m_EventStopWaiting, pThread->m_nDelay);
 		//Sleep(pThread->m_nDelay);
@@ -64,7 +65,7 @@ DWORD WINAPI AutoUpdateThread::ThreadProc(LPVOID pParam)
 }
 
 //自动更新执行函数
-bool AutoUpdateThread::AutoUpdate()
+bool AutoUpdateThread::AutoUpdate(const SStringW& strVersionNew)
 {
 	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_VERSION_INFO;
 	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
@@ -137,7 +138,9 @@ bool AutoUpdateThread::AutoUpdate()
 		}
 	}
 	
-	SStringW strShownInfo = L"软件有更新，更新将在下一次启动生效  ：) \\n\\n最新版本更新内容：\\n";
+	SStringW strShownInfo = L"软件有更新，更新将在下一次启动生效  ：) \\n\\n["
+		+ SStringW(VERSION_NUMBER.c_str()) + L" -> " + strVersionNew + L"]"
+		+ L"\\n最新版本更新内容：\\n";
 	strShownInfo += strUpdateInfo;
 	_MessageBox(NULL, strShownInfo, _T("软件更新提示"),MB_OK| MB_ICONINFORMATION);
 
@@ -148,7 +151,7 @@ bool AutoUpdateThread::AutoUpdate()
 }
 
 //检测是否有更新
-bool AutoUpdateThread::IfUpdateAvailable()
+bool AutoUpdateThread::IfUpdateAvailable(SStringW& versionNew)
 {
 	wstring strVersionFile = FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_VERSION_INFO;
 	wstring strLastExe =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_LAST_EXE_TEMP;
@@ -190,6 +193,8 @@ bool AutoUpdateThread::IfUpdateAvailable()
 	{
 		return false;
 	}
+
+	versionNew = strVersion;
 
 	//有更新可用
 	return true;
