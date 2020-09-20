@@ -422,12 +422,12 @@ bool CCheckIntegrityThread::CheckFFmpeg()
 			}
 		}
 		
-		vector<NamedLink> links = LinkHelper::getSingleton().GetAllLinksFFmpeg();
+		vector<LinkValue> links = LinkHelper::getSingleton().GetAllLinksFFmpeg();
 
 		bool bTrySuceed = false;
 		for(size_t i = 0; i < links.size(); ++i)
 		{
-			UpdateProgressUI(60 + i, wstring( L"下载转换器 ffmpeg(42.41MB),请耐心等待 ... (try "+links[i].name +L")").c_str());
+			UpdateProgressUI(60 + i, wstring( L"下载转换器 ffmpeg(42.41MB),请耐心等待 ... (try "+links[i].value +L")").c_str());
 			if(!CDownloader::DownloadFile( links[i].link, strFfmpeg, &m_hCheckWnd))
 				continue;
 			

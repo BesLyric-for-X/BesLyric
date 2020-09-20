@@ -46,3 +46,22 @@ http://bensonlaur.com/files/beslyric/Beslyric-Link.xml （备用）
 * `https://files.cnblogs.com/files/benson2/ffmpeg.9.zip`
 * `https://files.cnblogs.com/files/benson2/ffmpeg.10.zip`
 * `https://files.cnblogs.com/files/benson2/ffmpeg.11.zip`
+
+
+### 关于登陆信息收集
+
+1. 目前开启软件后，软件会向服务器 http://www.bensonlaur.com 发送登陆信息用户用户使用情况统计
+
+2. 关于 IP 地址的收集
+
+在2.3.0 版本之后，目前内置 1 个获取IP的链接
+
+| 过滤正则表达式 | 链接 |
+|:-----:|:---------:|
+|`>(\d+\.\d+\.\d+\.\d+)<`|https://whatismyipaddress.com/|
+
+同时支持获取动态下载获取IP的链接：
+https://files.cnblogs.com/files/BensonLaur/Beslyric-Link.xml 
+http://bensonlaur.com/files/beslyric/Beslyric-Link.xml （备用）
+
+

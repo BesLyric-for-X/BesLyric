@@ -2,6 +2,7 @@
 #include "SendLoginThread.h"
 #include "Define.h"
 #include "../utility/Downloader.h"
+#include "LinkHelper.h"
 #include "OsInfoHelper.hpp"
 #include <wininet.h>					//链接网络
 #pragma comment( lib, "wininet.lib" ) 
@@ -44,16 +45,6 @@ DWORD WINAPI SendLoginThread::ThreadProc(LPVOID pParam)
 //发送登录信息（ip地址）
 void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 {
-	//获得ip地址的网页源，3个备用
-	const int SrcCount = 3;
-	vector<wstring> ipSrc;
-	ipSrc.push_back(L"http://ip.chacuo.net/");
-	ipSrc.push_back(L"http://www.zzsky.cn/code/ip/index.asp");
-	ipSrc.push_back(L"https://whatismyipaddress.com/");
-
-	//单个源最大检测ip的次数
-	int nMaxSingleCheckCount = 3;
-	
 	wstring strIP= L"unknown";
 	wstring strTempFile;
 
@@ -66,15 +57,29 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 	}
 	else
 	{
-		int nLeftCheckCount = nMaxSingleCheckCount * SrcCount; // 计算总共检测次数
+		auto& helper = LinkHelper::getSingleton();
+
+		//获得ip地址的网页源
+		helper.UpdateLinkFromServer();
+		vector<LinkValue> ipSrc = helper.GetAllLinksIp();
+		//vector<LinkValue> ipSrc;
+		//ipSrc.push_back(LinkValue(L">(\\d+\\.\\d+\\.\\d+\\.\\d+)<",L"https://whatismyipaddress.com/"));
+		//ipSrc.push_back(LinkValue(L"value=\"(\\d+\\.\\d+\\.\\d+\\.\\d+)\"",L"http://ip.chacuo.net/"));
+		//ipSrc.push_back(LinkValue(L"您的IP：(\\d+\\.\\d+\\.\\d+\\.\\d+)&nbsp;",L"http://www.zzsky.cn/code/ip/index.asp"));
+		
+		//单个源最大检测ip的次数
+		int nMaxSingleCheckCount = 3;
+	
+		int nLeftCheckCount = nMaxSingleCheckCount * ipSrc.size(); // 计算总共检测次数
 		while(nLeftCheckCount-1)
 		{
 			strTempFile =  FileHelper::GetCurrentDirectoryStr() + FLODER_NAME_ETC + L"\\" + FILE_NAME_TEMP;
 			if(FileHelper::CheckFileExist(strTempFile))
 				_wremove(strTempFile.c_str());
 	
-			wstring url = ipSrc[(nLeftCheckCount-1) / nMaxSingleCheckCount];
-			bool bRet = CDownloader::DownloadFile(url,strTempFile);
+			LinkValue linkValue = ipSrc[(nLeftCheckCount-1) / nMaxSingleCheckCount];
+
+			bool bRet = CDownloader::DownloadFile(linkValue.link,strTempFile);
 			if(bRet == false)
 			{
 				//可能没网络，或网络异常，也可能读取文件失败
@@ -97,10 +102,9 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 			bool bFound = false;
 			for(auto iter = vecLine.begin(); iter != vecLine.end(); iter++)
 			{
-				// https://whatismyipaddress.com/ 和 http://ip.qq.com/ 的网页中IP都是 >ddd.ddd.ddd.ddd< 特征，查找该特征的字符串
 				wstring ipStr = L"Invalid IP query source";
 				
-				if(CatchIPStr(iter->GetBuffer(1), ipStr))
+				if(CatchIPStr(iter->GetBuffer(1),linkValue.value, ipStr))
 				{
 					strIP = ipStr;
 					bFound = true;
@@ -125,45 +129,14 @@ void SendLoginThread::SendLoginInfo(BOOL bAnonymity)
 
 
 //俘获满足需求的IP字符串
-bool SendLoginThread::CatchIPStr(const wstring &line, OUT wstring& ip)
+bool SendLoginThread::CatchIPStr(const wstring &line,const wstring &rule, OUT wstring& ip)
 {
-	//(http://ip.chacuo.net/)
-	//value="..."
-
-	// (https://whatismyipaddress.com/)
-	// > . . . <
-
-	//或 (http://www.zzsky.cn/code/ip/index.asp)
-	//   您的IP：...&nbsp;
-
-	// 参考 https://blog.csdn.net/effective_coder/article/details/9010337
 	std::locale loc("");    
     std::wcout.imbue(loc);    
-        
-    std::wstring regString1(_T("value=\"(\\d+\\.\\d+\\.\\d+\\.\\d+)\"")); 
+    std::wstring regString(rule); 
 
-    std::wstring regString2(_T(">(\\d+\\.\\d+\\.\\d+\\.\\d+)<")); 
+	// 参考 https://blog.csdn.net/effective_coder/article/details/9010337
 
-    std::wstring regString3(_T("您的IP：(\\d+\\.\\d+\\.\\d+\\.\\d+)&nbsp;"));   
-    
-	//先查找规则1
-    if(GetIpByRegString(line, regString1, ip))
-		return true;
-
-	//先查找规则2
-    if(GetIpByRegString(line, regString2, ip))
-		return true;
-	
-	//查找规则3
-	if( GetIpByRegString(line, regString3, ip))
-		return true;
-	
-	return false;
-}
-
-
-bool SendLoginThread::GetIpByRegString(const wstring &line, std::wstring regString, OUT wstring& ip)
-{
 	// 表达式选项 - 忽略大小写     
     std::regex_constants::syntax_option_type fl = std::regex_constants::icase;    
      
@@ -189,3 +162,4 @@ bool SendLoginThread::GetIpByRegString(const wstring &line, std::wstring regStri
         return false;
     }    
 }
+

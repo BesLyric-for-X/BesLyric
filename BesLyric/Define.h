@@ -189,7 +189,7 @@ static const wstring  LINK_LAST_VERSION_INFO_2= L"http://files.cnblogs.com/files
 static const wstring  LINK_LAST_EXE_2= L"http://files.cnblogs.com/files/BensonLaur/BesLyricExe.rar";			//链接，指向最新的 EXE文件
 #endif
 
-static const wstring LINK_SEND_LOGIN = L"http://beslyric.320.io/BesBlog/beslyric/login.action";
+static const wstring LINK_SEND_LOGIN = L"http://www.bensonlaur.com/BesBlog/beslyric/login.action";
 
 static const wstring FLODER_NAME_ETC = L"etc";									//文件夹名称，存放各种临时或配置杂项
 static const wstring FILE_NAME_LAST_VERSION_INFO = L"version";					//文件名，从 LINK_LAST_VERSION_INFO 下载下来储存的文件

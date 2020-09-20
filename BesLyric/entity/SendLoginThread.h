@@ -48,10 +48,8 @@ private:
 	void SendLoginInfo(BOOL bAnonymity);
 
 	//俘获满足需求的IP字符串
-	inline bool CatchIPStr(const wstring &line, OUT wstring& ip);
+	inline bool CatchIPStr(const wstring &line,const wstring &rule, OUT wstring& ip);
 	
-	inline bool GetIpByRegString(const wstring &line, std::wstring regString, OUT wstring& ip);
-
 private:
 
 	HANDLE		m_handleThread;			/* 当前线程句柄 */

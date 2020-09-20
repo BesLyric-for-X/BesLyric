@@ -20,33 +20,42 @@ using namespace tinyxml2;
 */
 bool LinkHelper::UpdateLinkFromServer()
 {
-	//从服务器获取更新链接
-	vector<wstring> candidates;
-	candidates.push_back(L"https://files.cnblogs.com/files/BensonLaur/Beslyric-Link.xml");
-	candidates.push_back(L"http://bensonlaur.com/files/beslyric/Beslyric-Link.xml");
+	Enter();
 	
-	UpdateHelper updateHelper;
-	wstring etcDir = updateHelper.GetEtcDir();
-	if(!FileHelper::IsFloderExistW(etcDir))
-		_wmkdir(etcDir.c_str());
-
-	wstring xml = updateHelper.GetEtcDir()+ L"dynamicLink.xml";
 	bool getValidUpdate = false;
-	for(size_t i = 0; i < candidates.size(); ++i)
-	{
-		if(!CDownloader::DownloadFile(candidates[i], xml))
-			continue; //下载失败
-
-		if(!IsValidXml(xml))
-			continue; //下载下来的内容不对
-
-		if(!GetLinkUpdate(xml))
-			continue; //xml解析出错，继续下一个
-
-		//成功获取，可以跳出
+	if(HasFinishedUpdate())
 		getValidUpdate = true;
-		break;
+	else
+	{
+		//从服务器获取更新链接
+		vector<wstring> candidates;
+		candidates.push_back(L"https://files.cnblogs.com/files/BensonLaur/Beslyric-Link.xml");
+		candidates.push_back(L"http://bensonlaur.com/files/beslyric/Beslyric-Link.xml");
+	
+		UpdateHelper updateHelper;
+		wstring etcDir = updateHelper.GetEtcDir();
+		if(!FileHelper::IsFloderExistW(etcDir))
+			_wmkdir(etcDir.c_str());
+
+		wstring xml = updateHelper.GetEtcDir()+ L"dynamicLink.xml";
+		for(size_t i = 0; i < candidates.size(); ++i)
+		{
+			if(!CDownloader::DownloadFile(candidates[i], xml))
+				continue; //下载失败
+
+			if(!IsValidXml(xml))
+				continue; //下载下来的内容不对
+
+			if(!GetLinkUpdate(xml))
+				continue; //xml解析出错，继续下一个
+
+			//成功获取，可以跳出
+			getValidUpdate = true;
+			break;
+		}
 	}
+
+	Leave();
 
 	return getValidUpdate;
 }
@@ -54,9 +63,9 @@ bool LinkHelper::UpdateLinkFromServer()
 /*
 	获得所有的 ffmpeg 下载链接（为了减少单一服务器负荷，会随机打乱顺序）
 */
-vector<NamedLink> LinkHelper::GetAllLinksFFmpeg()
+vector<LinkValue> LinkHelper::GetAllLinksFFmpeg()
 {
-	vector<NamedLink> links = GetLinksFFmpegRaw();
+	vector<LinkValue> links = GetLinksFFmpegRaw();
 	links.insert(links.end(),linksFFmpegUpdate.begin(), linksFFmpegUpdate.end());
 
 	//乱序算法 
@@ -68,17 +77,19 @@ vector<NamedLink> LinkHelper::GetAllLinksFFmpeg()
 }
 
 /*
-	获得程序自带的 ffmpeg 下载链接
+	获得所有的 ip 获取链接（为了减少单一服务器负荷，会随机打乱顺序）
 */
-vector<NamedLink> LinkHelper::GetLinksFFmpegRaw()
+vector<LinkValue> LinkHelper::GetAllLinksIp()
 {
-	if(linksFFmpegRaw.empty())
-	{
-		linksFFmpegRaw.push_back(NamedLink(L"gitlab",L"https://gitlab.com/BensonLaur/resource-provider-gitlab/-/raw/master/beslyric/ffmpeg-3.4.1.exe"));
-		linksFFmpegRaw.push_back(NamedLink(L"bitbucket",L"https://bitbucket.org/bensonlaur/resource-provider-bitbucket/raw/bcd1a44f30893427a5f78243e4548f9afbb82c9c/beslyric/ffmpeg-3.4.1.exe"));
-	}
+	vector<LinkValue> links = GetLinksIpRaw();
+	links.insert(links.end(),linksIpUpdate.begin(), linksIpUpdate.end());
 
-	return linksFFmpegRaw;
+	//乱序算法 
+	//srand种子要加上#include<ctime>头文件 
+	srand((unsigned int)time(0));
+	random_shuffle(links.begin(),links.end());
+
+	return links;
 }
 
 /*!
@@ -87,6 +98,7 @@ vector<NamedLink> LinkHelper::GetLinksFFmpegRaw()
 	\param filePath 被检测的文件
 	\return 返回文件是否为有效的 xml 文件
 */
+
 bool LinkHelper::IsValidXml(const std::wstring& filePath)
 {
 	//读取XML文件
@@ -107,7 +119,34 @@ bool LinkHelper::IsValidXml(const std::wstring& filePath)
 
 	return true;
 }
-		
+	
+/*
+	获得程序自带的 ffmpeg 下载链接
+*/
+vector<LinkValue> LinkHelper::GetLinksFFmpegRaw()
+{
+	if(linksFFmpegRaw.empty())
+	{
+		linksFFmpegRaw.push_back(LinkValue(L"gitlab",L"https://gitlab.com/BensonLaur/resource-provider-gitlab/-/raw/master/beslyric/ffmpeg-3.4.1.exe"));
+		linksFFmpegRaw.push_back(LinkValue(L"bitbucket",L"https://bitbucket.org/bensonlaur/resource-provider-bitbucket/raw/bcd1a44f30893427a5f78243e4548f9afbb82c9c/beslyric/ffmpeg-3.4.1.exe"));
+	}
+
+	return linksFFmpegRaw;
+}
+
+/*
+	获得程序自带的 ip 下载获取
+*/
+vector<LinkValue> LinkHelper::GetLinksIpRaw()
+{
+	if(linksIpRaw.empty())
+	{
+		linksIpRaw.push_back(LinkValue(L">(\\d+\\.\\d+\\.\\d+\\.\\d+)<",L"https://whatismyipaddress.com/"));
+	}
+
+	return linksIpRaw;
+}
+	
 /*!
 	获得更新文件内容
 
@@ -138,29 +177,44 @@ bool LinkHelper::GetLinkUpdate(const wstring& updateItemFile)
 
 		//根
 		XMLElement *pRoot = doc.RootElement();
-		SASSERT(pRoot);
-
-		XMLElement* ele = pRoot->FirstChildElement();
-		while(ele)
+		if(pRoot)
 		{
-			const char* eName = ele->Name();
-
-			const char* szName = ele->Attribute("name");
-			const char* szLink = ele->Attribute("link");
-			
-			if(eName && szName && szLink)
+			XMLElement* ele = pRoot->FirstChildElement();
+			while(ele)
 			{
-				wstring wStrName = S_CA2W(SStringA(szName),CP_UTF8);
-				wstring wStrLink = S_CA2W(SStringA(szLink),CP_UTF8);
+				const char* eName = ele->Name();
 
-				if(eName == string("ffmpeg"))
-					linksFFmpegUpdate.push_back(NamedLink(wStrName, wStrLink));
+				const char* szValue = ele->Attribute("value");
+				const char* szLink = ele->Attribute("link");
+			
+				if(eName && szValue && szLink)
+				{
+					wstring wStrValue = S_CA2W(SStringA(szValue),CP_UTF8);
+					wstring wStrLink = S_CA2W(SStringA(szLink),CP_UTF8);
+
+					if(eName == string("ffmpeg"))
+						linksFFmpegUpdate.push_back(LinkValue(wStrValue, wStrLink));
+				
+					if(eName == string("ipSource"))
+						linksIpUpdate.push_back(LinkValue(wStrValue, wStrLink));
+				}
+
+				//下一兄弟结点
+				ele = ele->NextSiblingElement();
 			}
-
-			//下一兄弟结点
-			ele = ele->NextSiblingElement();
 		}
+		else
+			return false;
 	}
 
 	return true;
+}
+
+//判断是否完成了更新
+bool LinkHelper::HasFinishedUpdate()
+{
+	if(!linksFFmpegUpdate.empty() || !linksIpUpdate.empty())
+		return true;
+	else
+		return false;
 }

@@ -47,37 +47,39 @@ bool CNcmIDManager::LoadAndCheckDataPairs()
 
 		m_mapNcmID.clear();
 
-
 		//根
 		XMLElement *pRoot = doc.RootElement();
-		SASSERT(pRoot);
-
-		XMLElement* ele = pRoot->FirstChildElement();
-		while(ele)
+		if(pRoot)
 		{
-			const char* szName = ele->Name();
-			const char* szfileName = ele->Attribute(S_CW2A(SStringW(XML_FILE_NAME.c_str()).GetBuffer(1)));
-			const char* szID = ele->Attribute(S_CW2A(SStringW(XML_ID.c_str()).GetBuffer(1)));
+			XMLElement* ele = pRoot->FirstChildElement();
+			while(ele)
+			{
+				const char* szName = ele->Name();
+				const char* szfileName = ele->Attribute(S_CW2A(SStringW(XML_FILE_NAME.c_str()).GetBuffer(1)));
+				const char* szID = ele->Attribute(S_CW2A(SStringW(XML_ID.c_str()).GetBuffer(1)));
 			
-			wstring wStrName = S_CA2W(SStringA(szfileName));
-			wstring wStrID = S_CA2W(SStringA(szID));
+				wstring wStrName = S_CA2W(SStringA(szfileName));
+				wstring wStrID = S_CA2W(SStringA(szID));
 			
-			WCHAR wszName[MAX_BUFFER_SIZE] = {0};
-			WCHAR wszID[MAX_BUFFER_SIZE] = {0};
+				WCHAR wszName[MAX_BUFFER_SIZE] = {0};
+				WCHAR wszID[MAX_BUFFER_SIZE] = {0};
 
-			//由于文件保存是以utf-8保存，需要转换
-			::MultiByteToWideChar(CP_UTF8,0,szfileName, MAX_BUFFER_SIZE/2, wszName, MAX_BUFFER_SIZE);
-			//由于文件保存是以utf-8保存，需要转换
-			::MultiByteToWideChar(CP_UTF8,0,szID, MAX_BUFFER_SIZE/2, wszID, MAX_BUFFER_SIZE);
+				//由于文件保存是以utf-8保存，需要转换
+				::MultiByteToWideChar(CP_UTF8,0,szfileName, MAX_BUFFER_SIZE/2, wszName, MAX_BUFFER_SIZE);
+				//由于文件保存是以utf-8保存，需要转换
+				::MultiByteToWideChar(CP_UTF8,0,szID, MAX_BUFFER_SIZE/2, wszID, MAX_BUFFER_SIZE);
 			
-			pair<wstring, wstring> p;
-			p.first = wszName;
-			p.second = wszID;
-			m_mapNcmID.insert(p);
+				pair<wstring, wstring> p;
+				p.first = wszName;
+				p.second = wszID;
+				m_mapNcmID.insert(p);
 
-			//下一兄弟结点
-			ele = ele->NextSiblingElement();
+				//下一兄弟结点
+				ele = ele->NextSiblingElement();
+			}
 		}
+		else
+			return false;
 	}
 	else
 		SaveDataPairs(); //文件不存在，创建空的文件

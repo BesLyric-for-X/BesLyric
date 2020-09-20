@@ -64,35 +64,36 @@ bool UpdateHelper::GetUpdateItem(const wstring& updateItemFile, vector<UpdateIte
 
 		//根
 		XMLElement *pRoot = doc.RootElement();
-		SASSERT(pRoot);
-
-		XMLElement* ele = pRoot->FirstChildElement();
-		while(ele)
+		if(pRoot)
 		{
-			UpdateItem item;
-			const char* szName = ele->Attribute("name");
-			const char* szLink = ele->Attribute("link");
-			const char* szLocal = ele->Attribute("local");
-			const char* szMd5 = ele->Attribute("md5");
+			XMLElement* ele = pRoot->FirstChildElement();
+			while(ele)
+			{
+				UpdateItem item;
+				const char* szName = ele->Attribute("name");
+				const char* szLink = ele->Attribute("link");
+				const char* szLocal = ele->Attribute("local");
+				const char* szMd5 = ele->Attribute("md5");
 			
-			wstring wStrName = S_CA2W(SStringA(szName),CP_UTF8);
-			wstring wStrLink = S_CA2W(SStringA(szLink),CP_UTF8);
-			wstring wStrLocal = S_CA2W(SStringA(szLocal),CP_UTF8);
-			string strMd5 = szMd5;
+				wstring wStrName = S_CA2W(SStringA(szName),CP_UTF8);
+				wstring wStrLink = S_CA2W(SStringA(szLink),CP_UTF8);
+				wstring wStrLocal = S_CA2W(SStringA(szLocal),CP_UTF8);
+				string strMd5 = szMd5;
 
-			item.fileName = wStrName;
-			item.link = wStrLink;
-			item.local = wStrLocal; 
-			item.md5 = strMd5;
+				item.fileName = wStrName;
+				item.link = wStrLink;
+				item.local = wStrLocal; 
+				item.md5 = strMd5;
 
-			updateItems.push_back(item);
+				updateItems.push_back(item);
 
-			//下一兄弟结点
-			ele = ele->NextSiblingElement();
+				//下一兄弟结点
+				ele = ele->NextSiblingElement();
+			}
 		}
+		else
+			return false;
 	}
-
-
 
 	return true;
 }

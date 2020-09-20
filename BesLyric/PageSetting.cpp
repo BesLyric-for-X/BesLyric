@@ -114,56 +114,59 @@ void CSettingPage::LoadSetting()
 
 		//根
 		XMLElement *pRoot = doc.RootElement();
-		SASSERT(pRoot);
-
-		XMLElement* ele = pRoot->FirstChildElement();
-		while(ele)
+		if(pRoot)
 		{
-			const char* szName = ele->Name();
-			const char* szValue = ele->Attribute("value");
+			XMLElement* ele = pRoot->FirstChildElement();
+			while(ele)
+			{
+				const char* szName = ele->Name();
+				const char* szValue = ele->Attribute("value");
 			
-			wstring wStrName = S_CA2W(SStringA(szName));
-			WCHAR wszValue[MAX_BUFFER_SIZE] = {0};
-			if(szValue)
-			{
-				//由于文件保存是以utf-8保存，需要转换
-				::MultiByteToWideChar(CP_UTF8,0,szValue, MAX_BUFFER_SIZE/2, wszValue, MAX_BUFFER_SIZE);
-			}
+				wstring wStrName = S_CA2W(SStringA(szName));
+				WCHAR wszValue[MAX_BUFFER_SIZE] = {0};
+				if(szValue)
+				{
+					//由于文件保存是以utf-8保存，需要转换
+					::MultiByteToWideChar(CP_UTF8,0,szValue, MAX_BUFFER_SIZE/2, wszValue, MAX_BUFFER_SIZE);
+				}
 
-			if (XML_SHIFT_TIME == wStrName)
-			{
-				//时间轴偏移量
-				m_nTimeShift = _wtoi(wszValue);
-			}
-			else if (XML_DEFAULF_MUSIC_PATH == wStrName)
-			{
-				//默认音乐路径
-				m_default_music_path = wszValue;
-			}
-			else if ( XML_DEFAULF_LYRIC_PATH == wStrName)
-			{
-				//默认歌词路径
-				m_default_lyric_path = wszValue;
-			}
-			else if (XML_DEFAULF_OUTPUT_PATH == wStrName)
-			{
-				//默认输出路径
-				m_default_output_path = wszValue;
-			}
-			else if (XML_AUTO_UPDATE == wStrName)
-			{
-				//是否自动升级
-				m_check_auto_update = (_wtoi(wszValue)? TRUE: FALSE);
-			}
-			else if(XML_ANONYMITY == wStrName)
-			{
-				//是否匿名
-				m_check_anonymity = (_wtoi(wszValue)? TRUE: FALSE);
-			}
+				if (XML_SHIFT_TIME == wStrName)
+				{
+					//时间轴偏移量
+					m_nTimeShift = _wtoi(wszValue);
+				}
+				else if (XML_DEFAULF_MUSIC_PATH == wStrName)
+				{
+					//默认音乐路径
+					m_default_music_path = wszValue;
+				}
+				else if ( XML_DEFAULF_LYRIC_PATH == wStrName)
+				{
+					//默认歌词路径
+					m_default_lyric_path = wszValue;
+				}
+				else if (XML_DEFAULF_OUTPUT_PATH == wStrName)
+				{
+					//默认输出路径
+					m_default_output_path = wszValue;
+				}
+				else if (XML_AUTO_UPDATE == wStrName)
+				{
+					//是否自动升级
+					m_check_auto_update = (_wtoi(wszValue)? TRUE: FALSE);
+				}
+				else if(XML_ANONYMITY == wStrName)
+				{
+					//是否匿名
+					m_check_anonymity = (_wtoi(wszValue)? TRUE: FALSE);
+				}
 
-			//下一兄弟结点
-			ele = ele->NextSiblingElement();
+				//下一兄弟结点
+				ele = ele->NextSiblingElement();
+			}
 		}
+		else
+			return;
 	}
 }
 
